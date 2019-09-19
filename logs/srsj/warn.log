@@ -1,0 +1,2 @@
+2019-09-19 17:12:55.796 [main] WARN  n.s.e.config.ConfigurationFactory - No configuration found. Configuring ehcache from ehcache-failsafe.xml  found in the classpath: jar:file:/E:/code/re5git/red5-springboot/springboot_red5_netty/target/red5-0.2-SNAPSHOT.jar!/BOOT-INF/lib/ehcache-core-2.6.11.jar!/ehcache-failsafe.xml
+2019-09-19 17:13:46.542 [NioProcessor-4] WARN  o.r.server.net.rtmp.InboundHandshake - Client not compatible

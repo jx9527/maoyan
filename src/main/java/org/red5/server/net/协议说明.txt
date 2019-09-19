@@ -1,0 +1,23 @@
+AMF：Action Message Format，是在 Flash 和 Flex 中与远程服务端交换数据的一种格式，它是二进制格式。
+	Flash应用与服务端或数据库通过RPC交换数据时，通常都采用这种格式。AMF 1 诞生于Flash Player 6，
+	发展到现在已经变成了了 AMF3。
+
+RTMP：Real-Time Messaging Protocol，实时消息传送协议，它是 Adobe Systems 公司为 Flash 
+	播放器和服务器之间音频、视频和数据传输开发的协议。这是一个标准的，未加密的实时消息传递协议，RTMP 协议是被
+	 Flash 用于对象，视频，音频的传输。该协议建立在 TCP 协议或者轮询 HTTP 协议之上。
+
+RTMPT：RTMP的变种，此协建立在HTTP协议之上，是通过HTTP封装后的RTMP协议，默认端口80。
+
+RTMPS：RTMP的另一个变种，此协议是通过SSL加密的RTMP协议，为数据通讯提供安全支持。
+	SSL(Secure Sockets Layer 安全套接层)是为网络通信提供安全及数据完整性的一种安全协议。
+	SSL 在传输层对网络连接进行加密。默认端口443。
+
+RTMPE：RTMP的变种，RTMPE是一个加密版本的 RTMP，和 RTMPS 不同的是 RTMPE 不采用 SSL 加密，RTMPE 
+	加密快于SSL，并且不需要认证管理。
+
+RTMPTE：RTMPTE 这个协议是一个通过加密通道连接的 RTMPE，默认端口80。
+
+RTMFP：RTMFP 是 Adobe 公司开发的一套新的通信协议，该协议可以让使用 Adobe Flash Player 
+	的终端用户之间进行直接通信。此方案提升了目前 Flash Player 在网络交互方面的体验。RTMFP将减少直播、
+	实时聊天方案的带宽消耗，例如音视频聊天和多人游戏。因为RTMFP的数据在终端用户之间流动，而不是和服务器，
+	所以此方案很适合于大范围的部署。RTMFP因为采用了UDP也提升了传送的速度。

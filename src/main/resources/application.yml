@@ -1,0 +1,173 @@
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+#8762
+server:
+  port: 5080 
+spring:
+  application:
+    name: service-srsj-console
+#logbackConfigLocation: classpath:logback.xml
+logging.config: classpath:logback.xml
+#Socket policy
+policy:
+  host:0.0.0.0
+  port:843
+#minalog
+mina:
+  logfilter.enable: false 
+#HTTP
+http:
+  host: 0.0.0.0
+  port: 80
+  URIEncoding: UTF-8
+  max_headers_size: 8192
+  max_keep_alive_requests: -1
+  max_threads: 20
+  acceptor_thread_count: 10
+  processor_cache: 20
+  io_threads: 2
+  worker_threads: 32
+  send_buffer_size: 16000
+  receive_buffer_size: 16000
+  tcp_nodelay: true
+  max_backlog: 8000
+  idle: 30 
+#HLS
+hls:
+  segment_max:2
+  segment_time:5
+  encrypt:false
+  
+#RTSP
+rtsp:
+  host:0.0.0.0
+  port:554
+  io_threads:2
+  worker_threads:16
+  send_buffer_size:65536
+  receive_buffer_size:65536
+  tcp_nodelay:true
+  max_backlog:8000
+udp:
+  port_start:6970
+# RTMP
+rtmp: 
+  host: 0.0.0.0
+  port: 1935
+  io_threads: 8
+  send_buffer_size: 65536
+  receive_buffer_size: 65536
+  ping_interval: 1000
+  max_inactivity: 60000
+  max_handshake_time: 5000
+  tcp_nodelay: true
+  tcp_keepalive: true
+  default_server_bandwidth: 10000000
+  default_client_bandwidth: 10000000
+  client_bandwidth_limit_type: 2
+  bandwidth_detection: false
+  encoder_base_tolerance: 5000
+  encoder_drop_live_future: false
+  traffic_class: -1
+  backlog: 32 
+  thoughput_calc_interval: 15 
+  default_acceptor: true 
+  initial_pool_size: 2
+  max_pool_size: 12
+  max_processor_pool_size: 8
+  executor_keepalive_time: 60000 
+  scheduler.pool_size: 8
+  deadlockguard.sheduler.pool_size: 8
+  executor.core_pool_size: 4
+  executor.max_pool_size: 32
+  executor.queue_capacity: 64
+  executor.queue_size_to_drop_audio_packets: 60
+  max_handling_time: 2000
+  channel.initial.capacity: 3
+  channel.concurrency.level: 1
+  stream.initial.capacity: 1
+  stream.concurrency.level: 1
+  pending.calls.initial.capacity: 3
+  pending.calls.concurrency.level: 1
+  reserved.streams.initial.capacity: 1
+  reserved.streams.concurrency.level: 1
+  max_packet_size: 3145728 
+#RTMPS
+rtmps:
+  host:0.0.0.0
+  port:8443
+  ping_interval:5000
+  max_inactivity:60000
+  max_keep_alive_requests:-1
+  max_threads:8
+  acceptor_thread_count:2
+  processor_cache:20
+  keystorepass:password
+  keystorefile:conf/keystore.jks
+  truststorepass:password
+  truststorefile:conf/truststore.jks
+
+# RTMPT
+rtmpt: 
+  host: 0.0.0.0
+  port: 8088
+  ping_interval: 5000
+  max_inactivity: 60000
+  max_handshake_time: 5000
+  max_keep_alive_requests: -1
+  max_threads: 8
+  acceptor_thread_count: 2
+  processor_cache: 20
+  encoder_base_tolerance: 5000
+  encoder_drop_live_future: true 
+  target_reponse_size: 32768 
+  max_in_msg_process: 166 
+  max_queue_offer_time: 125
+  max_queue_offer_attempts: 4
+
+# Debug proxy (needs to be activated in red5-core.xml)
+proxy:
+  source_host:127.0.0.1
+  source_port:1936
+  destination_host:127.0.0.1
+  destination_port:1935
+
+# JMX
+jmx:
+  rmi:
+    host:localhost
+    port:9999
+    sport:9998
+  mina:
+    monitor.enable: false
+    poll.interval: 1000
+  keystorepass: password
+  registry: 
+    create:true
+  reuse:
+    existing.server:true
+  register:
+    factory: true
+  daemon: true
+  threaded: true 
+# Server properties
+# max events to send in a single update
+so: 
+  max.events.per.update: 64
+  scheduler.pool_size: 4
+keyframe: 
+  cache.entry.max: 500
+war: 
+  deploy.server.check.interval: 600000
+fileconsumer: 
+  delayed.write: true
+  queue.size: 120
+  wait.for.keyframe: true
+subscriberstream: 
+  buffer.check.interval: 5000
+  underrun.trigger: 100
+  max.pending.frames: 10
+  max.sequential.frames: 10
+  auto.record: false
