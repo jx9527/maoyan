@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import org.assertj.core.util.Lists;
 import org.red5.cache.impl.NoCacheImpl;
 import org.red5.demo.Application1;
 import org.red5.io.CachingFileKeyFrameMetaCache;
