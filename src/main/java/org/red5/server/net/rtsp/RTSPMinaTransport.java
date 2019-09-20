@@ -64,7 +64,9 @@ public class RTSPMinaTransport {
 		}
 		
 		acceptor = new NioSocketAcceptor(ExtConfiguration.RTSP_IO_THREADS);	
-		ioHandler = new RTSPMinaIoHandler();
+		if(ioHandler == null){
+			ioHandler = new RTSPMinaIoHandler();
+		} 
 		acceptor.setHandler(ioHandler);
 		acceptor.setBacklog(ExtConfiguration.RTSP_MAX_BACKLOG);
 		

@@ -43,7 +43,7 @@ hls:
 #RTSP
 rtsp:
   host: 0.0.0.0
-  port: 554
+  port: 555
   io_threads: 2
   worker_threads: 16
   send_buffer_size: 65536
