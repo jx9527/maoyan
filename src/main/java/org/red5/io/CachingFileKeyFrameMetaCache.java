@@ -30,6 +30,17 @@ import org.red5.io.flv.IKeyFrameDataAnalyzer.KeyFrameMeta;
 
 public class CachingFileKeyFrameMetaCache extends FileKeyFrameMetaCache {
 
+	private static final class SingletonHolder {
+
+		private static final CachingFileKeyFrameMetaCache INSTANCE = new CachingFileKeyFrameMetaCache();
+	}
+
+	public static CachingFileKeyFrameMetaCache getInstance() {
+
+		return SingletonHolder.INSTANCE;
+	}
+
+	
     private Map<String, KeyFrameMeta> inMemoryMetaCache = new HashMap<String, KeyFrameMeta>();
 
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();

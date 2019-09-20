@@ -36,22 +36,22 @@ http:
   idle: 30 
 #HLS
 hls:
-  segment_max:2
-  segment_time:5
-  encrypt:false
+  segment_max: 2
+  segment_time: 5
+  encrypt: false
   
 #RTSP
 rtsp:
-  host:0.0.0.0
-  port:554
-  io_threads:2
-  worker_threads:16
-  send_buffer_size:65536
-  receive_buffer_size:65536
-  tcp_nodelay:true
-  max_backlog:8000
+  host: 0.0.0.0
+  port: 554
+  io_threads: 2
+  worker_threads: 16
+  send_buffer_size: 65536
+  receive_buffer_size: 65536
+  tcp_nodelay: true
+  max_backlog: 8000
 udp:
-  port_start:6970
+  port_start: 6970
 # RTMP
 rtmp: 
   host: 0.0.0.0
@@ -137,21 +137,27 @@ proxy:
 # JMX
 jmx:
   rmi:
-    host:localhost
-    port:9999
-    sport:9998
+    host: localhost
+    port: 9999
+    sport: 9998
+    registryes: 9999
+    enable: false 
   mina:
-    monitor.enable: false
-    poll.interval: 1000
-  keystorepass: password
+    monitor:
+      enable: false
+    poll:
+      interval: 1000
+  keystorepass: password 
   registry: 
-    create:true
+    create: true
   reuse:
-    existing.server:true
+    existing:
+     server: true
   register:
     factory: true
   daemon: true
-  threaded: true 
+  threaded: true
+ 
 # Server properties
 # max events to send in a single update
 so: 
@@ -171,3 +177,14 @@ subscriberstream:
   max.pending.frames: 10
   max.sequential.frames: 10
   auto.record: false
+notify:
+  systimer:
+    tick: 50
+filecache_maxsize: 500
+filecache_purge: 10
+#cache interal (in sec)
+cache_interval: 10
+multicast:
+  executor_threads: 10
+unicast:
+  executor_threads: 4

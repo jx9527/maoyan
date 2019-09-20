@@ -61,9 +61,9 @@ public class QuartzSchedulingService implements ISchedulingService, QuartzSchedu
 	private QuartzSchedulingService() {
 
 		try {
-			String conf = System.getProperty("sms.config_root");
-			factory = new StdSchedulerFactory(String.format("%s%s", conf, "/quartz.properties"));
-
+			//String conf = System.getProperty("red5.config_root");
+			//factory = new StdSchedulerFactory(String.format("%s%s", conf, "/quartz.properties"));
+			
 			if (factory == null) {
 				factory = new StdSchedulerFactory();
 			}		

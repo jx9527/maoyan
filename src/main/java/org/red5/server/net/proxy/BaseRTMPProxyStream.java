@@ -55,7 +55,7 @@ public abstract class BaseRTMPProxyStream extends RecordableBroadcastStream impl
 	public void register(){
 		
 		IScope scope = this.getScope();
-		IProviderService providerService = (IProviderService) scope.getContext().getService(ScopeContextBean.PROVIDERSERVICE_BEAN);
+		IProviderService providerService = (IProviderService) scope.getContext().getBean(ScopeContextBean.PROVIDERSERVICE_BEAN);
 		IBroadcastScope bsScope = (IBroadcastScope) providerService.getLiveProviderInput(scope, this.getPublishedName(), true);
 		this.setName(UUID.randomUUID().toString());
 		providerService.registerBroadcastStream(scope, this.getPublishedName(), this);

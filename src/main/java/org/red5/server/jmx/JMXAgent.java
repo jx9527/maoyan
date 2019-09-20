@@ -19,10 +19,9 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.lang3.StringUtils;
+import org.red5.server.ExtConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.red5.server.Configuration;
 
 public class JMXAgent implements NotificationListener {
 
@@ -32,11 +31,11 @@ public class JMXAgent implements NotificationListener {
 
 	private static MBeanServer mbs;
 
-	private static String rmiAdapterPort = String.valueOf(Configuration.JMX_RMI_PORT_REGISTRY);
+	private static String rmiAdapterPort = String.valueOf(ExtConfiguration.JMX_RMI_PORT_REGISTRY);
 
-	private static String rmiAdapterRemotePort = Configuration.JMX_RMI_PORT_REMOTEOBJECTS;
+	private static String rmiAdapterRemotePort = ExtConfiguration.JMX_RMI_PORT_REMOTEOBJECTS;
 
-	private static String rmiAdapterHost = Configuration.JMX_RMI_HOST;
+	private static String rmiAdapterHost = ExtConfiguration.JMX_RMI_HOST;
 
 	private static String remotePasswordProperties = "jmxremote.password";
 
@@ -234,7 +233,7 @@ public class JMXAgent implements NotificationListener {
 		//environmental var holder
 		HashMap<String, Object> env = null;
 
-		if (Configuration.JMX_RMI_ENABLE) {
+		if (ExtConfiguration.JMX_RMI_ENABLE) {
 			// Create an RMI connector server
 			log.debug("Create an RMI connector server");
 			// bind the rmi hostname for systems with nat and multiple binded addresses !
@@ -274,11 +273,11 @@ public class JMXAgent implements NotificationListener {
 					//check the existance of the files
 					//in the war version the full path is needed
 					File file = new File(remoteAccessProperties);
-					if (!file.exists() && remoteAccessProperties.indexOf(System.getProperty("sms.config_root")) != 0) {
+					if (!file.exists() && remoteAccessProperties.indexOf(System.getProperty("red5.config_root")) != 0) {
 						log.debug("Access file was not found on path, will prepend config_root");
 						//pre-pend the system property set in war startup
-						remoteAccessProperties = System.getProperty("sms.config_root") + '/' + remoteAccessProperties;
-						remotePasswordProperties = System.getProperty("sms.config_root") + '/' + remotePasswordProperties;
+						remoteAccessProperties = System.getProperty("red5.config_root") + '/' + remoteAccessProperties;
+						remotePasswordProperties = System.getProperty("red5.config_root") + '/' + remotePasswordProperties;
 					}
 					//strip "file:" prefixing
 					env.put("jmx.remote.x.access.file", remoteAccessProperties.replace("file:", ""));

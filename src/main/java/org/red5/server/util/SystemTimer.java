@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 
 /**
  * System Cache Time 
@@ -15,7 +15,7 @@ public class SystemTimer {
 
 	private final static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new CustomizableThreadFactory("SystemTimerExecutor-"));
 
-	private static final long tickUnit = Configuration.NOTIFY_SYSTIMER_TICK;
+	private static final long tickUnit = ExtConfiguration.NOTIFY_SYSTIMER_TICK;
 	private static volatile long time = System.currentTimeMillis();
 
 	private static class TimerTicker implements Runnable {

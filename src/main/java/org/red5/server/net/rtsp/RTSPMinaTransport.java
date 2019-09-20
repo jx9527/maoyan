@@ -17,7 +17,7 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.net.rtp.RTPMinaIoHandler;
 import org.red5.server.net.rtp.rtcp.RTCPMinaIoHandler;
 import org.red5.server.util.CustomizableThreadFactory;
@@ -63,25 +63,25 @@ public class RTSPMinaTransport {
 			IoBuffer.setAllocator(new SimpleBufferAllocator());
 		}
 		
-		acceptor = new NioSocketAcceptor(Configuration.RTSP_IO_THREADS);	
+		acceptor = new NioSocketAcceptor(ExtConfiguration.RTSP_IO_THREADS);	
 		ioHandler = new RTSPMinaIoHandler();
 		acceptor.setHandler(ioHandler);
-		acceptor.setBacklog(Configuration.RTSP_MAX_BACKLOG);
+		acceptor.setBacklog(ExtConfiguration.RTSP_MAX_BACKLOG);
 		
 		SocketSessionConfig sessionConf = acceptor.getSessionConfig();
 		//reuse the addresses
 		sessionConf.setReuseAddress(true);
-		sessionConf.setTcpNoDelay(Configuration.RTSP_TCP_NODELAY);
-		sessionConf.setReceiveBufferSize(Configuration.RTSP_RECEIVE_BUFFER_SIZE);
-		sessionConf.setMaxReadBufferSize(Configuration.RTSP_RECEIVE_BUFFER_SIZE);
-		sessionConf.setSendBufferSize(Configuration.RTSP_SEND_BUFFER_SIZE);
+		sessionConf.setTcpNoDelay(ExtConfiguration.RTSP_TCP_NODELAY);
+		sessionConf.setReceiveBufferSize(ExtConfiguration.RTSP_RECEIVE_BUFFER_SIZE);
+		sessionConf.setMaxReadBufferSize(ExtConfiguration.RTSP_RECEIVE_BUFFER_SIZE);
+		sessionConf.setSendBufferSize(ExtConfiguration.RTSP_SEND_BUFFER_SIZE);
 		//set reuse address on the socket acceptor as well
 		acceptor.setReuseAddress(true);		
-		OrderedThreadPoolExecutor executor = new OrderedThreadPoolExecutor(Configuration.RTSP_WORKER_THREADS);
+		OrderedThreadPoolExecutor executor = new OrderedThreadPoolExecutor(ExtConfiguration.RTSP_WORKER_THREADS);
 		executor.setThreadFactory(new CustomizableThreadFactory("RtspWorkerExecutor-"));
 		acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(executor));
-		acceptor.bind(new InetSocketAddress(Configuration.RTSP_HOST, Configuration.RTSP_PORT));
-		log.info("RTSP Socket Acceptor bound to :"+Configuration.RTSP_PORT);
+		acceptor.bind(new InetSocketAddress(ExtConfiguration.RTSP_HOST, ExtConfiguration.RTSP_PORT));
+		log.info("RTSP Socket Acceptor bound to :"+ExtConfiguration.RTSP_PORT);
 		
 		RTP_VIDEO_ACCEPTOR.bind(new InetSocketAddress(0));
 		log.info("RTP VIDEO Socket Acceptor bound to :"+RTP_VIDEO_ACCEPTOR.getLocalAddress().getPort());

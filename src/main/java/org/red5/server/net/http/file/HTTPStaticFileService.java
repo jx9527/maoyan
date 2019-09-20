@@ -166,7 +166,7 @@ public class HTTPStaticFileService extends BaseHTTPService implements IHTTPServi
 
         // Convert to absolute path.
         StringBuilder absPathSB = new StringBuilder();
-        absPathSB.append(System.getProperty("sms.root"));
+        absPathSB.append(System.getProperty("red5.root"));
         absPathSB.append(File.separator);
         absPathSB.append("webapps");
         if(scope.getName().equals("root")) {

@@ -502,11 +502,11 @@
 		    <artifactId>ehcache-core</artifactId>
 		    <version>2.6.11</version>
 		</dependency>
-		 <dependency>
-            <groupId>org.red5</groupId>
-            <artifactId>red5-io</artifactId> 
-            <version>${red5-server.version}</version>
-        </dependency>
+<!-- 		 <dependency> -->
+<!--             <groupId>org.red5</groupId> -->
+<!--             <artifactId>red5-io</artifactId>  -->
+<!--             <version>${red5-server.version}</version> -->
+<!--         </dependency> -->
         
 <!--         <dependency> -->
 <!--             <groupId>org.red5</groupId> -->

@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IStreamListener;
 import org.red5.server.api.stream.IStreamPacket;
@@ -37,7 +37,7 @@ public class MulticastOutgoingService implements IStreamListener {
 	private MulticastOutgoingService() {
 		
 		multicastOutgoing = new MulticastOutgoing();
-		multicastOutgoing.init(Configuration.MULTICAST_EXECUTOR_THREADS);
+		multicastOutgoing.init(ExtConfiguration.MULTICAST_EXECUTOR_THREADS);
 	}
 	
 	public void register(IBroadcastStream stream, UDPDatagramConfig config, String host, int port) {

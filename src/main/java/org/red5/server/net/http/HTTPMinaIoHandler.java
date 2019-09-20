@@ -7,7 +7,7 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.api.Red5;
 import org.red5.server.api.ScopeUtils;
 import org.red5.server.net.http.codec.HTTPCodecFactory;
@@ -34,7 +34,7 @@ public class HTTPMinaIoHandler extends IoHandlerAdapter {
 	public void sessionCreated(IoSession session) throws Exception {
 		
 		log.debug("HTTP Session Created id = {}", session.getId());
-		session.getConfig().setIdleTime(IdleStatus.READER_IDLE, Configuration.HTTP_IDLE);
+		session.getConfig().setIdleTime(IdleStatus.READER_IDLE, ExtConfiguration.HTTP_IDLE);
 		session.getFilterChain().addLast("protocolFilter", new ProtocolCodecFilter(new HTTPCodecFactory()));
 		
 		// create http connection
@@ -89,7 +89,7 @@ public class HTTPMinaIoHandler extends IoHandlerAdapter {
 	
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-
+		cause.printStackTrace();
 		log.error("Exception caught {}", cause.toString());
 		session.close(false);
 	}

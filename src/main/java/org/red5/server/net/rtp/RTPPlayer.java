@@ -2,10 +2,7 @@ package org.red5.server.net.rtp;
 
 import java.net.InetSocketAddress;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IStreamListener;
 import org.red5.server.api.stream.IStreamPacket;
@@ -14,6 +11,8 @@ import org.red5.server.net.rtp.packetizer.IRTPPacketizer;
 import org.red5.server.net.rtsp.RTSPMinaConnection;
 import org.red5.server.net.udp.IUDPTransportOutgoingConnection;
 import org.red5.server.net.udp.UnicastOutgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * rtp live and vod play
@@ -34,7 +33,7 @@ public class RTPPlayer implements IStreamListener {
 	private static UnicastOutgoing unicastout = new UnicastOutgoing();
 	
 	static {
-		unicastout.init(Configuration.UNICAST_EXECUTOR_THREADS);
+		unicastout.init(ExtConfiguration.UNICAST_EXECUTOR_THREADS);
 	}
 	
 	private InetSocketAddress videoRtpAddress;

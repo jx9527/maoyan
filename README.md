@@ -11,7 +11,11 @@
 1. 首先运行SpringBootRed5Application启动red5服务器（Vm argments添加 -Dred5.root=路径）
 2. 运行test下的GuangDongRTMP进行推流。
 3. 使用VLC Mider player或其他软件播放 
-4. 例如 rtmp://localhost:1935/oflaDemo/sssssss，http://127.0.0.1/oflaDemo/sssssss/playlist.m3u8，
+4. 例如 
+rtmp://localhost:1935/oflaDemo/sssssss，播放推送流
+http://127.0.0.1/oflaDemo/sssssss/playlist.m3u8， 播放推送流
+http://127.0.0.1/oflaDemo/file.flv/playlist.m3u8，播放本地文件
+rtsp://127.0.0.1/oflaDemo/sssssss
 
 ### 感谢开源的道友
 

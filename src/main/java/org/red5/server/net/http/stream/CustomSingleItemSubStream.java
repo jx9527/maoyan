@@ -81,7 +81,7 @@ public class CustomSingleItemSubStream extends SingleItemSubscriberStream {
 					}
 
 				};
-				IProviderService providerService = (IProviderService) scope.getContext().getService(ScopeContextBean.PROVIDERSERVICE_BEAN);
+				IProviderService providerService = (IProviderService) scope.getContext().getBean(ScopeContextBean.PROVIDERSERVICE_BEAN);
 				engine = new PlayEngine.Builder(this, schedulingService, consumerService, providerService).build();
 			} 
 		}
@@ -154,7 +154,7 @@ public class CustomSingleItemSubStream extends SingleItemSubscriberStream {
 	
 	public INPUT_TYPE lookupStreamInput() {
 		IScope scope = getScope();
-		IProviderService providerService = (IProviderService) scope.getContext().getService(ScopeContextBean.PROVIDERSERVICE_BEAN);
+		IProviderService providerService = (IProviderService) scope.getContext().getBean(ScopeContextBean.PROVIDERSERVICE_BEAN);
 		return providerService.lookupProviderInput(scope, item.getName(), 0);
 	}	
 	
@@ -169,7 +169,7 @@ public class CustomSingleItemSubStream extends SingleItemSubscriberStream {
 		
 		
 		IScope scope = getScope();
-		IProviderService providerService = (IProviderService) scope.getContext().getService(ScopeContextBean.PROVIDERSERVICE_BEAN);
+		IProviderService providerService = (IProviderService) scope.getContext().getBean(ScopeContextBean.PROVIDERSERVICE_BEAN);
 		INPUT_TYPE result = lookupStreamInput();
 		
 		if(result == INPUT_TYPE.VOD) { // reader file get video and audio config

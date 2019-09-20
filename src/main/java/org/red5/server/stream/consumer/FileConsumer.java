@@ -373,7 +373,7 @@ public class FileConsumer implements Constants, IPushableConsumer, IPipeConnecti
                         throw new IOException("File to be appended doesnt exist, verify the record mode");
                     }
                     log.debug("Path: {}\nRead: {} write: {} size: {}", path, Files.isReadable(path), Files.isWritable(path), Files.size(path));
-                    writer = new FLVWriter(path, true);
+                    writer = new FLVWriter(path.toFile(), true);
                 } else if (IClientStream.MODE_RECORD.equals(mode)) {
                     try {
                         // delete existing file
@@ -391,7 +391,7 @@ public class FileConsumer implements Constants, IPushableConsumer, IPipeConnecti
                         throw new IOException("File is not writable");
                     }
                     log.debug("Path: {}\nRead: {} write: {}", path, Files.isReadable(path), Files.isWritable(path));
-                    writer = new FLVWriter(path, false);
+                    writer = new FLVWriter(path.toFile(), false);
                 } else {
                     try {
                         // delete existing file since we're not recording nor appending

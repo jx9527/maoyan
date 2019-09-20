@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 
 /**
  * UDP Port Manager
@@ -18,7 +18,7 @@ import org.red5.server.Configuration;
 public class UDPPortManager {
 
 	private int portRecycleTime = 600000;
-	private int nextPort = Configuration.UDP_PORT_START;
+	private int nextPort = ExtConfiguration.UDP_PORT_START;
 	private Map<Integer, AvailablePortHolder> availablePorts = new HashMap<Integer, UDPPortManager.AvailablePortHolder>();
 	private List<Integer> usedPorts = new ArrayList<Integer>();
 	private List<Integer> portByNumberPorts = new ArrayList<Integer>();

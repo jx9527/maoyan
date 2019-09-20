@@ -323,14 +323,14 @@ public class FLV implements IFLV {
     @Override
     public ITagWriter getWriter() throws IOException {
         log.info("getWriter: {}", file);
-        return new FLVWriter(file.toPath(), false);
+        return new FLVWriter(file, false);
     }
 
     /** {@inheritDoc} */
     @Override
     public ITagWriter getAppendWriter() throws IOException {
         log.info("getAppendWriter: {}", file);
-        return new FLVWriter(file.toPath(), true);
+        return new FLVWriter(file, true);
     }
 
     /**

@@ -3,13 +3,12 @@ package org.red5.server.cache;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.api.scheduling.IScheduledJob;
 import org.red5.server.api.scheduling.ISchedulingService;
 import org.red5.server.scheduling.QuartzSchedulingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Cache Manager
@@ -29,7 +28,7 @@ public class CacheManager {
 	private CacheManager() {
 		
 		constructDefault();
-		QuartzSchedulingService.getInstance().addScheduledJob(Configuration.CACHE_INTERVAL * 1000, new CacheCollectorJob());
+		QuartzSchedulingService.getInstance().addScheduledJob(ExtConfiguration.CACHE_INTERVAL * 1000, new CacheCollectorJob());
 	}
 
 	public static CacheManager getInstance() {

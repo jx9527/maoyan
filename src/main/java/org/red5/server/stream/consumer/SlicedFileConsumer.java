@@ -449,7 +449,7 @@ public class SlicedFileConsumer implements Constants, IPushableConsumer, IPipeCo
                         throw new IOException("File to be appended doesnt exist, verify the record mode");
                     }
                     log.debug("Path: {}\nRead: {} write: {} size: {}", path, Files.isReadable(path), Files.isWritable(path), Files.size(path));
-                    writer = new FLVWriter(path, true);
+                    writer = new FLVWriter(path.toFile(), true);
                 } else if (IClientStream.MODE_RECORD.equals(mode)) {
                     try {
                         // delete existing file
@@ -467,7 +467,7 @@ public class SlicedFileConsumer implements Constants, IPushableConsumer, IPipeCo
                         throw new IOException("File is not writable");
                     }
                     log.debug("Path: {}\nRead: {} write: {}", path, Files.isReadable(path), Files.isWritable(path));
-                    writer = new FLVWriter(path, false);
+                    writer = new FLVWriter(path.toFile(), false);
                     if (audioConfigurationTag != null) {
                         writer.writeTag(audioConfigurationTag);
                     }

@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.cache.CacheManager;
 import org.red5.server.cache.ObjectCache;
 
@@ -27,7 +27,7 @@ public class RecordFLVReaderCreator {
 	public synchronized static IRecordFLVReader createRecordFLVReader(File file) throws Exception {
 	
 		IRecordFLVReader reader = null;
-		long memAvailable = Configuration.FILECACHE_MAXSIZE - getCacheSize();
+		long memAvailable = ExtConfiguration.FILECACHE_MAXSIZE - getCacheSize();
 		log.info("available file cache {} MB", memAvailable);	
 		ByteBuffer data = (ByteBuffer)getFileCache().get(file.getAbsolutePath());
 		if(data != null) { //cache reader
@@ -52,7 +52,7 @@ public class RecordFLVReaderCreator {
 		ByteBuffer buff = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
 		fileChannel.close();
 		fileOutput.close();
-		fileCache.put(file.getAbsolutePath(), buff, Configuration.FILECACHE_PURGE * 60);
+		fileCache.put(file.getAbsolutePath(), buff, ExtConfiguration.FILECACHE_PURGE * 60);
 		return buff.asReadOnlyBuffer();
 	}
 	

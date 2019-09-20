@@ -15,7 +15,7 @@ import org.red5.io.ITagReader;
 import org.red5.io.StreamableFileFactory;
 import org.red5.io.flv.IKeyFrameDataAnalyzer;
 import org.red5.io.flv.IKeyFrameDataAnalyzer.KeyFrameMeta;
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.ScopeContextBean;
 import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;
@@ -140,7 +140,7 @@ public class HTTPM3U8Service extends BaseHTTPService implements IHTTPService {
 	 */
 	private void playVodStream(IScope scope, String app, String streamName, HTTPRequest req, HTTPResponse resp) {
 		
-		IProviderService providerService = (IProviderService) scope.getContext().getService(ScopeContextBean.PROVIDERSERVICE_BEAN);
+		IProviderService providerService = (IProviderService) scope.getContext().getBean(ScopeContextBean.PROVIDERSERVICE_BEAN);
 		File file = providerService.getVODProviderFile(scope, streamName);
 		
 		if(file != null && file.exists()) {
@@ -154,7 +154,7 @@ public class HTTPM3U8Service extends BaseHTTPService implements IHTTPService {
 				try {
 					streamFile = service.getStreamableFile(file);
 					reader = streamFile.getReader();
-					HTTPTSService.getFileCache().put(streamName, reader, Configuration.FILECACHE_PURGE * 60);
+					HTTPTSService.getFileCache().put(streamName, reader, ExtConfiguration.FILECACHE_PURGE * 60);
 				} catch (IOException e) {
 					log.info("play hls exception {}", e.getMessage());
 					sendError(req, resp, HTTPResponseStatus.BAD_REQUEST);		
@@ -164,12 +164,12 @@ public class HTTPM3U8Service extends BaseHTTPService implements IHTTPService {
 				KeyFrameMeta keymeta = ((IKeyFrameDataAnalyzer) reader).analyzeKeyFrames();
 				long[] positions = keymeta.positions;
 				int[] timestamps = keymeta.timestamps;
-				int duration = Configuration.HLS_SEGMENT_TIME * 1000;
+				int duration = ExtConfiguration.HLS_SEGMENT_TIME * 1000;
 				int nextTime = duration;
 				long startPos = positions[0];
 				int rest = 0;
 				StringBuilder sb = new StringBuilder("#EXTM3U\n#EXT-X-VERSION:3\n");
-				sb.append("#EXT-X-TARGETDURATION:").append(Configuration.HLS_SEGMENT_TIME).append("\n");
+				sb.append("#EXT-X-TARGETDURATION:").append(ExtConfiguration.HLS_SEGMENT_TIME).append("\n");
 				sb.append("#EXT-X-MEDIA-SEQUENCE:1\n");
 				int seqNum = 1;
 				float fixDuration = 0;

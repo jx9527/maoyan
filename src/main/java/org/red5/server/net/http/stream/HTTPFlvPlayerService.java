@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.apache.mina.core.session.IdleStatus;
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IStreamPlaybackSecurity;
@@ -74,7 +74,7 @@ public class HTTPFlvPlayerService extends BaseHTTPService implements IHTTPServic
 		
 		conn.getHttpSession().getConfig().setReaderIdleTime(0);
 		conn.getHttpSession().getConfig().setWriterIdleTime(0);
-		conn.getHttpSession().getConfig().setIdleTime(IdleStatus.WRITER_IDLE, Configuration.HTTP_IDLE);
+		conn.getHttpSession().getConfig().setIdleTime(IdleStatus.WRITER_IDLE, ExtConfiguration.HTTP_IDLE);
 		
 		consumer.getConnection().connect(scope);
 		CustomSingleItemSubStream stream = new CustomSingleItemSubStream(scope, consumer);

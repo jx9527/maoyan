@@ -844,7 +844,7 @@ public class RTMPHandler extends BaseRTMPHandler {
 					case PAUSE_RAW:
 					case RECEIVE_VIDEO:
 					case RECEIVE_AUDIO:
-						IStreamService streamService = (IStreamService)conn.getScope().getContext().getService(ScopeContextBean.STREAMSERVICE_BEAN); 
+						IStreamService streamService = (IStreamService)conn.getScope().getContext().getBean(ScopeContextBean.STREAMSERVICE_BEAN); 
 						//ScopeUtils.getScopeService(conn.getScope(), IStreamService.class, StreamService.class);
 						Status status = null;
 						try {

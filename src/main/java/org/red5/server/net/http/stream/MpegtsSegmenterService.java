@@ -12,23 +12,22 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.red5.codec.IAudioStreamCodec;
+import org.red5.codec.IStreamCodecInfo;
+import org.red5.codec.IVideoStreamCodec;
 import org.red5.io.ts.FLV2MPEGTSChunkWriter;
 import org.red5.io.utils.HexDump;
-import org.red5.server.Configuration;
+import org.red5.server.ExtConfiguration;
 import org.red5.server.api.scope.IScope;
-import org.red5.codec.IAudioStreamCodec;
 import org.red5.server.api.stream.IBroadcastStream;
-import org.red5.codec.IStreamCodecInfo;
 import org.red5.server.api.stream.IStreamListener;
 import org.red5.server.api.stream.IStreamPacket;
-import org.red5.codec.IVideoStreamCodec;
 import org.red5.server.net.rtmp.event.AudioData;
 import org.red5.server.net.rtmp.event.IRTMPEvent;
 import org.red5.server.net.rtmp.event.VideoData;
 import org.red5.server.net.rtmp.event.VideoData.FrameType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FLV TO Mpeg2ts Segmenter
@@ -42,10 +41,10 @@ public class MpegtsSegmenterService implements IStreamListener {
 	private static ConcurrentMap<String, ConcurrentHashMap<String, SegmentFacade>> scopeSegMap = new ConcurrentHashMap<String, ConcurrentHashMap<String,SegmentFacade>>();
 	
 	// length of a segment in milliseconds
-	private long segmentTimeLimit = Configuration.HLS_SEGMENT_TIME * 1000;
+	private long segmentTimeLimit = ExtConfiguration.HLS_SEGMENT_TIME * 1000;
 	
 	// maximum number of segments to keep available per stream
-	private int maxSegmentsPerFacade = Configuration.HLS_SEGMENT_MAX;
+	private int maxSegmentsPerFacade = ExtConfiguration.HLS_SEGMENT_MAX;
 	
 	private static final class SingletonHolder {
 
@@ -136,7 +135,7 @@ public class MpegtsSegmenterService implements IStreamListener {
 		}
 		SegmentFacade facade = segments.get(name);
 		if (facade == null) { //TODO http live stream aes 128是否加密在这里处理 
-			facade = new SegmentFacade(name, Configuration.HLS_ENCRYPT);
+			facade = new SegmentFacade(name, ExtConfiguration.HLS_ENCRYPT);
 			segments.put(name, facade);
 		}
 		try {

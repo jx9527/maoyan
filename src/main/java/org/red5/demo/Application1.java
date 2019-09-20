@@ -8,6 +8,8 @@ import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IServerStream;
 import org.red5.server.net.http.stream.MpegtsSegmenterService;
+import org.red5.server.net.udp.MulticastOutgoingService;
+import org.red5.server.net.udp.UDPDatagramConfig;
 import org.red5.server.stream.ClientBroadcastStream;
 
 
@@ -101,9 +103,18 @@ public class Application1 extends ApplicationAdapter {
 
 	@Override
 	public void streamPublishStart(IBroadcastStream stream) {
-		//添加监听
+		//添加hls监听
 		MpegtsSegmenterService ss = MpegtsSegmenterService.getInstance();
 		stream.addStreamListener(ss);
+		
+//		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
+//		UDPDatagramConfig config = new UDPDatagramConfig();
+//		config.setReceiveBufferSize(8192);
+//		config.setSendBufferSize(8192);
+//		ms.register(stream, config, "0.0.0.0", 1234);
+//		stream.addStreamListener(ms);
+		super.streamPublishStart(stream);
+		
 		
 		/*String streamName = stream.getPublishedName();
 		 
@@ -126,5 +137,19 @@ public class Application1 extends ApplicationAdapter {
 
 		super.streamPublishStart(stream);
 	}
-
+	@Override
+	public void streamBroadcastClose(IBroadcastStream stream) {
+		
+		MpegtsSegmenterService ss = MpegtsSegmenterService.getInstance();
+		stream.removeStreamListener(ss);
+		ss.removeSegment(stream.getScope().getName(), stream.getPublishedName());
+//		
+//		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
+//		stream.removeStreamListener(ms);
+//		ms.unregister(stream.getPublishedName());
+ 		
+		
+		super.streamBroadcastClose(stream);
+		
+	}
 }

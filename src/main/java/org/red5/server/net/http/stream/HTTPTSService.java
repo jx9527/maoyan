@@ -116,7 +116,7 @@ public class HTTPTSService extends BaseHTTPService implements IHTTPService {
 			return;
 		}
 		HTTPMinaConnection conn = (HTTPMinaConnection)Red5.getConnectionLocal();
-		IProviderService providerService = (IProviderService) scope.getContext().getService(ScopeContextBean.PROVIDERSERVICE_BEAN);
+		IProviderService providerService = (IProviderService) scope.getContext().getBean(ScopeContextBean.PROVIDERSERVICE_BEAN);
 		File file = providerService.getVODProviderFile(scope, streamName);
 		IStreamableFileFactory factory = StreamableFileFactory.getInstance();
 		IStreamableFileService service = factory.getService(file);
