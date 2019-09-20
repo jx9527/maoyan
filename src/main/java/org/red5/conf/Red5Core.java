@@ -1,11 +1,13 @@
 package org.red5.conf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import org.assertj.core.util.Lists;
 import org.red5.cache.impl.NoCacheImpl;
 import org.red5.demo.Application1;
 import org.red5.io.CachingFileKeyFrameMetaCache;
@@ -36,6 +38,8 @@ import org.red5.server.net.rtmpt.RTMPTConnection;
 import org.red5.server.net.rtmpt.RTMPTHandler;
 import org.red5.server.net.rtmpt.RTMPTServlet;
 import org.red5.server.net.rtmpt.codec.RTMPTCodecFactory;
+import org.red5.server.net.rtsp.RTSPMinaIoHandler;
+import org.red5.server.net.rtsp.RTSPMinaTransport;
 import org.red5.server.scheduling.JDKSchedulingService;
 import org.red5.server.scope.GlobalScope;
 import org.red5.server.scope.ScopeResolver;
@@ -476,44 +480,42 @@ public class Red5Core {
 		poolSched.setEnableMinaLogFilter(enableMinaLogFilter);
 		return poolSched;
     }
-	
-	@Value("${http.host}")
-	String httpHost;
-	@Value("${http.io_threads}")
-	int httpIoThrads;
-	@Value("${http.max_backlog}")
-	int httpMaxBacklog;
-	@Value("${http.tcp_nodelay}")
-	boolean httpTcpNoDelay;
-	@Value("${http.receive_buffer_size}")
-	int httpReceiveBufferSize;
-	@Value("${http.send_buffer_size}")
-	int httpSendBufferSize;
-	@Value("${http.worker_threads}")
-	int httpWorkerThreads;
-	@Value("${http.port}")
-	private int httpPort;
+	//http 
 	@Bean(name="hTTPMinaTransport",initMethod = "start", destroyMethod = "stop") 
     public HTTPMinaTransport hTTPMinaTransport(){
-		HTTPMinaTransport poolSched = new HTTPMinaTransport(); 
+		HTTPMinaTransport poolSched = new HTTPMinaTransport();  
 		poolSched.setIoHandler(hTTPMinaIoHandler());
-		poolSched.setHttpHost(httpHost);
-		poolSched.setHttpPort(httpPort);
-		poolSched.setHttpIoThrads(httpIoThrads);
-		poolSched.setHttpMaxBacklog(httpMaxBacklog);
-		poolSched.setHttpReceiveBufferSize(httpReceiveBufferSize);
-		poolSched.setHttpSendBufferSize(httpSendBufferSize);
-		poolSched.setHttpTcpNoDelay(httpTcpNoDelay);
-		poolSched.setHttpWorkerThreads(httpWorkerThreads);
 		return poolSched;
     }
-	
 	@Bean(name="hTTPMinaIoHandler") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public HTTPMinaIoHandler hTTPMinaIoHandler(){
 		HTTPMinaIoHandler poolSched = new HTTPMinaIoHandler();  
 		return poolSched;
     }
+	//rtsp
+	@Bean(name="rTSPMinaTransport",initMethod = "start", destroyMethod = "stop") 
+    public RTSPMinaTransport rTSPMinaTransport() throws IOException{
+		RTSPMinaTransport poolSched = new RTSPMinaTransport(); 
+		poolSched.setIoHandler(rTSPMinaIoHandler()); 
+		return poolSched;
+    }
+	
+	@Bean(name="rTSPMinaIoHandler") 
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public RTSPMinaIoHandler rTSPMinaIoHandler(){
+		RTSPMinaIoHandler poolSched = new RTSPMinaIoHandler();  
+		return poolSched;
+    }
+	//Forbidden
+	@Bean(name="forbidden") 
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public String forbidden(){
+		String forbidden = "*/WEB-INF/*;";
+		return forbidden;
+    }
+	
+	//rtmp
 	@Value("${rtmp.ping_interval}")
 	int pingInterval;
 	@Value("${rtmp.max_inactivity}")

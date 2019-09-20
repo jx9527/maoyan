@@ -160,6 +160,7 @@ public final class RTSPCore {
 			response.addHeader(CONTENT_LENGTH, sdp.length());
 			response.setContent(HTTPCodecUtil.encodeBody(sdp));
 		} catch (Exception e) {	
+			e.printStackTrace();
 			log.info("describe exception {}", e.toString());
 			response.setStatus(RTSPResponseStatuses.BAD_REQUEST);
 		}			
@@ -635,7 +636,7 @@ public final class RTSPCore {
 		String app = segments[0];
 		String stream = segments[1];
 		
-		Scope scope = ScopeUtils.getScope(app);	
+		Scope scope = (Scope) conn.getScope();
 		if (scope == null || StringUtils.isEmpty(stream)) return null;
 		
 		StringBuilder streamSb = new StringBuilder();
@@ -665,7 +666,8 @@ public final class RTSPCore {
 		}
 		
 		// play security
-		IStreamSecurityService security = (IStreamSecurityService) ScopeUtils.getScopeService(scope, IStreamSecurityService.class);
+		IStreamSecurityService security =  
+				(IStreamSecurityService) ScopeUtils.getScopeService(scope, IStreamSecurityService.class);
 		if (security != null) {
 			Set<IStreamPlaybackSecurity> handlers = security.getStreamPlaybackSecurity();
 			for (IStreamPlaybackSecurity handler : handlers) {

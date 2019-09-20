@@ -13,9 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.red5.io.IStreamableFile;
 import org.red5.io.ITag;
 import org.red5.io.ITagReader;
@@ -25,7 +22,9 @@ import org.red5.io.flv.FLVHeader;
 import org.red5.io.flv.IFLV;
 import org.red5.io.utils.IOUtils;
 import org.red5.media.processor.IPostProcessor;
-import org.red5.server.api.SMS;
+import org.red5.server.api.Red5;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Writer is used to write the contents of a FLV file
@@ -398,7 +397,7 @@ public class FLVWriter implements ITagWriter {
 		Output out = new Output(buf);
 		out.writeString("onMetaData");
 		Map<Object, Object> params = new HashMap<Object, Object>();
-		params.put("server", SMS.getVersion().replaceAll("\\$", "").trim());
+		params.put("server", Red5.getVersion().replaceAll("\\$", "").trim());
 		params.put("creationdate", GregorianCalendar.getInstance().getTime().toString());
 		params.put("duration", duration);
 		//if (videoCodecId != -1) {

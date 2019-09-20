@@ -13,7 +13,7 @@ import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.red5.server.ExtConfiguration;
 import org.red5.server.util.CustomizableThreadFactory;
 
 /**
@@ -27,16 +27,7 @@ public class HTTPMinaTransport {
 	
 	private SocketAcceptor acceptor;
 	private IoHandler ioHandler;
-	protected boolean useHeapBuffers = true;
-	
-	private int httpIoThrads;
-	private int httpMaxBacklog;
-	private boolean httpTcpNoDelay;
-	private int httpReceiveBufferSize;
-	private int httpSendBufferSize;
-	private int httpWorkerThreads;
-	private String httpHost;
-	private int httpPort;
+	protected boolean useHeapBuffers = true; 
 	
 	public void start() throws IOException {
 		log.info("HTTP Mina Transport starting...");
@@ -45,25 +36,25 @@ public class HTTPMinaTransport {
 			IoBuffer.setAllocator(new SimpleBufferAllocator());
 		}
 		
-		acceptor = new NioSocketAcceptor(httpIoThrads);	
+		acceptor = new NioSocketAcceptor(ExtConfiguration.HTTP_IO_THREADS);	
 		ioHandler = new HTTPMinaIoHandler();
 		acceptor.setHandler(ioHandler);
-		acceptor.setBacklog(httpMaxBacklog);
+		acceptor.setBacklog(ExtConfiguration.HTTP_MAX_BACKLOG);
 		
 		SocketSessionConfig sessionConf = acceptor.getSessionConfig();
 		//reuse the addresses
 		sessionConf.setReuseAddress(true);
-		sessionConf.setTcpNoDelay(httpTcpNoDelay);
-		sessionConf.setReceiveBufferSize(httpReceiveBufferSize);
-		sessionConf.setMaxReadBufferSize(httpReceiveBufferSize);
-		sessionConf.setSendBufferSize(httpSendBufferSize);		
+		sessionConf.setTcpNoDelay(ExtConfiguration.HTTP_TCP_NODELAY);
+		sessionConf.setReceiveBufferSize(ExtConfiguration.HTTP_RECEIVE_BUFFER_SIZE);
+		sessionConf.setMaxReadBufferSize(ExtConfiguration.HTTP_RECEIVE_BUFFER_SIZE);
+		sessionConf.setSendBufferSize(ExtConfiguration.HTTP_SEND_BUFFER_SIZE);		
 		//set reuse address on the socket acceptor as well
 		acceptor.setReuseAddress(true);		
-		OrderedThreadPoolExecutor executor = new OrderedThreadPoolExecutor(httpWorkerThreads);
+		OrderedThreadPoolExecutor executor = new OrderedThreadPoolExecutor(ExtConfiguration.HTTP_WORKER_THREADS);
 		executor.setThreadFactory(new CustomizableThreadFactory("HttpWorkerExecutor-"));
 		acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(executor));
-		acceptor.bind(new InetSocketAddress(httpHost,httpPort));
-		log.info("HTTP Socket Acceptor bound to :"+httpPort);
+		acceptor.bind(new InetSocketAddress(ExtConfiguration.HTTP_HOST,ExtConfiguration.HTTP_PORT));
+		log.info("HTTP Socket Acceptor bound to :"+ExtConfiguration.HTTP_PORT);
 	}
 	
 	public void stop() {
@@ -71,72 +62,8 @@ public class HTTPMinaTransport {
 		log.info("HTTP Mina Transport stopped");
 	}
 
-	public int getHttpIoThrads() {
-		return httpIoThrads;
-	}
-
-	public void setHttpIoThrads(int httpIoThrads) {
-		this.httpIoThrads = httpIoThrads;
-	}
-
-	public int getHttpMaxBacklog() {
-		return httpMaxBacklog;
-	}
-
-	public void setHttpMaxBacklog(int httpMaxBacklog) {
-		this.httpMaxBacklog = httpMaxBacklog;
-	}
-
-	public boolean isHttpTcpNoDelay() {
-		return httpTcpNoDelay;
-	}
-
-	public void setHttpTcpNoDelay(boolean httpTcpNoDelay) {
-		this.httpTcpNoDelay = httpTcpNoDelay;
-	}
-
-	public int getHttpReceiveBufferSize() {
-		return httpReceiveBufferSize;
-	}
-
-	public void setHttpReceiveBufferSize(int httpReceiveBufferSize) {
-		this.httpReceiveBufferSize = httpReceiveBufferSize;
-	}
-
-	public int getHttpSendBufferSize() {
-		return httpSendBufferSize;
-	}
-
-	public void setHttpSendBufferSize(int httpSendBufferSize) {
-		this.httpSendBufferSize = httpSendBufferSize;
-	}
-
-	public int getHttpWorkerThreads() {
-		return httpWorkerThreads;
-	}
-
-	public void setHttpWorkerThreads(int httpWorkerThreads) {
-		this.httpWorkerThreads = httpWorkerThreads;
-	}
-
-	public String getHttpHost() {
-		return httpHost;
-	}
-
-	public void setHttpHost(String httpHost) {
-		this.httpHost = httpHost;
-	}
-
-	public int getHttpPort() {
-		return httpPort;
-	}
-
-	public void setHttpPort(int httpPort) {
-		this.httpPort = httpPort;
-	}
-
 	public void setIoHandler(IoHandler ioHandler) {
 		this.ioHandler = ioHandler;
-	}
+	} 
 	
 }

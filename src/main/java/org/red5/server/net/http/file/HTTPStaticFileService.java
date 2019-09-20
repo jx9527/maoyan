@@ -142,11 +142,10 @@ public class HTTPStaticFileService extends BaseHTTPService implements IHTTPServi
             return null;
         }
         
-        ScopeContextBean scopeCtxBean = scope.getContext().getScopeCtxBean();
-        ContextBean ctxBean = scopeCtxBean.getClazz(ScopeContextBean.SECURITYFORBIDDEN_BEAN);
+        String scopeCtxBean = (String) scope.getContext().getBean("forbidden"); 
         String[] forbiddenList = new String[0];
-        if(ctxBean != null && !StringUtils.isEmpty(ctxBean.getClassName())) {
-        	forbiddenList = ctxBean.getClassName().split(";");
+        if(StringUtils.isNotBlank(scopeCtxBean)) {
+        	forbiddenList = scopeCtxBean.split(";");
         }
         
         for(String forbidden : forbiddenList) {

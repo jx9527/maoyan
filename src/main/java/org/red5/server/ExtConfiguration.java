@@ -15,7 +15,7 @@ public class ExtConfiguration{
  
 	public static String HTTP_HOST = "0.0.0.0";
 	public static int HTTP_PORT = 5080;
-	public static int HTTP_IO_THREADS = 2;
+	public static int HTTP_IO_THREADS = 2; 
 	public static int HTTP_WORKER_THREADS = 10;
 	public static int HTTP_SEND_BUFFER_SIZE = 65536;
 	public static int HTTP_RECEIVE_BUFFER_SIZE = 65536;

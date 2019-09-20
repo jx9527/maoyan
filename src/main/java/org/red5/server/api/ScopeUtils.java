@@ -200,7 +200,7 @@ public class ScopeUtils {
 		final IContext context = scope.getContext();
 		Object result = null;
 		
-		result = context.getService(name);
+		result = context.getBean(name);
 		if(result == null) {
 			if (defaultClass == null) {
 				return null;
