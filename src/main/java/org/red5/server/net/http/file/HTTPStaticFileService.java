@@ -19,8 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.file.DefaultFileRegion;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.future.WriteFuture;
-import org.red5.server.ContextBean;
-import org.red5.server.ScopeContextBean;
 import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;
 import org.red5.server.net.http.BaseHTTPService;
@@ -120,7 +118,7 @@ public class HTTPStaticFileService extends BaseHTTPService implements IHTTPServi
 					log.info("file close exception : {}", e.getMessage());
 				}
             	if(!isKeepAlive) {
-            		conn.getHttpSession().close(true);
+            		conn.getHttpSession().closeNow();
                 }
             }
         });

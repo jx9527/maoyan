@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.red5.io.object.Input;
 import org.red5.io.object.Output;
-import org.red5.server.api.scope.ScopeType;
 
 /**
  * Base interface for objects that can be made persistent.

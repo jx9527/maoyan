@@ -73,7 +73,7 @@ public class RTMPClient extends BaseRTMPClientHandler {
 		if (future != null) {
 			try {
 				// close requesting that the pending messages are sent before the session is closed
-				future.getSession().close(false);
+				future.getSession().closeOnFlush();
 				// now wait for the close to be completed
 				future.awaitUninterruptibly(CONNECTOR_WORKER_TIMEOUT);
 			} catch (Exception e) {

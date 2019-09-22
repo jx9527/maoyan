@@ -631,9 +631,7 @@ public final class RTSPCore {
 		QueryStringDecoder queryStringDecoder = new QueryStringDecoder(url);
 		URI uri = new URI(queryStringDecoder.getPath());		
 		String[] segments = uri.getPath().substring(1).split("/");
-		if (segments.length < 2) return null;
-			
-		String app = segments[0];
+		if (segments.length < 2) return null; 
 		String stream = segments[1];
 		Scope scope = (Scope) conn.getScope();
 		if(scope == null) {

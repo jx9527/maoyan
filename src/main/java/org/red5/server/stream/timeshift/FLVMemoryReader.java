@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.red5.io.IStreamableFile;
 import org.red5.io.ITag;
 import org.red5.io.ITagReader;
@@ -15,8 +12,9 @@ import org.red5.io.IoConstants;
 import org.red5.io.flv.FLVHeader;
 import org.red5.io.flv.impl.Tag;
 import org.red5.io.utils.IOUtils;
-import org.red5.server.util.FileUtil;
 import org.red5.server.util.FileUtilS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FLV Reader From Memory

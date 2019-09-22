@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.red5.io.flv.impl.FLVReader;
-import org.red5.server.util.FileUtil;
 import org.red5.server.util.FileUtilS;
 
 /**

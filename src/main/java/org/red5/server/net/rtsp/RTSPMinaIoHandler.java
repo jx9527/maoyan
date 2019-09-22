@@ -47,7 +47,7 @@ public class RTSPMinaIoHandler extends IoHandlerAdapter {
 			log.warn("Exception caught {}", cause.getMessage());
 		} else {
 			log.error("Exception caught {}", cause.getMessage());
-			session.close(false);
+			session.closeOnFlush();
 		}
 	}
 

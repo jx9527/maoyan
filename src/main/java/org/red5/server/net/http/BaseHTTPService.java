@@ -73,7 +73,7 @@ public abstract class BaseHTTPService implements IHTTPService {
 			future.addListener(new IoFutureListener<IoFuture>() {
 				@Override
 				public void operationComplete(IoFuture future) {
-					future.getSession().close(true);
+					future.getSession().closeNow();
 				}
 			});
 		} 

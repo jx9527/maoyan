@@ -21,6 +21,7 @@ public class PushRTMP {
 		System.out.println("end...");
 	}
 
+	@SuppressWarnings("resource")
 	private static void push(String rtmpPath, String rtspPath, int audioRecord, boolean saveVideo) throws Exception {
 		// 使用rtsp的时候需要使用 FFmpegFrameGrabber，不能再用 FrameGrabber
 		int width = 640, height = 480;

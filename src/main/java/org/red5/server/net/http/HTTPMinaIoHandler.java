@@ -78,11 +78,11 @@ public class HTTPMinaIoHandler extends IoHandlerAdapter {
 			if(applicationAdapter != null) {
 				applicationAdapter.onHTTPChunk(chunk);
 			} else {
-				session.close(false);
+				session.closeOnFlush();
 			}
 		} else {
 			log.info("unkown http request : {}", message.toString());
-			session.close(false);
+			session.closeOnFlush();
 		} 
 		Red5.setConnectionLocal(null);
 	}
@@ -91,7 +91,7 @@ public class HTTPMinaIoHandler extends IoHandlerAdapter {
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		cause.printStackTrace();
 		log.error("Exception caught {}", cause.toString());
-		session.close(false);
+		session.closeOnFlush();
 	}
 	
 	@Override
@@ -106,7 +106,7 @@ public class HTTPMinaIoHandler extends IoHandlerAdapter {
 	public void sessionIdle(IoSession session, IdleStatus status)
 			throws Exception {
 		log.debug("HTTP Session Idle id = {}", session.getId());
-		session.close(false);
+		session.closeOnFlush();
 	}
 	
 	@Override

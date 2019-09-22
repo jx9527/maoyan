@@ -117,7 +117,7 @@ public class RTSPMinaConnection extends BaseConnection implements IStreamCapable
 		// clear rtsp tunnel
 		if(getAttribute("sessioncookie") != null) RTSPTunnel.RTSP_TUNNEL_CONNS.remove(getAttribute("sessioncookie"));
 		
-		if(rtspSession != null) rtspSession.close(true);
+		if(rtspSession != null) rtspSession.closeNow();
 	}
 	
 	public int getPlayType() {

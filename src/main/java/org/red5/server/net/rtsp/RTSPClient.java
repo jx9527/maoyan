@@ -145,7 +145,7 @@ public class RTSPClient extends IoHandlerAdapter {
 		if (future != null) {
 			try {
 				// close requesting that the pending messages are sent before the session is closed
-				future.getSession().close(false);
+				future.getSession().closeOnFlush();
 				// now wait for the close to be completed
 				future.awaitUninterruptibly(CONNECTOR_WORKER_TIMEOUT);
 			} catch (Exception e) {
@@ -167,7 +167,7 @@ public class RTSPClient extends IoHandlerAdapter {
 			log.warn("Exception caught {}", cause.getMessage());
 		} else {
 			log.error("Exception caught {}", cause.getMessage());
-			session.close(false);
+			session.closeOnFlush();
 		}
 	}
 
@@ -187,14 +187,14 @@ public class RTSPClient extends IoHandlerAdapter {
 					
 					String publish = response.getHeader(PUBLIC);
 					methods = publish.split(",");
-					if(!availableMethod(DESCRIBE.getName())) {session.close(true); return;}
+					if(!availableMethod(DESCRIBE.getName())) {session.closeNow(); return;}
 					request = new DefaultHttpRequest(RTSP_1_0, DESCRIBE, playStream);
 					conn.setAttribute("method", DESCRIBE);
 					request.addHeader(SESSION, String.valueOf(session.getId()));
 					request.addHeader(CSEQ, Integer.parseInt(response.getHeader("CSeq"))+1);
 					conn.write(request);
 				} else if(method == DESCRIBE) {
-					if(!availableMethod(SETUP.getName())) {session.close(true); return;}
+					if(!availableMethod(SETUP.getName())) {session.closeNow(); return;}
 					String contentType = response.getHeader(CONTENT_TYPE);
 					if(contentType.equals("application/sdp")) {
 						String sdp = HTTPCodecUtil.decodeBody(response.getContent());
@@ -249,7 +249,7 @@ public class RTSPClient extends IoHandlerAdapter {
 						conn.write(request);
 						
 					} else {
-						session.close(true);
+						session.closeNow();
 						return;
 					}
 				} else if(method == SETUP) {
@@ -262,7 +262,7 @@ public class RTSPClient extends IoHandlerAdapter {
 					} else if(transport.contains(audioTransport)) {
 						setupAudio = true;
 					} else {
-						session.close(true);
+						session.closeNow();
 						return;
 					}
 					
@@ -290,7 +290,7 @@ public class RTSPClient extends IoHandlerAdapter {
 				}
 				
 			} else {
-				session.close(true);
+				session.closeNow();
 			}
 			
 		} else if(message instanceof RTSPChannelData) { // handle rtp data

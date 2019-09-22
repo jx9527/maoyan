@@ -235,7 +235,7 @@ public class ContextLoader implements ApplicationContextAware, InitializingBean,
                     factory.destroyBean(name, ctx);
                 } catch (Exception e) {
                     log.warn("Context destroy failed for: {}", name, e);
-                    ctx.destroy();
+                    ctx.close();
                 } finally {
                     if (factory.containsSingleton(name)) {
                         log.debug("Singleton still exists, trying another destroy method");

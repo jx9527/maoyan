@@ -19,14 +19,12 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.red5.io.ITag;
 import org.red5.io.flv.impl.FLVWriter;
 import org.red5.server.util.CustomizableThreadFactory;
-import org.red5.server.util.FileUtil;
 import org.red5.server.util.FileUtilS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FLV Writer

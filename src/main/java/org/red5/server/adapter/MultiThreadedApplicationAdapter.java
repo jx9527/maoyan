@@ -68,7 +68,6 @@ import org.red5.server.messaging.IMessageInput;
 import org.red5.server.plugin.PluginDescriptor;
 import org.red5.server.plugin.PluginRegistry;
 import org.red5.server.plugin.Red5Plugin;
-import org.red5.server.scheduling.JDKSchedulingService;
 import org.red5.server.scheduling.QuartzSchedulingService;
 import org.red5.server.so.SharedObjectService;
 import org.red5.server.stream.IProviderService;

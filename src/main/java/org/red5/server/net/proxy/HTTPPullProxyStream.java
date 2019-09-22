@@ -7,13 +7,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.mina.core.buffer.IoBuffer;
+import org.red5.server.util.HttpConnectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.red5.server.util.HttpConnectionUtil;
 
 /**
  * http拉流
@@ -35,7 +33,7 @@ public class HTTPPullProxyStream extends HTTPProxyStream {
 	private static volatile int threadCount = 0;
 	
 	public HTTPPullProxyStream(String url, String streamName) {
-		
+		 
 		super(streamName);
 		this.url = url;
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);

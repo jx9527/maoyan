@@ -8,10 +8,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.red5.io.utils.BufferUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.red5.io.utils.BufferUtil;
-import org.red5.io.utils.BufferUtils;
 
 /**
  * MPEGTS Segment Encryptor
