@@ -9,7 +9,7 @@
 1. 首先运行SpringBootRed5Application启动red5服务器
 2. 运行test下的GuangDongRTMP进行推流。
 3. 使用VLC Mider player或其他软件播放 
-4. 例如 (测试通过)
+4. 例如 (eclipse中测试通过,打成jar包后文件请求路径有问题)
 rtmp://localhost:1935/oflaDemo/sssssss，播放推送流
 rtmp://localhost:1935/oflaDemo/file.flv
 http://127.0.0.1/oflaDemo/sssssss/playlist.m3u8， 播放推送流
