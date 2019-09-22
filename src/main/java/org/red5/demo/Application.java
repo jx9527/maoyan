@@ -97,8 +97,7 @@ public class Application extends ApplicationAdapter {
  
 	public IConnection iconn;
 	public IScope iscope;
-	public ClientBroadcastStream istream;// 用来接受flash上传的stream的类
-
+	 
 	@Override
 	public void streamPublishStart(IBroadcastStream stream) {
 		//添加hls监听
@@ -128,12 +127,18 @@ public class Application extends ApplicationAdapter {
 		System.out.println("the stream Name is: " + streamName);
 		try { 
 			 
-			//istream.saveAs(streamName,false);
+			istream.saveAs(streamName,false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-
+		try { 
+			stream.saveAs(stream.getPublishedName(),false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		super.streamPublishStart(stream);
 	}
 	@Override
