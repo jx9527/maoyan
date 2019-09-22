@@ -216,25 +216,16 @@ public class ProviderService implements IProviderService {
         String filename = filenameGenerator.generateFilename(scope, name, GenerationType.PLAYBACK);
         // start life as null and only update upon positive outcome
         File file = null;
-        try {
-            // get ahead of the game with the direct check first
-            File tmp = Paths.get(filename).toFile();
-            // most likely case first
-            if (tmp.exists()) {
-                file = tmp;
-            } else if (!filenameGenerator.resolvesToAbsolutePath()) {
-                try { 
-                    file = scope.getContext().getResource(filename).getFile();
-                } catch (FileNotFoundException e) {
-                    log.debug("File {} not found, nulling it", filename);
-                }
-            }
-        } catch (IOException e) {
-            log.info("Exception attempting to lookup file: {}", e.getMessage());
-            if (log.isDebugEnabled()) {
-                log.warn("Exception attempting to lookup file: {}", name, e);
-            }
-        }
+        // get ahead of the game with the direct check first
+		File tmp = Paths.get(filename).toFile();
+		// most likely case first
+		if (tmp.exists()) {
+		    file = tmp;
+		} else if (!filenameGenerator.resolvesToAbsolutePath()) {
+		    String appScopeName = ScopeUtils.findApplication(scope).getName();
+			file = new File(String.format("%s/webapps/%s/%s", System.getProperty("red5.root"), appScopeName, filename));
+		   // file = scope.getContext().getResource(filename).getFile();
+		}
         return file;
     }
 

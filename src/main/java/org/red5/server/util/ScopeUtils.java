@@ -123,7 +123,7 @@ public class ScopeUtils {
      */
     public static IScope findApplication(IScope from) {
         IScope current = from;
-        while (current.hasParent() && !current.getType().equals(ScopeType.APPLICATION)) {
+        while (current.hasParent() && !current.getType().equals(ScopeType.APPLICATION.toString())) {
             current = current.getParent();
         }
         return current;
