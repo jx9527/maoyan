@@ -589,6 +589,13 @@
                  <extensions>true</extensions>
              </plugin>
         </plugins>
-    </build>
-
+        <resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</resource> 
+		</resources> 
+    </build> 
 </project>

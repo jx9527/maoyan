@@ -223,7 +223,7 @@ public class ProviderService implements IProviderService {
             if (tmp.exists()) {
                 file = tmp;
             } else if (!filenameGenerator.resolvesToAbsolutePath()) {
-                try {
+                try { 
                     file = scope.getContext().getResource(filename).getFile();
                 } catch (FileNotFoundException e) {
                     log.debug("File {} not found, nulling it", filename);
