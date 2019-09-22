@@ -71,19 +71,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration 
 public class Red5Core {
 	//-------------------------------------------default-----------------------------
-	 
+	@Order(1)
 	@Bean(name="global.clientRegistry")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ClientRegistry clientRegistry(){
         return new ClientRegistry();
     }
-	 
+	@Order(2)
 	@Bean(name="global.serviceInvoker")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ServiceInvoker serviceInvoker(){
@@ -95,25 +96,25 @@ public class Red5Core {
 		inv.setServiceResolvers(serviceResolvers);
         return inv;
     } 
-	 
+	@Order(3)
 	@Bean(name="global.mappingStrategy")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public MappingStrategy mappingStrategy(){ 
         return new MappingStrategy();
     }
-	 
+	@Order(4)
 	@Bean(name="global.context",autowire=Autowire.BY_TYPE)
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Context context(){ 
         return new Context();
     }
-	 
+	@Order(5)
 	@Bean(name="global.handler",autowire=Autowire.BY_TYPE)
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public CoreHandler coreHandler(){ 
         return new CoreHandler();
     }
-	 
+	@Order(6)
 	@Bean(name="global.scope",initMethod="register")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public GlobalScope globalScope() throws Exception{
@@ -129,7 +130,7 @@ public class Red5Core {
 		gsope.setSecurityHandlers(securityHandlers); 
 		return gsope;
     }
-	 
+	@Order(6)
 	@Bean(name="red5.scopeResolver")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ScopeResolver scopeResolver() throws Exception{
@@ -141,30 +142,30 @@ public class Red5Core {
 	
 		
 	//---------------------------------------common----------------------
-	 
+	@Order(8)
 	@Bean(name="red5.server")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Server server(){ 
         return Server.getInstance();
     }
-	 
+	@Order(9)
 	@Bean(name="statusObjectService",autowire= Autowire.BY_TYPE) 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public StatusObjectService statusObjectService(){
         return new StatusObjectService();
     }
-	 
+	@Order(10)
 	@Bean(name="minaEncoder") 
 	@Scope("prototype")
     public RTMPMinaProtocolEncoder minaEncoder(){
         return new RTMPMinaProtocolEncoder();
     }
-	 
+	@Order(11)
 	@Bean(name="minaDecoder") 
     public RTMPMinaProtocolDecoder minaDecoder(){
         return new RTMPMinaProtocolDecoder();
     }
-	 
+	@Order(12)
 	@Bean(name="rtmptCodecFactory",initMethod = "init",autowire=Autowire.BY_TYPE) 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RTMPTCodecFactory rtmptCodecFactory(){
@@ -173,13 +174,13 @@ public class Red5Core {
 		factory.setDropLiveFuture(ExtConfiguration.DROP_LIVE_FUTURE); 
 		return factory;
     }
-	 
+	@Order(13)
 	@Bean(name="remotingCodecFactory",initMethod = "init",autowire= Autowire.BY_TYPE) 
     public RemotingCodecFactory remotingCodecFactory(){
 		RemotingCodecFactory factory = new RemotingCodecFactory();  
 		return factory;
     }
-	 
+	@Order(14)
 	@Bean(name="streamableFileFactory") 
     public StreamableFileFactory streamableFileFactory(){
 		StreamableFileFactory factory = new StreamableFileFactory(); 
@@ -194,7 +195,7 @@ public class Red5Core {
 		factory.setServices(services);
 		return factory;
     } 
-	 
+	@Order(15)
 	@Bean(name="sharedObjectService") 
     public SharedObjectService sharedObjectService(){
 		SharedObjectService factory = new SharedObjectService(); 
@@ -203,7 +204,7 @@ public class Red5Core {
 		factory.setScheduler(poolScheduler());
 		return factory;
     } 
-	
+	@Order(16)
     public ThreadPoolTaskScheduler poolScheduler(){
     	ThreadPoolTaskScheduler factory = new ThreadPoolTaskScheduler(); 
     	factory.setPoolSize(ExtConfiguration.SO_POOL_SIZE);
@@ -212,40 +213,40 @@ public class Red5Core {
     	factory.setThreadNamePrefix("SharedObjectScheduler-");
 		return factory;
     }
-	 
+	@Order(17)
     @Bean(name="streamService") 
     public StreamService streamService(){ 
 		return new StreamService();
     }
- 
+	@Order(18)
     @Bean(name="providerService") 
     public ProviderService providerService(){ 
 		return new ProviderService();
     }
-	 
+	@Order(19)
     @Bean(name="consumerService") 
     public ConsumerService consumerService(){ 
 		return new ConsumerService();
     }
-	 
+	@Order(20)
     @Bean(name="schedulingService") 
     public JDKSchedulingService schedulingService(){ 
 		return new JDKSchedulingService();
     }
-	 
+	@Order(21)
     @Bean(name="remotingClient") 
     public RemotingClient remotingClient(){ 
     	RemotingClient client = new RemotingClient();
     	client.setPoolSize(2);
 		return client;
     }
-	 
+	@Order(22)
     @Bean(name="object.cache") 
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public NoCacheImpl objectCache(){ 
 		return NoCacheImpl.getInstance();
     } 
-    
+	@Order(23)
     @Bean(name="keyframe.cache") 
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public CachingFileKeyFrameMetaCache keyframeCache(){ 
@@ -253,28 +254,28 @@ public class Red5Core {
     	cache.setMaxCacheEntry(ExtConfiguration.ENTRY_MAX);
 		return cache;
     }
-   
+	@Order(24)
     @Bean(name="flv.impl") 
     public FLV flvImpl(){ 
     	FLV cache = new FLV();
     	cache.setCache(objectCache());
 		return cache;
     }
-    
+	@Order(25)
     @Bean(name="flvreader.impl") 
     public FLVReader flvreaderImpl(){ 
     	FLVReader cache = new FLVReader();
     	cache.setKeyFrameCache(keyframeCache());
 		return cache;
     }
-   
+	@Order(26)
     @Bean(name="mp3reader.impl") 
     public MP3Reader mp3readerImpl(){ 
     	MP3Reader cache = new MP3Reader();
     	cache.setFrameCache(keyframeCache());
 		return cache;
     }
-   
+	@Order(27)
     @Bean(name="invokingOne")
     public MethodInvokingFactoryBean invoking1(){ 
     	MethodInvokingFactoryBean cache = new MethodInvokingFactoryBean();
@@ -282,7 +283,7 @@ public class Red5Core {
 		cache.setArguments("auto");
     	return cache;
     }
-    
+	@Order(28)
     @Bean(name="invokingTwo") 
     public MethodInvokingFactoryBean invoking2(){ 
     	MethodInvokingFactoryBean cache = new MethodInvokingFactoryBean();
@@ -290,14 +291,14 @@ public class Red5Core {
 		cache.setArguments("4096");
     	return cache;
     }
-   
+	@Order(29)
     @Bean(name="streamExecutor") 
     public ScheduledThreadPoolExecutor streamExecutor(){ 
     	ScheduledThreadPoolExecutor cache = new ScheduledThreadPoolExecutor(16);
     	cache.setMaximumPoolSize(64);
 		return cache;
     } 
-   
+	@Order(30)
     @Bean(name="playlistSubscriberStream")
     @Lazy
     @Scope("prototype")
@@ -307,7 +308,7 @@ public class Red5Core {
     	cache.setUnderrunTrigger(ExtConfiguration.TRIGGER); 
 		return cache;
     }
-    
+	@Order(31)
     @Bean(name="clientBroadcastStream")
     @Lazy
     @Scope("prototype")
@@ -317,7 +318,7 @@ public class Red5Core {
     } 
 	
 	//-----------------------------------------------------------core------------------
-  
+	@Order(32)
 	@Bean(name="rtmpScheduler")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ThreadPoolTaskScheduler trmpScheduler(){
@@ -329,7 +330,7 @@ public class Red5Core {
 		poolSched.setThreadNamePrefix("RTMPConnectionScheduler-");
 		return poolSched;
     }
-    
+	@Order(33)
 	@Bean(name="messageExecutor")
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ThreadPoolTaskExecutor messageExecutor(){
@@ -343,7 +344,7 @@ public class Red5Core {
 		poolSched.setThreadNamePrefix("RTMPConnectionExecutor-");
 		return poolSched;
     }
-    
+	@Order(34)
 	@Bean(name="deadlockGuardScheduler") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ThreadPoolTaskScheduler deadlockGuardScheduler(){
@@ -355,13 +356,13 @@ public class Red5Core {
 		poolSched.setThreadNamePrefix("DeadlockGuardScheduler-");
 		return poolSched;
     }
-    
+	@Order(35)
 	@Bean(name="rtmpConnManager") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RTMPConnManager rtmpConnManager(){ 
 		return new RTMPConnManager();
     }
-    
+	@Order(36)
 	@Bean(name="rtmpHandler") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RTMPHandler rtmpHandler(){
@@ -371,7 +372,7 @@ public class Red5Core {
 		poolSched.setUnvalidatedConnectionAllowed(true);
 		return poolSched;
     }
-    
+	@Order(37)
 	@Bean(name="rtmpMinaIoHandler") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RTMPMinaIoHandler rtmpMinaIoHandler(){
@@ -379,7 +380,7 @@ public class Red5Core {
 		poolSched.setHandler(rtmpHandler()); 
 		return poolSched;
     }   
-	 
+	@Order(38)
 	@Bean(name="rtmpTransport",initMethod = "start", destroyMethod = "stop") 
     public RTMPMinaTransport rtmpTransport(){
 		RTMPMinaTransport poolSched = new RTMPMinaTransport(); 
@@ -406,12 +407,14 @@ public class Red5Core {
 		return poolSched;
     }
 	//http 
+	@Order(39)
 	@Bean(name="hTTPMinaTransport",initMethod = "start", destroyMethod = "stop") 
     public HTTPMinaTransport hTTPMinaTransport(){
 		HTTPMinaTransport poolSched = new HTTPMinaTransport();  
 		poolSched.setIoHandler(hTTPMinaIoHandler());
 		return poolSched;
     }
+	@Order(40)
 	@Bean(name="hTTPMinaIoHandler") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public HTTPMinaIoHandler hTTPMinaIoHandler(){
@@ -419,13 +422,14 @@ public class Red5Core {
 		return poolSched;
     }
 	//rtsp
+	@Order(41)
 	@Bean(name="rTSPMinaTransport",initMethod = "start", destroyMethod = "stop") 
     public RTSPMinaTransport rTSPMinaTransport() throws IOException{
 		RTSPMinaTransport poolSched = new RTSPMinaTransport(); 
 		poolSched.setIoHandler(rTSPMinaIoHandler()); 
 		return poolSched;
     }
-	
+	@Order(42)
 	@Bean(name="rTSPMinaIoHandler") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RTSPMinaIoHandler rTSPMinaIoHandler(){
@@ -433,6 +437,7 @@ public class Red5Core {
 		return poolSched;
     }
 	//Forbidden
+	@Order(43)
 	@Bean(name="forbidden") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public String forbidden(){
@@ -440,7 +445,8 @@ public class Red5Core {
 		return forbidden;
     }
 	
-	//rtmp    
+	//rtmp 
+	@Order(44)
 	@Bean(name="rtmpMinaConnection") 
 	@Scope("prototype")
     public RTMPMinaConnection rtmpMinaConnection(){
@@ -467,7 +473,7 @@ public class Red5Core {
 		poolSched.setReservedStreamsConcurrencyLevel(ExtConfiguration.RESERVED_STREAMS_CONCURREN_CYLEVEL);
 		return poolSched;
     }
-	 
+	@Order(45)
 	@Bean(name="rtmptHandler",autowire=Autowire.BY_TYPE)
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RTMPTHandler rtmptHandler(){
@@ -475,7 +481,7 @@ public class Red5Core {
 		poolSched.setCodecFactory(rtmptCodecFactory());
 		return poolSched;
     } 
-	 
+	@Order(46)
 	@Bean(name="rtmptServlet") 
     public RTMPTServlet rtmptServlet(){
 		RTMPTServlet poolSched = new RTMPTServlet(); 
@@ -484,7 +490,7 @@ public class Red5Core {
 		poolSched.setTargetResponseSize(ExtConfiguration.TARGET_RESPONSE_SIZE);
 		return poolSched;
     }  
-	 
+	@Order(47)
 	@Bean(name="rtmptConnection") 
 	@Scope("prototype")
     public RTMPTConnection rtmptConnection(){
@@ -511,7 +517,7 @@ public class Red5Core {
 		return poolSched;
     }
 	//---------------------------------------新增-------------------------
-	 
+	@Order(48)
 	@Bean(name="rtmpSampleAccess") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RtmpSampleAccess rtmpSampleAccess() throws Exception{
@@ -520,7 +526,7 @@ public class Red5Core {
 		context.setVideoAllowed(true);
         return context;
     }
-	
+	@Order(49)
 	@Bean(name="broadcastStream") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RecordableBroadcastStream recordableBroadcastStream() throws Exception{
@@ -530,12 +536,14 @@ public class Red5Core {
 		context.setDurationPerFile(60);
         return context;
     }
+	@Order(50)
 	@Bean(name="singleStream") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public SingleItemSubscriberStream singleItemSubscriberStream() throws Exception{
 		SingleItemSubscriberStream context = new SingleItemSubscriberStream(); 
         return context;
-    }	
+    }
+	@Order(51)
 	@Bean(name="fileConsumer") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public FileConsumer fileConsumer(){
@@ -544,7 +552,7 @@ public class Red5Core {
     }	
 	
 	//----------------------------------------demo-------------------------
-	 
+	@Order(52)
 	@Bean(name="web.context.oflaDemo") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Context contextOflaDemo() throws Exception{
@@ -556,21 +564,21 @@ public class Red5Core {
         return context;
     }
 	
-	 
+	@Order(53)
 	@Bean(name="web.handler.oflaDemo") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Application handlerOflaDemo() throws Exception{
 		Application context = new Application(); 
         return context;
     }
-	 
+	@Order(54)
 	@Bean(name="httpApplicationAdapter") 
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public HTTPApplicationAdapter httpApplicationAdapter(){
 		HTTPApplicationAdapter context = new HTTPApplicationAdapter(); 
         return context;
     } 
-	 
+	@Order(55)
 	@Bean(name="web.scope.oflaDemo") 
     public WebScope scopeOflaDemo() throws Exception{
 		WebScope context = new WebScope(); 

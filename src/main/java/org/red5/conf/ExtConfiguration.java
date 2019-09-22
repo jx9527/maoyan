@@ -1,6 +1,5 @@
 package org.red5.conf;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -123,7 +122,7 @@ public class ExtConfiguration{
 	public static int MAX_QUEUE_OFFER_ATTEMPTS = 4; 
 	
 	
-	@Value("${rtmpt.max_queue_offer_attempts}")
+	/*@Value("${rtmpt.max_queue_offer_attempts}")
 	public  void setMaxQueueOfferAttempts(int maxQueueOfferAttempts) {
 		MAX_QUEUE_OFFER_ATTEMPTS = maxQueueOfferAttempts;
 	} 
@@ -496,6 +495,6 @@ public class ExtConfiguration{
 	@Value("${unicast.executor_threads}")
 	public  void setUNICAST_EXECUTOR_THREADS(int uNICAST_EXECUTOR_THREADS) {
 		UNICAST_EXECUTOR_THREADS = uNICAST_EXECUTOR_THREADS;
-	} 
+	} */
 	 
 }
