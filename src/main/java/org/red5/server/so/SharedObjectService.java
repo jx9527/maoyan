@@ -91,7 +91,7 @@ public class SharedObjectService implements ISharedObjectService {
      * @param scheduler
      *            the scheduler to set
      */
-    public static void setScheduler(ThreadPoolTaskScheduler scheduler) {
+    public void setScheduler(ThreadPoolTaskScheduler scheduler) {
         SharedObjectService.scheduler = scheduler;
     }
 

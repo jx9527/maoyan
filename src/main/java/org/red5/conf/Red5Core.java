@@ -65,14 +65,12 @@ import org.red5.server.stream.StreamableFileFactory;
 import org.red5.server.stream.consumer.FileConsumer;
 import org.red5.server.stream.timeshift.RecordableBroadcastStream;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -195,10 +193,8 @@ public class Red5Core {
 		services.add(new M4AService()); 
 		factory.setServices(services);
 		return factory;
-    }
-	
-	@Value("${so.max.events.per.update}")
-	int maxUpdate; 
+    } 
+	 
 	@Bean(name="sharedObjectService") 
     public SharedObjectService sharedObjectService(){
 		SharedObjectService factory = new SharedObjectService(); 
@@ -207,11 +203,10 @@ public class Red5Core {
 		factory.setScheduler(poolScheduler());
 		return factory;
     } 
-	@Value("${so.scheduler.pool_size}")
-	int soPoolSize; 
+	
     public ThreadPoolTaskScheduler poolScheduler(){
     	ThreadPoolTaskScheduler factory = new ThreadPoolTaskScheduler(); 
-    	factory.setPoolSize(soPoolSize);
+    	factory.setPoolSize(ExtConfiguration.SO_POOL_SIZE);
     	factory.setWaitForTasksToCompleteOnShutdown(false);
     	factory.setDaemon(true);
     	factory.setThreadNamePrefix("SharedObjectScheduler-");
@@ -249,16 +244,13 @@ public class Red5Core {
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public NoCacheImpl objectCache(){ 
 		return NoCacheImpl.getInstance();
-    }
-    
-    @Value("${keyframe.cache.entry.max}")
-    int entryMax;
+    } 
     
     @Bean(name="keyframe.cache") 
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public CachingFileKeyFrameMetaCache keyframeCache(){ 
     	CachingFileKeyFrameMetaCache cache = new CachingFileKeyFrameMetaCache();
-    	cache.setMaxCacheEntry(entryMax);
+    	cache.setMaxCacheEntry(ExtConfiguration.ENTRY_MAX);
 		return cache;
     }
    
@@ -304,21 +296,15 @@ public class Red5Core {
     	ScheduledThreadPoolExecutor cache = new ScheduledThreadPoolExecutor(16);
     	cache.setMaximumPoolSize(64);
 		return cache;
-    }
-    
-    @Value("${subscriberstream.buffer.check.interval}")
-    int interval;
-    @Value("${subscriberstream.underrun.trigger}")
-    int trigger;
-    
+    } 
    
     @Bean(name="playlistSubscriberStream")
     @Lazy
     @Scope("prototype")
     public PlaylistSubscriberStream playlistSubscriberStream(){ 
     	PlaylistSubscriberStream cache = new PlaylistSubscriberStream();
-    	cache.setBufferCheckInterval(interval);
-    	cache.setUnderrunTrigger(trigger); 
+    	cache.setBufferCheckInterval(ExtConfiguration.INTERVAL);
+    	cache.setUnderrunTrigger(ExtConfiguration.TRIGGER); 
 		return cache;
     }
     
@@ -392,68 +378,31 @@ public class Red5Core {
 		RTMPMinaIoHandler poolSched = new RTMPMinaIoHandler(); 
 		poolSched.setHandler(rtmpHandler()); 
 		return poolSched;
-    }
-	
-	@Value("${rtmp.host}")
-	String host;
-	@Value("${rtmp.port}")
-	String port;
-	@Value("${rtmp.io_threads}")
-	int ioThreads;
-	@Value("${rtmp.send_buffer_size}")
-	int bufferSize;
-	@Value("${rtmp.receive_buffer_size}")
-	int receiveBufferSize;
-	@Value("${rtmp.traffic_class}")
-	int trafficClass;
-	@Value("${rtmp.backlog}")
-	int backlog;
-	@Value("${rtmp.tcp_nodelay}")
-	boolean tcpNoDelay;
-	@Value("${rtmp.tcp_keepalive}")
-	boolean keepAlive;
-	@Value("${rtmp.thoughput_calc_interval}")
-	int thoughputCalcInterval;
-	@Value("${rtmp.default_acceptor}")
-	boolean enableDefaultAcceptor;
-	@Value("${rtmp.initial_pool_size}")
-	int initialPoolSize;
-	@Value("${rtmp.max_pool_size}")
-	int rmaxPoolSize;
-	@Value("${rtmp.max_processor_pool_size}")
-	int maxProcessorPoolSize;
-	@Value("${rtmp.executor_keepalive_time}")
-	int executorKeepAliveTime;
-	@Value("${jmx.mina.poll.interval}")
-	int minaPollInterval; 
-	@Value("${jmx.mina.monitor.enable}")
-	boolean enableMinaMonitor;
-	@Value("${mina.logfilter.enable}")
-	boolean enableMinaLogFilter;
+    }   
 	 
 	@Bean(name="rtmpTransport",initMethod = "start", destroyMethod = "stop") 
     public RTMPMinaTransport rtmpTransport(){
 		RTMPMinaTransport poolSched = new RTMPMinaTransport(); 
 		poolSched.setIoHandler(rtmpMinaIoHandler());
 		List<String> addresses = new ArrayList<String>();
-		addresses.add(host+":"+port);
+		addresses.add(ExtConfiguration.RTMP_HOST+":"+ExtConfiguration.RTMP_PORT);
 		poolSched.setAddresses(addresses);
-		poolSched.setIoThreads(ioThreads);
-		poolSched.setSendBufferSize(bufferSize);
-		poolSched.setReceiveBufferSize(receiveBufferSize);
-		poolSched.setTrafficClass(trafficClass);
-		poolSched.setBacklog(backlog);
-		poolSched.setTcpNoDelay(tcpNoDelay);
-		poolSched.setKeepAlive(keepAlive);
-		poolSched.setThoughputCalcInterval(thoughputCalcInterval);
-		poolSched.setEnableDefaultAcceptor(enableDefaultAcceptor);
-		poolSched.setInitialPoolSize(initialPoolSize);
+		poolSched.setIoThreads(ExtConfiguration.IO_THREADS);
+		poolSched.setSendBufferSize(ExtConfiguration.BUFFER_SIZE);
+		poolSched.setReceiveBufferSize(ExtConfiguration.RECEIVE_BUFFER_SIZE);
+		poolSched.setTrafficClass(ExtConfiguration.TRAFFIC_CLASS);
+		poolSched.setBacklog(ExtConfiguration.BACK_LOG);
+		poolSched.setTcpNoDelay(ExtConfiguration.TCP_NO_DELAY);
+		poolSched.setKeepAlive(ExtConfiguration.KEEP_ALIVE);
+		poolSched.setThoughputCalcInterval(ExtConfiguration.THOUGH_PUT_CALC_INTERVAL);
+		poolSched.setEnableDefaultAcceptor(ExtConfiguration.ENABLED_EFAULT_ACCEPTOR);
+		poolSched.setInitialPoolSize(ExtConfiguration.INITIAL_POOL_SIZE);
 		poolSched.setMaxPoolSize(ExtConfiguration.MAX_POOL_SIZE);
-		poolSched.setMaxProcessorPoolSize(maxProcessorPoolSize);
-		poolSched.setExecutorKeepAliveTime(executorKeepAliveTime);
-		poolSched.setMinaPollInterval(minaPollInterval);
-		poolSched.setEnableMinaMonitor(enableMinaMonitor);
-		poolSched.setEnableMinaLogFilter(enableMinaLogFilter);
+		poolSched.setMaxProcessorPoolSize(ExtConfiguration.MAX_PROCESSOR_POOL_SIZE);
+		poolSched.setExecutorKeepAliveTime(ExtConfiguration.EXECUTOR_KEEP_ALIVE_TIME);
+		poolSched.setMinaPollInterval(ExtConfiguration.MINA_POLL_INTERVAL);
+		poolSched.setEnableMinaMonitor(ExtConfiguration.ENABLE_MINA_MONITOR);
+		poolSched.setEnableMinaLogFilter(ExtConfiguration.ENABLE_MINA_LOG_FILTER);
 		return poolSched;
     }
 	//http 
@@ -491,42 +440,7 @@ public class Red5Core {
 		return forbidden;
     }
 	
-	//rtmp
-	@Value("${rtmp.ping_interval}")
-	int pingInterval;
-	@Value("${rtmp.max_inactivity}")
-	int maxInactivity;
-	@Value("${rtmp.max_handshake_time}")
-	int maxHandshakeTimeout;
-	@Value("${rtmp.default_server_bandwidth}")
-	int defaultServerBandwidth;
-	@Value("${rtmp.default_client_bandwidth}")
-	int defaultClientBandwidth;
-	@Value("${rtmp.client_bandwidth_limit_type}")
-	int limitType;
-	@Value("${rtmp.bandwidth_detection}")
-	boolean bandwidthDetection;
-	@Value("${rtmp.max_handling_time}")
-	int maxHandlingTimeout;
-	@Value("${rtmp.executor.queue_size_to_drop_audio_packets}")
-	int executorQueueSizeToDropAudioPackets;
-	@Value("${rtmp.channel.initial.capacity}")
-	int channelsInitalCapacity;
-	@Value("${rtmp.channel.concurrency.level}")
-	int channelsConcurrencyLevel;
-	@Value("${rtmp.stream.initial.capacity}")
-	int streamsInitalCapacity;
-	@Value("${rtmp.stream.concurrency.level}")
-	int streamsConcurrencyLevel;
-	@Value("${rtmp.pending.calls.initial.capacity}")
-	int pendingCallsInitalCapacity;
-	@Value("${rtmp.pending.calls.concurrency.level}")
-	int pendingCallsConcurrencyLevel;
-	@Value("${rtmp.reserved.streams.initial.capacity}")
-	int reservedStreamsInitalCapacity;
-	@Value("${rtmp.reserved.streams.concurrency.level}")
-	int reservedStreamsConcurrencyLevel;
-	 
+	//rtmp    
 	@Bean(name="rtmpMinaConnection") 
 	@Scope("prototype")
     public RTMPMinaConnection rtmpMinaConnection(){
@@ -534,23 +448,23 @@ public class Red5Core {
 		poolSched.setScheduler(trmpScheduler());
 		poolSched.setExecutor(messageExecutor());
 		poolSched.setDeadlockGuardScheduler(deadlockGuardScheduler());
-		poolSched.setPingInterval(pingInterval);
-		poolSched.setMaxInactivity(maxInactivity);
-		poolSched.setMaxHandshakeTimeout(maxHandshakeTimeout);
-		poolSched.setDefaultServerBandwidth(defaultServerBandwidth);
-		poolSched.setDefaultClientBandwidth(defaultClientBandwidth);
-		poolSched.setLimitType(limitType);
-		poolSched.setBandwidthDetection(bandwidthDetection);
-		poolSched.setMaxHandlingTimeout(maxHandlingTimeout);
-		poolSched.setExecutorQueueSizeToDropAudioPackets(executorQueueSizeToDropAudioPackets);
-		poolSched.setChannelsInitalCapacity(channelsInitalCapacity);
-		poolSched.setChannelsConcurrencyLevel(channelsConcurrencyLevel);
-		poolSched.setStreamsInitalCapacity(streamsInitalCapacity);
-		poolSched.setStreamsConcurrencyLevel(streamsConcurrencyLevel);
-		poolSched.setPendingCallsInitalCapacity(pendingCallsInitalCapacity);
-		poolSched.setPendingCallsConcurrencyLevel(pendingCallsConcurrencyLevel);
-		poolSched.setReservedStreamsInitalCapacity(reservedStreamsInitalCapacity);
-		poolSched.setReservedStreamsConcurrencyLevel(reservedStreamsConcurrencyLevel);
+		poolSched.setPingInterval(ExtConfiguration.PING_INTERVAL);
+		poolSched.setMaxInactivity(ExtConfiguration.MAX_INACTIVITY);
+		poolSched.setMaxHandshakeTimeout(ExtConfiguration.MAX_HANDSHAKE_TIMEOUT);
+		poolSched.setDefaultServerBandwidth(ExtConfiguration.DEFAULT_SERVER_BANDWIDTH);
+		poolSched.setDefaultClientBandwidth(ExtConfiguration.DEFAULT_CLIENT_BANDWIDTH);
+		poolSched.setLimitType(ExtConfiguration.LIMIT_TYPE);
+		poolSched.setBandwidthDetection(ExtConfiguration.BANDWIDTH_DETECTION);
+		poolSched.setMaxHandlingTimeout(ExtConfiguration.MAX_HANDLING_TIMEOUT);
+		poolSched.setExecutorQueueSizeToDropAudioPackets(ExtConfiguration.EXECUTOR_QUEUE_SIZE_TO_DROP_AUDIO_PACKETS);
+		poolSched.setChannelsInitalCapacity(ExtConfiguration.CHANNELS_INITAL_CAPACITY);
+		poolSched.setChannelsConcurrencyLevel(ExtConfiguration.CHANNELS_CONCURRENCY_LEVEL);
+		poolSched.setStreamsInitalCapacity(ExtConfiguration.STREAMS_INITAL_CAPACITY);
+		poolSched.setStreamsConcurrencyLevel(ExtConfiguration.STREAMS_CONCURRENCY_LEVEL);
+		poolSched.setPendingCallsInitalCapacity(ExtConfiguration.PENDING_CALLS_INITAL_CAPACITY);
+		poolSched.setPendingCallsConcurrencyLevel(ExtConfiguration.PENDING_CALLS_CONCURRENCY_LEVEL);
+		poolSched.setReservedStreamsInitalCapacity(ExtConfiguration.RESERVED_STREAMS_INITAL_CAPACITY);
+		poolSched.setReservedStreamsConcurrencyLevel(ExtConfiguration.RESERVED_STREAMS_CONCURREN_CYLEVEL);
 		return poolSched;
     }
 	 
@@ -560,33 +474,16 @@ public class Red5Core {
 		RTMPTHandler poolSched = new RTMPTHandler(); 
 		poolSched.setCodecFactory(rtmptCodecFactory());
 		return poolSched;
-    }
-	
-	@Value("${rtmpt.target_reponse_size}")
-	int targetResponseSize;
+    } 
 	 
 	@Bean(name="rtmptServlet") 
     public RTMPTServlet rtmptServlet(){
 		RTMPTServlet poolSched = new RTMPTServlet(); 
 		poolSched.setManager(rtmpConnManager());
 		poolSched.setHandler(rtmptHandler());
-		poolSched.setTargetResponseSize(targetResponseSize);
+		poolSched.setTargetResponseSize(ExtConfiguration.TARGET_RESPONSE_SIZE);
 		return poolSched;
-    }
-	
-	@Value("${rtmpt.ping_interval}")
-	int pingIntervalt;
-	@Value("${rtmpt.max_inactivity}")
-	int maxInactivityt;
-	@Value("${rtmpt.max_handshake_time}")
-	int maxHandshakeTimeoutt;
-	 
-	@Value("${rtmpt.max_in_msg_process}")
-	int maxInMessagesPerProcess;
-	@Value("${rtmpt.max_queue_offer_time}")
-	int maxQueueOfferTime;
-	@Value("${rtmpt.max_queue_offer_attempts}")
-	int maxQueueOfferAttempts; 
+    }  
 	 
 	@Bean(name="rtmptConnection") 
 	@Scope("prototype")
@@ -595,22 +492,22 @@ public class Red5Core {
 		poolSched.setScheduler(trmpScheduler());
 		poolSched.setExecutor(messageExecutor());
 		poolSched.setDeadlockGuardScheduler(deadlockGuardScheduler());
-		poolSched.setPingInterval(pingIntervalt);
-		poolSched.setMaxInactivity(maxInactivityt);
-		poolSched.setMaxHandshakeTimeout(maxHandshakeTimeoutt);
-		poolSched.setMaxInMessagesPerProcess(maxInMessagesPerProcess);
-		poolSched.setMaxQueueOfferTime(maxQueueOfferTime);
-		poolSched.setMaxQueueOfferAttempts(maxQueueOfferAttempts);
-		poolSched.setMaxHandlingTimeout(maxHandlingTimeout);
-		poolSched.setExecutorQueueSizeToDropAudioPackets(executorQueueSizeToDropAudioPackets);
-		poolSched.setChannelsInitalCapacity(channelsInitalCapacity);
-		poolSched.setChannelsConcurrencyLevel(channelsConcurrencyLevel);
-		poolSched.setStreamsInitalCapacity(streamsInitalCapacity);
-		poolSched.setStreamsConcurrencyLevel(streamsConcurrencyLevel);
-		poolSched.setPendingCallsInitalCapacity(pendingCallsInitalCapacity);
-		poolSched.setPendingCallsConcurrencyLevel(pendingCallsConcurrencyLevel);
-		poolSched.setReservedStreamsInitalCapacity(reservedStreamsInitalCapacity);
-		poolSched.setReservedStreamsConcurrencyLevel(reservedStreamsConcurrencyLevel);
+		poolSched.setPingInterval(ExtConfiguration.PING_INTERVAL);
+		poolSched.setMaxInactivity(ExtConfiguration.MAX_INACTIVITY_T);
+		poolSched.setMaxHandshakeTimeout(ExtConfiguration.MAX_HANDSHAKE_TIMEOUTT);
+		poolSched.setMaxInMessagesPerProcess(ExtConfiguration.MAX_IN_MESSAGES_PERPROCESS);
+		poolSched.setMaxQueueOfferTime(ExtConfiguration.MAX_QUEUE_OFFER_TIME);
+		poolSched.setMaxQueueOfferAttempts(ExtConfiguration.MAX_QUEUE_OFFER_ATTEMPTS);
+		poolSched.setMaxHandlingTimeout(ExtConfiguration.MAX_HANDLING_TIMEOUT);
+		poolSched.setExecutorQueueSizeToDropAudioPackets(ExtConfiguration.EXECUTOR_QUEUE_SIZE_TO_DROP_AUDIO_PACKETS);
+		poolSched.setChannelsInitalCapacity(ExtConfiguration.CHANNELS_INITAL_CAPACITY);
+		poolSched.setChannelsConcurrencyLevel(ExtConfiguration.CHANNELS_CONCURRENCY_LEVEL);
+		poolSched.setStreamsInitalCapacity(ExtConfiguration.STREAMS_INITAL_CAPACITY);
+		poolSched.setStreamsConcurrencyLevel(ExtConfiguration.STREAMS_CONCURRENCY_LEVEL);
+		poolSched.setPendingCallsInitalCapacity(ExtConfiguration.PENDING_CALLS_INITAL_CAPACITY);
+		poolSched.setPendingCallsConcurrencyLevel(ExtConfiguration.PENDING_CALLS_CONCURRENCY_LEVEL);
+		poolSched.setReservedStreamsInitalCapacity(ExtConfiguration.RESERVED_STREAMS_INITAL_CAPACITY);
+		poolSched.setReservedStreamsConcurrencyLevel(ExtConfiguration.RESERVED_STREAMS_CONCURREN_CYLEVEL);
 		return poolSched;
     }
 	//---------------------------------------新增-------------------------
@@ -672,9 +569,7 @@ public class Red5Core {
     public HTTPApplicationAdapter httpApplicationAdapter(){
 		HTTPApplicationAdapter context = new HTTPApplicationAdapter(); 
         return context;
-    }
-	
-	
+    } 
 	 
 	@Bean(name="web.scope.oflaDemo") 
     public WebScope scopeOflaDemo() throws Exception{
@@ -688,8 +583,6 @@ public class Red5Core {
 		context.setVirtualHosts("*, localhost, localhost:5080, 127.0.0.1:5080");
         return context;
     }
-	
-	
-	
+	 
 }
  
