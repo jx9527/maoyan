@@ -52,7 +52,7 @@
     <logger name="org.hibernate" level="error" />
     <!--<logger name="org.apache.tomcat.jdbc" level="DEBUG" />-->
     <!--<logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG" />-->
-    <logger name="org.springframework" level="error" />
+   <!--  <logger name="org.springframework" level="error" />
     <logger name="org.red5.server.api" level="error" />
     <logger name="org.red5.server.net.rtmp" level="error" />
     <logger name="net.sf.ehcache" level="error" />
@@ -64,9 +64,9 @@
     <logger name="org.red5.io.amf" level="error" />
     <logger name="org.red5.io.object.Deserializer" level="error" />
     <logger name="org.red5.io.utils" level="error" />
-    <logger name="org.red5.io.utils.ConversionUtils" level="error" />
+    <logger name="org.red5.io.utils.ConversionUtils" level="error" /> -->
     <!--<logger name="org.hibernate.cfg" level="WARN" />-->
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="console" />
 <!--         <appender-ref ref="info" /> -->
 <!--         <appender-ref ref="warn" /> -->
