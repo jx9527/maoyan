@@ -13,7 +13,7 @@ public class StringUtil {
     static {
         String newLine = null;
 
-        try { 
+        try {
             newLine = new Formatter().format("%n").toString();
         } catch (Exception e) {
             newLine = "\n";
