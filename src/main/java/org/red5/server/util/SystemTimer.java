@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 
 /**
  * System Cache Time 

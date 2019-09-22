@@ -19,7 +19,7 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.lang3.StringUtils;
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

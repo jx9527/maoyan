@@ -13,7 +13,7 @@ import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 import org.red5.server.util.CustomizableThreadFactory;
 
 /**

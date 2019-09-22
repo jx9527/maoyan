@@ -8,7 +8,7 @@
 ### 启动
 
 
-1. 首先运行SpringBootRed5Application启动red5服务器（Vm argments添加 -Dred5.root=路径）
+1. 首先运行SpringBootRed5Application启动red5服务器
 2. 运行test下的GuangDongRTMP进行推流。
 3. 使用VLC Mider player或其他软件播放 
 4. 例如 

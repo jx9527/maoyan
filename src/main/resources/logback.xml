@@ -63,10 +63,10 @@
     <logger name="org.red5.server.messaging" level="error" />
     <logger name="org.red5.io.amf" level="error" />
     <logger name="org.red5.io.object.Deserializer" level="error" />
-    <logger name=" org.red5.io.utils" level="error" />
-   
+    <logger name="org.red5.io.utils" level="error" />
+    <logger name="org.red5.io.utils.ConversionUtils" level="error" />
     <!--<logger name="org.hibernate.cfg" level="WARN" />-->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="console" />
 <!--         <appender-ref ref="info" /> -->
 <!--         <appender-ref ref="warn" /> -->

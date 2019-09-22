@@ -1,13 +1,12 @@
-package push;
+package org.red5.demo;
 
 
 import org.bytedeco.javacpp.avcodec;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.OpenCVFrameConverter;
 
-public class GuangDongRTMP {
+public class PushRTMP {
 	static boolean exit = false;
 
 	public static void run() throws Exception {
@@ -22,7 +21,7 @@ public class GuangDongRTMP {
 		System.out.println("end...");
 	}
 
-	public static void push(String rtmpPath, String rtspPath, int audioRecord, boolean saveVideo) throws Exception {
+	private static void push(String rtmpPath, String rtspPath, int audioRecord, boolean saveVideo) throws Exception {
 		// 使用rtsp的时候需要使用 FFmpegFrameGrabber，不能再用 FrameGrabber
 		int width = 640, height = 480;
 		FFmpegFrameGrabber grabber = FFmpegFrameGrabber.createDefault(rtmpPath);
@@ -44,22 +43,15 @@ public class GuangDongRTMP {
 		recorder.setPixelFormat(0); // yuv420p
 		System.out.println("recorder start");
 		recorder.start();
-		//
-		OpenCVFrameConverter.ToIplImage conveter = new OpenCVFrameConverter.ToIplImage();
-		System.out.println("all start!!");
-		int count = 0;
-		while (!exit) {
-			count++;
+		 
+		System.out.println("all start!!"); 
+		while (!exit) { 
 			Frame frame = grabber.grabImage();
 			if (frame == null) {
 				continue;
-			}
-			if (count % 100 == 0) {
-				System.out.println("count=" + count);
-			}
+			} 
 			recorder.record(frame);
-		}
-
+		} 
 		grabber.stop();
 		grabber.release();
 		recorder.stop();

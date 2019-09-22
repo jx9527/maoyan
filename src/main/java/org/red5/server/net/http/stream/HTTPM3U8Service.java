@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.buffer.IoBuffer;
+import org.red5.conf.ExtConfiguration;
 import org.red5.io.IStreamableFile;
 import org.red5.io.IStreamableFileFactory;
 import org.red5.io.IStreamableFileService;
@@ -15,7 +16,6 @@ import org.red5.io.ITagReader;
 import org.red5.io.StreamableFileFactory;
 import org.red5.io.flv.IKeyFrameDataAnalyzer;
 import org.red5.io.flv.IKeyFrameDataAnalyzer.KeyFrameMeta;
-import org.red5.server.ExtConfiguration;
 import org.red5.server.ScopeContextBean;
 import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;

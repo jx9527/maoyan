@@ -3,7 +3,7 @@ package org.red5.server.cache;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 import org.red5.server.api.scheduling.IScheduledJob;
 import org.red5.server.api.scheduling.ISchedulingService;
 import org.red5.server.scheduling.QuartzSchedulingService;

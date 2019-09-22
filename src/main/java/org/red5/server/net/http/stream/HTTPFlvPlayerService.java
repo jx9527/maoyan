@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.apache.mina.core.session.IdleStatus;
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;
 import org.red5.server.api.service.IStreamSecurityService;

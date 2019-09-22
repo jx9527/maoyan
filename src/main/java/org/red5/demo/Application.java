@@ -8,13 +8,10 @@ import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IServerStream;
 import org.red5.server.net.http.stream.MpegtsSegmenterService;
-import org.red5.server.net.rtp.RTPPlayer;
-import org.red5.server.net.udp.MulticastOutgoingService;
-import org.red5.server.net.udp.UDPDatagramConfig;
 import org.red5.server.stream.ClientBroadcastStream;
 
 
-public class Application1 extends ApplicationAdapter {
+public class Application extends ApplicationAdapter {
 
 	private IScope appScope;
 

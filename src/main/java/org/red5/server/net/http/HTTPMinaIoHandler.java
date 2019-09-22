@@ -7,7 +7,7 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 import org.red5.server.api.Red5;
 import org.red5.server.api.ScopeUtils;
 import org.red5.server.net.http.codec.HTTPCodecFactory;

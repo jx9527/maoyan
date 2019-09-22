@@ -2,7 +2,7 @@ package org.red5.server.net.rtp;
 
 import java.net.InetSocketAddress;
 
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IStreamListener;
 import org.red5.server.api.stream.IStreamPacket;

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.red5.server.ExtConfiguration;
+import org.red5.conf.ExtConfiguration;
 
 /**
  * UDP Port Manager

@@ -1,4 +1,4 @@
-package org.red5.server;
+package org.red5.conf;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -67,6 +67,52 @@ public class ExtConfiguration{
 	
 	public static int MULTICAST_EXECUTOR_THREADS = 4;
 	public static int UNICAST_EXECUTOR_THREADS = 4;
+	 
+	
+	
+	public static int POOL_SIZE = 8; 
+	public static int CORE_POOL_SIZE = 4; 
+	public static int MAX_POOL_SIZE = 12; 
+	public static int QUEUE_CAPACITY = 64; 
+	public static int DEAD_POOL_SIZE = 8; 
+	public static long BASE_TO_LERANCE = 5000; 
+	public static boolean DROP_LIVE_FUTURE = false;
+	
+	
+	
+	@Value("${rtmpt.encoder_drop_live_future}")
+	public  void setDropLiveFuture(boolean dropLiveFuture) {
+		DROP_LIVE_FUTURE = dropLiveFuture;
+	}
+	
+	@Value("${rtmpt.encoder_base_tolerance}")
+	public  void setBaseTolerance(int baseTolerance) {
+		BASE_TO_LERANCE = baseTolerance;
+	}
+	
+	@Value("${rtmp.deadlockguard.sheduler.pool_size}")
+	public  void setDeadPoolSize(int deadPoolSize) {
+		DEAD_POOL_SIZE = deadPoolSize;
+	}
+	
+	@Value("${rtmp.executor.queue_capacity}")
+	public  void setQueueCapacity(int queueCapacity) {
+		QUEUE_CAPACITY = queueCapacity;
+	}
+	
+	@Value("${rtmp.executor.max_pool_size}")
+	public  void setMaxPoolSize(int maxPoolSize) {
+		MAX_POOL_SIZE = maxPoolSize;
+	}
+	
+	@Value("${rtmp.scheduler.pool_size}")
+	public  void setPoolSize(int poolSize) {
+		POOL_SIZE = poolSize;
+	}
+	@Value("${rtmp.executor.core_pool_size}")
+	public  void setCorePoolSize(int corePoolSize) {
+		CORE_POOL_SIZE = corePoolSize;
+	} 
 	
 	@Value("${http.host}")
 	public  void setHTTP_HOST(String hTTP_HOST) {
