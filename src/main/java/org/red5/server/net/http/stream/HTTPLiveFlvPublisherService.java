@@ -4,9 +4,9 @@ import java.util.Set;
 
 import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;
+import org.red5.server.api.service.IStreamSecurityService;
 import org.red5.server.api.stream.IClientStream;
 import org.red5.server.api.stream.IStreamPublishSecurity;
-import org.red5.server.api.stream.IStreamSecurityService;
 import org.red5.server.net.http.BaseHTTPService;
 import org.red5.server.net.http.HTTPMinaConnection;
 import org.red5.server.net.http.IHTTPService;

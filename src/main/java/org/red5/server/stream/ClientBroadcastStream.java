@@ -625,10 +625,10 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
                 }
                 break;
             case CONSUMER_CONNECT_PUSH:
-                //log.debug("Consumer connect");
+                log.debug("Consumer connect");
                 IPipe pipe = (IPipe) event.getSource();
                 //if (log.isDebugEnabled() && pipe != null) {
-                //log.debug("Consumer: {}", pipe.getClass().getName());
+                log.debug("Consumer: {}", pipe.getClass().getName());
                 //}
                 if (livePipe == pipe) {
                     notifyChunkSize();

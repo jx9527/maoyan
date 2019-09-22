@@ -36,6 +36,7 @@ import org.red5.server.api.stream.IPlaylistSubscriberStream;
 import org.red5.server.api.stream.IStreamAwareScopeHandler;
 import org.red5.server.api.stream.OperationNotSupportedException;
 import org.red5.server.api.stream.StreamState;
+import org.red5.server.scheduling.QuartzSchedulingService;
 import org.slf4j.Logger;
 
 /**
@@ -182,12 +183,13 @@ public class PlaylistSubscriberStream extends AbstractClientStream implements IP
             IScope scope = getScope();
             if (scope != null) {
                 IContext ctx = scope.getContext();
-                if (ctx.hasBean(ISchedulingService.BEAN_NAME)) {
-                    schedulingService = (ISchedulingService) ctx.getBean(ISchedulingService.BEAN_NAME);
-                } else {
-                    //try the parent
-                    schedulingService = (ISchedulingService) scope.getParent().getContext().getBean(ISchedulingService.BEAN_NAME);
-                }
+//                if (ctx.hasBean(ISchedulingService.BEAN_NAME)) {
+//                    schedulingService = (ISchedulingService) ctx.getBean(ISchedulingService.BEAN_NAME);
+//                } else {
+//                    //try the parent
+//                    schedulingService = (ISchedulingService) scope.getParent().getContext().getBean(ISchedulingService.BEAN_NAME);
+//                }
+                schedulingService = QuartzSchedulingService.getInstance();
                 IConsumerService consumerService = null;
                 if (ctx.hasBean(IConsumerService.KEY)) {
                     consumerService = (IConsumerService) ctx.getBean(IConsumerService.KEY);

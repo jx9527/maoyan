@@ -50,7 +50,7 @@ public class ExtConfiguration{
 	public static int RTSP_SEND_BUFFER_SIZE = 65536;
 	public static int RTSP_RECEIVE_BUFFER_SIZE = 65536;
 	public static boolean RTSP_TCP_NODELAY = true;
-	public static int RTSP_MAX_BACKLOG = 5000;
+	public static int RTSP_MAX_BACKLOG = 8000;
 	public static int UDP_PORT_START = 6970;
 	
 	public static String JMX_RMI_HOST = "0.0.0.0";
@@ -157,10 +157,10 @@ public class ExtConfiguration{
 	public  void setJMX_RMI_HOST(String jMX_RMI_HOST) {
 		JMX_RMI_HOST = jMX_RMI_HOST;
 	}
-//	@Value("${jmx.rmi.remoteobjects}")
-//	public  void setJMX_RMI_PORT_REMOTEOBJECTS(String jMX_RMI_PORT_REMOTEOBJECTS) {
-//		JMX_RMI_PORT_REMOTEOBJECTS = jMX_RMI_PORT_REMOTEOBJECTS;
-//	}
+	@Value("${jmx.rmi.remoteobjects}")
+	public  void setJMX_RMI_PORT_REMOTEOBJECTS(String jMX_RMI_PORT_REMOTEOBJECTS) {
+		JMX_RMI_PORT_REMOTEOBJECTS = jMX_RMI_PORT_REMOTEOBJECTS;
+	}
 	@Value("${jmx.rmi.registryes}")
 	public  void setJMX_RMI_PORT_REGISTRY(int jMX_RMI_PORT_REGISTRY) {
 		JMX_RMI_PORT_REGISTRY = jMX_RMI_PORT_REGISTRY;

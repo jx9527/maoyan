@@ -24,9 +24,7 @@ import org.red5.server.messaging.IPipe;
  * Broadcast scope is marker interface that represents object that works as basic scope and has pipe connection event dispatching capabilities.
  * 广播作用域是表示作为基本作用域的对象的标记接口，具有管道连接事件调度功能。
  */
-public interface IBroadcastScope extends IBasicScope, IPipe {
-	public static final ScopeType TYPE = ScopeType.BS;
-
+public interface IBroadcastScope extends IBasicScope, IPipe { 
 	public static final String STREAM_ATTRIBUTE = TRANSIENT_PREFIX
 			+ "_publishing_stream";
     public IClientBroadcastStream getClientBroadcastStream();

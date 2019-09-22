@@ -8,6 +8,7 @@ import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IServerStream;
 import org.red5.server.net.http.stream.MpegtsSegmenterService;
+import org.red5.server.net.rtp.RTPPlayer;
 import org.red5.server.net.udp.MulticastOutgoingService;
 import org.red5.server.net.udp.UDPDatagramConfig;
 import org.red5.server.stream.ClientBroadcastStream;
@@ -105,7 +106,8 @@ public class Application1 extends ApplicationAdapter {
 	public void streamPublishStart(IBroadcastStream stream) {
 		//添加hls监听
 		MpegtsSegmenterService ss = MpegtsSegmenterService.getInstance();
-		stream.addStreamListener(ss);
+		stream.addStreamListener(ss); 
+		
 		
 //		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
 //		UDPDatagramConfig config = new UDPDatagramConfig();

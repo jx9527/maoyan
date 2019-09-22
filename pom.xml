@@ -546,6 +546,16 @@
 		    <artifactId>nist-sdp</artifactId>
 		    <version>1.0</version>
 		</dependency>
+		<dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.1.19</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
 		<dependencies>

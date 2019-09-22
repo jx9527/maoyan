@@ -92,7 +92,9 @@ public class CoreHandler implements IScopeHandler, CoreHandlerMXBean {
             IClientRegistry clientRegistry = connectionScope.getContext().getClientRegistry();
             log.debug("Client registry: {}", (clientRegistry == null ? "is null" : "not null"));
             if (clientRegistry != null) {
-                IClient client = conn.getClient();
+            	 // Get client from registry by id or create a new one
+                IClient client = clientRegistry.hasClient(id) ? clientRegistry.lookupClient(id) : clientRegistry.newClient(params);    
+                /*IClient client = conn.getClient();
                 if (client == null) {
                     if (!clientRegistry.hasClient(id)) {
                         if (conn instanceof RTMPTConnection) {
@@ -116,7 +118,7 @@ public class CoreHandler implements IScopeHandler, CoreHandlerMXBean {
                 } else {
                     // set the client on the connection
                     conn.setClient(client);
-                }
+                }*/
                 // add any rtmp connections to the manager
                 IConnectionManager<RTMPConnection> connManager = RTMPConnManager.getInstance();
                 if (conn instanceof RTMPTConnection) {

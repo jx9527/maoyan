@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -1218,7 +1219,7 @@ public class Scope extends BasicScope implements IScope, IScopeStatistics, Scope
         return null;
     }
 
-    //for debugging
+    /*//for debugging
     public void dump() {
         if (log.isTraceEnabled()) {
             log.trace("Scope: {} {}", this.getClass().getName(), this);
@@ -1238,8 +1239,26 @@ public class Scope extends BasicScope implements IScope, IScopeStatistics, Scope
                 log.trace("Child: {}", child);
             });
         }
-    }
-
+    }*/
+  //for debugging
+  	public void dump() {
+  		if (log.isDebugEnabled()) {
+  			log.debug("Scope: {} {}", this.getClass().getName(), this);
+  			log.debug("Running: {}", running);
+  			if (hasParent()) {
+  				log.debug("Parent: {}", parent);
+  				Set<String> names = parent.getBasicScopeNames(null);
+  				for (String sib : names) {
+                    log.trace("Siblings - {}", sib);
+                }
+  				names = null;
+  			}
+  			log.debug("Handler: {}", handler);
+  			children.forEach(child -> {
+                log.trace("Child: {}", child);
+            });
+  		}
+  	}
     protected void registerJMX() {
         // register with jmx
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();

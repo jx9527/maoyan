@@ -696,6 +696,7 @@ public class StreamService implements IStreamService {
                 if (providerService.registerBroadcastStream(conn.getScope(), name, bs)) {
                     bsScope = getBroadcastScope(conn.getScope(), name);
                     bsScope.setClientBroadcastStream(bs);
+                    bsScope.setAttribute(IBroadcastScope.STREAM_ATTRIBUTE, bs);
                     if (conn instanceof BaseConnection) {
                         ((BaseConnection) conn).registerBasicScope(bsScope);
                     }

@@ -33,6 +33,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.red5.server.api.IClient;
 import org.red5.server.api.IConnection;
@@ -45,6 +46,10 @@ import org.red5.server.scope.Scope;
 import org.red5.server.so.SharedObjectScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
+
+import cn.hutool.core.collection.CollUtil;
 
 /**
  * Base abstract class for connections. Adds connection specific functionality like work with clients to AttributeStore.
@@ -326,6 +331,9 @@ public abstract class BaseConnection extends AttributeStore implements IConnecti
      * @return connection parameters
      */
     public Map<String, Object> getConnectParams() {
+    	if(CollUtil.isEmpty(params)){
+    		return Maps.newHashMap();
+    	}
         return Collections.unmodifiableMap(params);
     }
 

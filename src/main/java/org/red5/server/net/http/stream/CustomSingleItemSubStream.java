@@ -23,6 +23,7 @@ import org.red5.server.api.scheduling.ISchedulingService;
 import org.red5.server.api.scope.IBasicScope;
 import org.red5.server.api.scope.IBroadcastScope;
 import org.red5.server.api.scope.IScope;
+import org.red5.server.api.scope.ScopeType;
 import org.red5.server.api.stream.IClientBroadcastStream;
 import org.red5.server.api.stream.IClientStream;
 import org.red5.server.api.stream.IPlayItem;
@@ -111,7 +112,7 @@ public class CustomSingleItemSubStream extends SingleItemSubscriberStream {
 	@Override
 	public void close() {
 		
-		if(!state.equals(StreamState.CLOSED)) {
+		if(state.get() != StreamState.CLOSED) {
 			super.close();
 		}
 	}
@@ -207,7 +208,11 @@ public class CustomSingleItemSubStream extends SingleItemSubscriberStream {
 				reader.close();
 			}
 		} else if(result == INPUT_TYPE.LIVE) { // get live video and audio config
-			IBasicScope basicScope = scope.getBasicScope(IBroadcastScope.TYPE, item.getName());
+			//IBasicScope basicScope = scope.getBasicScope(ScopeType.APPLICATION, item.getName());
+			//IBasicScope basicScope1 = scope.getBasicScope(ScopeType.GLOBAL, item.getName());
+			IBasicScope basicScope = scope.getBasicScope(ScopeType.BROADCAST, item.getName()); 
+			
+			
 			IClientBroadcastStream bs = null;
 			if(basicScope != null) {
 				bs = (IClientBroadcastStream)basicScope.getAttribute(IBroadcastScope.STREAM_ATTRIBUTE);

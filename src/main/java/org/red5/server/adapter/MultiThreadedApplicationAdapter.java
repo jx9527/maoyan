@@ -69,6 +69,7 @@ import org.red5.server.plugin.PluginDescriptor;
 import org.red5.server.plugin.PluginRegistry;
 import org.red5.server.plugin.Red5Plugin;
 import org.red5.server.scheduling.JDKSchedulingService;
+import org.red5.server.scheduling.QuartzSchedulingService;
 import org.red5.server.so.SharedObjectService;
 import org.red5.server.stream.IProviderService;
 import org.red5.server.stream.PlaylistSubscriberStream;
@@ -967,7 +968,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public String addScheduledJob(int interval, IScheduledJob job) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         return schedulingService.addScheduledJob(interval, job);
     }
@@ -984,7 +985,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public String addScheduledOnceJob(long timeDelta, IScheduledJob job) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         return schedulingService.addScheduledOnceJob(timeDelta, job);
     }
@@ -1002,7 +1003,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public String addScheduledOnceJob(Date date, IScheduledJob job) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         return schedulingService.addScheduledOnceJob(date, job);
     }
@@ -1020,7 +1021,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public String addScheduledJobAfterDelay(int interval, IScheduledJob job, int delay) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         return schedulingService.addScheduledJobAfterDelay(interval, job, delay);
     }
@@ -1033,7 +1034,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public void pauseScheduledJob(String name) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         schedulingService.pauseScheduledJob(name);
     }
@@ -1046,7 +1047,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public void resumeScheduledJob(String name) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         schedulingService.resumeScheduledJob(name);
     }
@@ -1059,7 +1060,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public void removeScheduledJob(String name) {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         schedulingService.removeScheduledJob(name);
     }
@@ -1071,7 +1072,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
      */
     public List<String> getScheduledJobNames() {
         if (schedulingService == null) {
-            schedulingService = (ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
+            schedulingService = QuartzSchedulingService.getInstance();//(ISchedulingService) ScopeUtils.getScopeService(scope, ISchedulingService.class, JDKSchedulingService.class, false);
         }
         return schedulingService.getScheduledJobNames();
     }
@@ -1273,6 +1274,7 @@ public class MultiThreadedApplicationAdapter extends StatefulScopeWrappingAdapte
     public void streamPlayItemPlay(ISubscriberStream stream, IPlayItem item, boolean isLive) {
         // log w3c connect event
         log.info("W3C x-category:stream x-event:play c-ip:{} x-sname:{} x-name:{}", new Object[] { Red5.getConnectionLocal().getRemoteAddress(), stream.getName(), item.getName() });
+         
     }
 
     public void streamPlayItemStop(ISubscriberStream stream, IPlayItem item) {

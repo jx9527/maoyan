@@ -33,6 +33,7 @@ import org.red5.server.api.scheduling.IScheduledJob;
 import org.red5.server.api.scheduling.ISchedulingService;
 import org.red5.server.api.scope.IGlobalScope;
 import org.red5.server.api.scope.IScope;
+import org.red5.server.scheduling.QuartzSchedulingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -51,7 +52,7 @@ public class Server implements IServer, ApplicationContextAware, InitializingBea
     /**
      * Service used to provide notifications.
      */
-    private static ISchedulingService schedulingService;
+    private static ISchedulingService schedulingService = QuartzSchedulingService.getInstance();
 
     /**
      * List of global scopes
@@ -107,7 +108,7 @@ public class Server implements IServer, ApplicationContextAware, InitializingBea
      * Initialization section.
      */
     public void afterPropertiesSet() throws Exception {
-        Server.schedulingService = (ISchedulingService) applicationContext.getBean(ISchedulingService.BEAN_NAME);
+        Server.schedulingService =  QuartzSchedulingService.getInstance();// (ISchedulingService) applicationContext.getBean(ISchedulingService.BEAN_NAME);
     }
 
     /**

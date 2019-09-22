@@ -4,7 +4,7 @@
 #      defaultZone: http://localhost:8761/eureka/
 #8762
 server:
-  port: 5080 
+  port: 5089 
 spring:
   application:
     name: service-srsj-console
@@ -20,7 +20,7 @@ mina:
 #HTTP
 http:
   host: 0.0.0.0
-  port: 80
+  port: 5080
   URIEncoding: UTF-8
   max_headers_size: 8192
   max_keep_alive_requests: -1
@@ -43,7 +43,7 @@ hls:
 #RTSP
 rtsp:
   host: 0.0.0.0
-  port: 555
+  port: 554
   io_threads: 2
   worker_threads: 16
   send_buffer_size: 65536
@@ -141,7 +141,8 @@ jmx:
     port: 9999
     sport: 9998
     registryes: 9999
-    enable: false 
+    enable: false
+    remoteobjects: ''
   mina:
     monitor:
       enable: false

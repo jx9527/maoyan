@@ -35,6 +35,7 @@ import org.red5.server.api.scope.IBasicScope;
 import org.red5.server.api.scope.IScope;
 import org.red5.server.api.scope.IScopeSecurityHandler;
 import org.red5.server.api.scope.ScopeType;
+import org.red5.server.scheduling.QuartzSchedulingService;
 import org.red5.server.util.ScopeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,7 +306,7 @@ public abstract class BasicScope extends PersistableAttributeStore implements IB
             if (removed && keepAliveJobName == null) {
                 if (ScopeUtils.isRoom(this) && listeners.isEmpty()) {
                     // create job to kill the scope off if no listeners join within the delay
-                    ISchedulingService schedulingService = (ISchedulingService) parent.getContext().getBean(ISchedulingService.BEAN_NAME);
+                    ISchedulingService schedulingService =  QuartzSchedulingService.getInstance();//(ISchedulingService) parent.getContext().getBean(ISchedulingService.BEAN_NAME);
                     // by default keep a scope around for a fraction of a second
                     keepAliveJobName = schedulingService.addScheduledOnceJob((keepDelay > 0 ? keepDelay * 1000 : 100), new KeepAliveJob(this));
                 }

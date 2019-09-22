@@ -59,6 +59,7 @@ import org.red5.server.messaging.PipeConnectionEvent;
 import org.red5.server.net.rtmp.event.AudioData;
 import org.red5.server.net.rtmp.event.IRTMPEvent;
 import org.red5.server.net.rtmp.event.VideoData;
+import org.red5.server.scheduling.QuartzSchedulingService;
 import org.red5.server.stream.message.RTMPMessage;
 import org.red5.server.stream.message.ResetMessage;
 import org.red5.server.util.ScopeUtils;
@@ -442,7 +443,7 @@ public class ServerStream extends AbstractStream implements IServerStream, IFilt
             providerService = (IProviderService) context.getBean(IProviderService.BEAN_NAME);
             // publish this server-side stream
             providerService.registerBroadcastStream(scope, publishedName, this);
-            scheduler = (ISchedulingService) context.getBean(ISchedulingService.BEAN_NAME);
+            scheduler = QuartzSchedulingService.getInstance();//(ISchedulingService) context.getBean(ISchedulingService.BEAN_NAME);
         } catch (NullPointerException npe) {
             log.warn("Context beans were not available; this is ok during unit testing", npe);
         }

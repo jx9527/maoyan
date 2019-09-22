@@ -34,6 +34,7 @@ public class RTSPMinaTransport {
 	private SocketAcceptor acceptor;
 	private IoHandler ioHandler;
 	protected boolean useHeapBuffers = true;
+	static ExecutorService executor = Executors.newFixedThreadPool(4, new CustomizableThreadFactory("UdpWorkerExecutor-"));
 	
 	public final static NioDatagramAcceptor RTP_VIDEO_ACCEPTOR = new NioDatagramAcceptor();
 	public final static NioDatagramAcceptor RTP_AUDIO_ACCEPTOR = new NioDatagramAcceptor();
@@ -42,7 +43,6 @@ public class RTSPMinaTransport {
 	
 	public RTSPMinaTransport() throws IOException {
 							
-		ExecutorService executor = Executors.newFixedThreadPool(4, new CustomizableThreadFactory("UdpWorkerExecutor-"));
 		RTP_VIDEO_ACCEPTOR.setHandler(new RTPMinaIoHandler());
 		RTP_VIDEO_ACCEPTOR.getFilterChain().addLast("threadPool", new ExecutorFilter(executor)); 
 		
@@ -64,9 +64,7 @@ public class RTSPMinaTransport {
 		}
 		
 		acceptor = new NioSocketAcceptor(ExtConfiguration.RTSP_IO_THREADS);	
-		if(ioHandler == null){
-			ioHandler = new RTSPMinaIoHandler();
-		} 
+		ioHandler = new RTSPMinaIoHandler(); 
 		acceptor.setHandler(ioHandler);
 		acceptor.setBacklog(ExtConfiguration.RTSP_MAX_BACKLOG);
 		

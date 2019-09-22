@@ -43,8 +43,8 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.red5.io.flv.FLVUtils;
 import org.red5.server.api.Red5;
 import org.red5.server.api.ScopeUtils;
+import org.red5.server.api.service.IStreamSecurityService;
 import org.red5.server.api.stream.IStreamPlaybackSecurity;
-import org.red5.server.api.stream.IStreamSecurityService;
 import org.red5.server.api.stream.support.SimplePlayItem;
 import org.red5.server.net.http.codec.HTTPCodecUtil;
 import org.red5.server.net.http.codec.QueryStringDecoder;
@@ -96,7 +96,7 @@ public final class RTSPCore {
 		boolean flag = true;
 		RTSPMinaConnection conn = (RTSPMinaConnection)Red5.getConnectionLocal();
 		response.setHeader(SESSION, String.format("%s;%s", conn.getSessionId(),"timeout=60"));
-		response.setHeader(SERVER, "Red5");
+		response.setHeader(SERVER, "RED");
 		response.setHeader(CSEQ, String.valueOf(request.getHeader("CSeq")));
 		response.setHeader(CACHE_CONTROL, "no-cache");
 		if(request.getMethod() == OPTIONS){
@@ -135,8 +135,8 @@ public final class RTSPCore {
 	 */
 	public static void options(HTTPRequest request, HTTPResponse response) {
 
-		response.setHeader("Public", "DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, OPTIONS, ANNOUNCE, RECORD, GET_PARAMETER");
-		response.setHeader("Supported", "play.basic, con.persistent");
+		response.setHeader("Public", "DESCRIBE,SETUP,TEARDOWN,PLAY,PAUSE,OPTIONS,ANNOUNCE,RECORD,GET_PARAMETER");
+		response.setHeader("Supported", "play.basic,con.persistent");
 	}
 	
 	/**
@@ -635,8 +635,16 @@ public final class RTSPCore {
 			
 		String app = segments[0];
 		String stream = segments[1];
-		
 		Scope scope = (Scope) conn.getScope();
+		if(scope == null) {
+			scope = ScopeUtils.getScope(segments[0]);
+			if(scope == null) { // root scope?
+				scope = ScopeUtils.getScope("root");
+			} 
+		} else {// root scope
+			scope = ScopeUtils.getScope("root");
+		}  
+		
 		if (scope == null || StringUtils.isEmpty(stream)) return null;
 		
 		StringBuilder streamSb = new StringBuilder();
