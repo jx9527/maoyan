@@ -283,6 +283,8 @@ public class HTTPHeaders {
          * {@code "WWW-Authenticate"}
          */
         public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+        
+        public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 
         private Names() {
         }
@@ -472,10 +474,12 @@ public class HTTPHeaders {
                 message.removeHeader(Names.CONNECTION);
             } else {
                 message.setHeader(Names.CONNECTION, Values.CLOSE);
+                message.setHeader(Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
             }
         } else {
             if (keepAlive) {
                 message.setHeader(Names.CONNECTION, Values.KEEP_ALIVE);
+                message.setHeader(Names.ACCESS_CONTROL_ALLOW_ORIGIN,"*");
             } else {
                 message.removeHeader(Names.CONNECTION);
             }

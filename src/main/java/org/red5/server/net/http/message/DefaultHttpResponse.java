@@ -1,5 +1,6 @@
 package org.red5.server.net.http.message;
 
+import org.red5.server.net.http.message.HTTPHeaders.Names;
 import org.red5.server.util.StringUtil;
 
 /**
@@ -20,6 +21,8 @@ public class DefaultHttpResponse extends DefaultHttpMessage implements HTTPRespo
     public DefaultHttpResponse(HTTPVersion version, HTTPResponseStatus status) {
         super(version);
         setStatus(status);
+        //添加跨域请求
+        addHeader(Names.ACCESS_CONTROL_ALLOW_ORIGIN,"*");
     }
 
     public HTTPResponseStatus getStatus() {
