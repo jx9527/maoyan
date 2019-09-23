@@ -18,8 +18,7 @@ public class SpringBootRed5Application {
     	//设置root目录
     	RootPathUtil.iniRoot();
     	//启动服务器
-    	SpringApplication springApplication = new SpringApplication(SpringBootRed5Application.class);
-        springApplication.run(args); 
+        SpringApplication.run(SpringBootRed5Application.class, args);
         //视频推流
         PushRTMP.run();
     } 
