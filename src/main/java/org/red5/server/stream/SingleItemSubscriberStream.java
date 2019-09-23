@@ -242,7 +242,9 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
     }
 
     public void close() {
-        engine.close();
+    	if(engine != null){
+    		engine.close();	
+    	} 
         onChange(StreamState.CLOSED);
         // clear jobs
         if (schedulingService != null && !jobs.isEmpty()) {

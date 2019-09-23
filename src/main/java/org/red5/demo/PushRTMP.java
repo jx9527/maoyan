@@ -22,40 +22,44 @@ public class PushRTMP {
 	}
 
 	@SuppressWarnings("resource")
-	private static void push(String rtmpPath, String rtspPath, int audioRecord, boolean saveVideo) throws Exception {
+	private static void push(String rtmpPath, String rtspPath, int audioRecord, boolean saveVideo){
 		// 使用rtsp的时候需要使用 FFmpegFrameGrabber，不能再用 FrameGrabber
 		int width = 640, height = 480;
-		FFmpegFrameGrabber grabber = FFmpegFrameGrabber.createDefault(rtmpPath);
-		grabber.setOption("rtsp_transport", "tcp"); // 使用tcp的方式，不然会丢包很严重
+		try {
+			FFmpegFrameGrabber grabber = FFmpegFrameGrabber.createDefault(rtmpPath);
+			grabber.setOption("rtsp_transport", "tcp"); // 使用tcp的方式，不然会丢包很严重
 
-		grabber.setImageWidth(width);
-		grabber.setImageHeight(height);
-		System.out.println("grabber start");
-		grabber.start();
-		// 流媒体输出地址，分辨率（长，高），是否录制音频（0:不录制/1:录制）
-		FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(rtspPath, width, height, audioRecord);
-		recorder.setInterleaved(true);
-		// recorder.setVideoOption("crf","28");
-		recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264); // 28
-		recorder.setFormat("flv"); // rtmp的类型
-		recorder.setFrameRate(25);
-		recorder.setImageWidth(width);
-		recorder.setImageHeight(height);
-		recorder.setPixelFormat(0); // yuv420p
-		System.out.println("recorder start");
-		recorder.start();
-		 
-		System.out.println("all start!!"); 
-		while (!exit) { 
-			Frame frame = grabber.grabImage();
-			if (frame == null) {
-				continue;
+			grabber.setImageWidth(width);
+			grabber.setImageHeight(height);
+			System.out.println("grabber start");
+			grabber.start();
+			// 流媒体输出地址，分辨率（长，高），是否录制音频（0:不录制/1:录制）
+			FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(rtspPath, width, height, audioRecord);
+			recorder.setInterleaved(true);
+			// recorder.setVideoOption("crf","28");
+			recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264); // 28
+			recorder.setFormat("flv"); // rtmp的类型
+			recorder.setFrameRate(25);
+			recorder.setImageWidth(width);
+			recorder.setImageHeight(height);
+			recorder.setPixelFormat(0); // yuv420p
+			System.out.println("recorder start");
+			recorder.start();
+			 
+			System.out.println("all start!!"); 
+			while (!exit) { 
+				Frame frame = grabber.grabImage();
+				if (frame == null) {
+					continue;
+				} 
+				recorder.record(frame);
 			} 
-			recorder.record(frame);
+			grabber.stop();
+			grabber.release();
+			recorder.stop();
+			recorder.release();
+		} catch (Exception e) {
+			//不抛异常
 		} 
-		grabber.stop();
-		grabber.release();
-		recorder.stop();
-		recorder.release();
 	}
 }

@@ -453,8 +453,12 @@ public class MP3Reader implements ITagReader, IKeyFrameDataAnalyzer {
             posTimeMap.clear();
         }
         try {
-            fis.close();
-            fileChannel.close();
+        	if(fis != null){
+        		fis.close();
+        	}
+        	if(fileChannel != null){
+        		fileChannel.close();
+        	}
         } catch (IOException e) {
             log.error("Exception on close", e);
         }
