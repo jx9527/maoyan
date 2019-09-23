@@ -1,6 +1,8 @@
 package org.red5.conf;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 /**
  * 
@@ -121,8 +123,45 @@ public class ExtConfiguration{
 	public static int MAX_QUEUE_OFFER_TIME = 125;
 	public static int MAX_QUEUE_OFFER_ATTEMPTS = 4; 
 	
-	
-	/*@Value("${rtmpt.max_queue_offer_attempts}")
+
+	@Value("${http.host}")
+	public  void setHTTP_HOST(String hTTP_HOST) {
+		HTTP_HOST = hTTP_HOST;
+	}
+	@Value("${http.port}")
+	public  void setHTTP_PORT(int hTTP_PORT) {
+		HTTP_PORT = hTTP_PORT;
+	}
+	@Value("${http.io_threads}")
+	public  void setHTTP_IO_THREADS(int hTTP_IO_THREADS) {
+		HTTP_IO_THREADS = hTTP_IO_THREADS;
+	}
+	@Value("${http.worker_threads}")
+	public  void setHTTP_WORKER_THREADS(int hTTP_WORKER_THREADS) {
+		HTTP_WORKER_THREADS = hTTP_WORKER_THREADS;
+	}
+	@Value("${http.send_buffer_size}")
+	public  void setHTTP_SEND_BUFFER_SIZE(int hTTP_SEND_BUFFER_SIZE) {
+		HTTP_SEND_BUFFER_SIZE = hTTP_SEND_BUFFER_SIZE;
+	}
+	@Value("${http.receive_buffer_size}")
+	public  void setHTTP_RECEIVE_BUFFER_SIZE(int hTTP_RECEIVE_BUFFER_SIZE) {
+		HTTP_RECEIVE_BUFFER_SIZE = hTTP_RECEIVE_BUFFER_SIZE;
+	}
+	@Value("${http.tcp_nodelay}")
+	public  void setHTTP_TCP_NODELAY(boolean hTTP_TCP_NODELAY) {
+		HTTP_TCP_NODELAY = hTTP_TCP_NODELAY;
+	}
+	@Value("${http.max_backlog}")
+	public  void setHTTP_MAX_BACKLOG(int hTTP_MAX_BACKLOG) {
+		HTTP_MAX_BACKLOG = hTTP_MAX_BACKLOG;
+	}
+	@Value("${http.idle}")
+	public  void setHTTP_IDLE(int hTTP_IDLE) {
+		HTTP_IDLE = hTTP_IDLE;
+	}
+
+	@Value("${rtmpt.max_queue_offer_attempts}")
 	public  void setMaxQueueOfferAttempts(int maxQueueOfferAttempts) {
 		MAX_QUEUE_OFFER_ATTEMPTS = maxQueueOfferAttempts;
 	} 
@@ -370,43 +409,7 @@ public class ExtConfiguration{
 	public  void setCorePoolSize(int corePoolSize) {
 		CORE_POOL_SIZE = corePoolSize;
 	} 
-	
-	@Value("${http.host}")
-	public  void setHTTP_HOST(String hTTP_HOST) {
-		HTTP_HOST = hTTP_HOST;
-	}
-	@Value("${http.port}")
-	public  void setHTTP_PORT(int hTTP_PORT) {
-		HTTP_PORT = hTTP_PORT;
-	}
-	@Value("${http.io_threads}")
-	public  void setHTTP_IO_THREADS(int hTTP_IO_THREADS) {
-		HTTP_IO_THREADS = hTTP_IO_THREADS;
-	}
-	@Value("${http.worker_threads}")
-	public  void setHTTP_WORKER_THREADS(int hTTP_WORKER_THREADS) {
-		HTTP_WORKER_THREADS = hTTP_WORKER_THREADS;
-	}
-	@Value("${http.send_buffer_size}")
-	public  void setHTTP_SEND_BUFFER_SIZE(int hTTP_SEND_BUFFER_SIZE) {
-		HTTP_SEND_BUFFER_SIZE = hTTP_SEND_BUFFER_SIZE;
-	}
-	@Value("${http.receive_buffer_size}")
-	public  void setHTTP_RECEIVE_BUFFER_SIZE(int hTTP_RECEIVE_BUFFER_SIZE) {
-		HTTP_RECEIVE_BUFFER_SIZE = hTTP_RECEIVE_BUFFER_SIZE;
-	}
-	@Value("${http.tcp_nodelay}")
-	public  void setHTTP_TCP_NODELAY(boolean hTTP_TCP_NODELAY) {
-		HTTP_TCP_NODELAY = hTTP_TCP_NODELAY;
-	}
-	@Value("${http.max_backlog}")
-	public  void setHTTP_MAX_BACKLOG(int hTTP_MAX_BACKLOG) {
-		HTTP_MAX_BACKLOG = hTTP_MAX_BACKLOG;
-	}
-	@Value("${http.idle}")
-	public  void setHTTP_IDLE(int hTTP_IDLE) {
-		HTTP_IDLE = hTTP_IDLE;
-	} 
+	 
 	@Value("${hls.segment_max}")
 	public  void setHLS_SEGMENT_MAX(int hLS_SEGMENT_MAX) {
 		HLS_SEGMENT_MAX = hLS_SEGMENT_MAX;
@@ -468,6 +471,7 @@ public class ExtConfiguration{
 	public  void setJMX_RMI_PORT_REGISTRY(int jMX_RMI_PORT_REGISTRY) {
 		JMX_RMI_PORT_REGISTRY = jMX_RMI_PORT_REGISTRY;
 	}
+	
 	@Value("${jmx.rmi.enable}")
 	public  void setJMX_RMI_ENABLE(boolean jMX_RMI_ENABLE) {
 		JMX_RMI_ENABLE = jMX_RMI_ENABLE;
@@ -495,6 +499,5 @@ public class ExtConfiguration{
 	@Value("${unicast.executor_threads}")
 	public  void setUNICAST_EXECUTOR_THREADS(int uNICAST_EXECUTOR_THREADS) {
 		UNICAST_EXECUTOR_THREADS = uNICAST_EXECUTOR_THREADS;
-	} */
-	 
+	}
 }

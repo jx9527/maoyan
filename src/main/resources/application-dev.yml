@@ -1,0 +1,5 @@
+#minalog
+mina:
+  logfilter.enable: false 
+#HTTP
+
