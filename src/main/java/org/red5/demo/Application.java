@@ -8,7 +8,6 @@ import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IServerStream;
 import org.red5.server.net.http.stream.MpegtsSegmenterService;
-import org.red5.server.stream.ClientBroadcastStream;
 
 
 public class Application extends ApplicationAdapter {
@@ -105,33 +104,15 @@ public class Application extends ApplicationAdapter {
 		stream.addStreamListener(ss); 
 		
 		
-//		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
-//		UDPDatagramConfig config = new UDPDatagramConfig();
-//		config.setReceiveBufferSize(8192);
-//		config.setSendBufferSize(8192);
-//		ms.register(stream, config, "0.0.0.0", 1234);
-//		stream.addStreamListener(ms);
+/*		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
+		UDPDatagramConfig config = new UDPDatagramConfig();
+		config.setReceiveBufferSize(8192);
+		config.setSendBufferSize(8192);
+		ms.register(stream, config, "0.0.0.0", 5050);
+		stream.addStreamListener(ms);*/
 		super.streamPublishStart(stream);
 		
-		
-		/*String streamName = stream.getPublishedName();
-		 
-		iconn = Red5.getConnectionLocal();// 得到当前的连接
-		iscope = iconn.getScope();// 一组连入服务器的客户
-		this.connect(iconn, iscope, null);
-		System.out.println("connection Established!");
-		// 注意stream name，在flash端也需要匹配
-		istream = (ClientBroadcastStream) this.getBroadcastStream(iscope, streamName);
-		System.out.println(
-				"The publisher's name is: " + stream.getPublishedName() + ", created at: " + stream.getCreationTime());
-		System.out.println("the stream Name is: " + streamName);
-		try { 
-			 
-			istream.saveAs(streamName,false);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		//保存流为文件
 		try { 
 			stream.saveAs(stream.getPublishedName(),false);
 		} catch (Exception e) {
@@ -147,10 +128,10 @@ public class Application extends ApplicationAdapter {
 		MpegtsSegmenterService ss = MpegtsSegmenterService.getInstance();
 		stream.removeStreamListener(ss);
 		ss.removeSegment(stream.getScope().getName(), stream.getPublishedName());
-//		
-//		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
-//		stream.removeStreamListener(ms);
-//		ms.unregister(stream.getPublishedName());
+		
+		/*MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
+		stream.removeStreamListener(ms);
+		ms.unregister(stream.getPublishedName());*/
  		
 		
 		super.streamBroadcastClose(stream);
