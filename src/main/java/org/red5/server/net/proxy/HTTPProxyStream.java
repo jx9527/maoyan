@@ -8,6 +8,7 @@ import org.red5.io.ITag;
 import org.red5.io.IoConstants;
 import org.red5.io.flv.impl.Tag;
 import org.red5.io.utils.IOUtils;
+import org.red5.server.api.scope.IScope;
 import org.red5.server.api.service.IPendingServiceCall;
 import org.red5.server.net.rtmp.event.AudioData;
 import org.red5.server.net.rtmp.event.Notify;
@@ -27,9 +28,10 @@ public abstract class HTTPProxyStream extends BaseRTMPProxyStream implements IoC
 	
 	private volatile boolean skipFlvHeader = false;
 	
-	public HTTPProxyStream(String streamName) {
+	public HTTPProxyStream(IScope scope,String streamName) {
 	
 		super();
+		setScope(scope);
 		setPublishedName(streamName);	
 	}
 		

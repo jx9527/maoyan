@@ -14,10 +14,11 @@ rtmp://localhost:1935/oflaDemo/sssssss，播放推送流
 rtmp://localhost:1935/oflaDemo/sssssss.flv
 http://127.0.0.1/oflaDemo/sssssss/playlist.m3u8， 播放推送流
 http://127.0.0.1/oflaDemo/sssssss.flv/playlist.m3u8，播放本地文件
-rtsp://127.0.0.1/oflaDemo/sssssss 
+rtsp://127.0.0.1/oflaDemo/sssssss
 3.2 (放到jar包同级目录webapps/../../下)
 rtmp://localhost:1935/oflaDemo/file.flv，播放推送流
 http://127.0.0.1/oflaDemo/file.flv/playlist.m3u8，播放本地文件
+http://127.0.0.1/oflaDemo/flv/file.flv
 rtsp://127.0.0.1/oflaDemo/file.flv
 ### 感谢开源的道友
 

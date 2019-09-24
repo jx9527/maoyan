@@ -5,18 +5,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.buffer.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.red5.io.ITag;
 import org.red5.io.amf.Output;
 import org.red5.io.flv.impl.Tag;
-import org.red5.server.ContextBean;
 import org.red5.server.ScopeContextBean;
-import org.red5.server.api.scope.IScope;
 import org.red5.server.api.event.IEvent;
+import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IStreamListener;
 import org.red5.server.api.stream.IStreamPacket;
@@ -26,6 +21,8 @@ import org.red5.server.net.rtmp.event.VideoData;
 import org.red5.server.net.rtmp.message.Constants;
 import org.red5.server.stream.ClientBroadcastStream;
 import org.red5.server.util.SystemTimer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Live Broadcast Stream Record
@@ -65,15 +62,19 @@ public class RecordableBroadcastStream extends ClientBroadcastStream implements 
 		this.durationPerFile = durationPerFile;
 	}
 
+	public long getDurationPerFile() {
+		return durationPerFile;
+	}
+
 	@Override
 	public void setScope(IScope scope) {
 		
 		super.setScope(scope);
-		ContextBean ctxBean = getScope().getContext().getScopeCtxBean().getClazz(ScopeContextBean.BROADCASTSTREAM_BEAN); 
-		storePath = ctxBean.getProperty("path");
-		canRecord = Boolean.parseBoolean(ctxBean.getProperty("record"));
-		if (!StringUtils.isEmpty(ctxBean.getProperty("duration"))) {
-			durationPerFile = Long.parseLong(ctxBean.getProperty("duration")) * 1000;
+		RecordableBroadcastStream ctxBean = (RecordableBroadcastStream) getScope().getContext().getBean(ScopeContextBean.BROADCASTSTREAM_BEAN); 
+		storePath = ctxBean.getStorePath();
+		canRecord = ctxBean.isCanRecord();
+		if (ctxBean.getDurationPerFile() != 0) {
+			durationPerFile = ctxBean.getDurationPerFile() * 1000;
 		}
 	}
 	
@@ -208,4 +209,5 @@ public class RecordableBroadcastStream extends ClientBroadcastStream implements 
 			closeWriter();
 		}
 	}
+	
 }

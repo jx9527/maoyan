@@ -1,5 +1,6 @@
 package org.red5.server.net.proxy;
 
+import org.red5.server.api.scope.IScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +14,8 @@ public class HTTPPushProxyStream extends HTTPProxyStream {
 
 	private static Logger log = LoggerFactory.getLogger(HTTPPushProxyStream.class);
 	
-	public HTTPPushProxyStream(String streamName) {
-		super(streamName);
+	public HTTPPushProxyStream(IScope scope,String streamName) {
+		super(scope,streamName);
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.mina.core.buffer.IoBuffer;
+import org.red5.server.api.scope.IScope;
 import org.red5.server.util.HttpConnectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +33,9 @@ public class HTTPPullProxyStream extends HTTPProxyStream {
 	
 	private static volatile int threadCount = 0;
 	
-	public HTTPPullProxyStream(String url, String streamName) {
+	public HTTPPullProxyStream(String url,IScope scope, String streamName) {
 		 
-		super(streamName);
+		super(scope,streamName);
 		this.url = url;
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 	}
