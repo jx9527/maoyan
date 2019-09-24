@@ -84,6 +84,7 @@ public class HTTPApplicationAdapter implements IHTTPApplicationAdapter {
 				}
 			});
 		}
+		System.out.println(resp.toString());
 	}
 	
 	@Override

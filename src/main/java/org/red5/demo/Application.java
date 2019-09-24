@@ -8,6 +8,8 @@ import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IServerStream;
 import org.red5.server.net.http.stream.MpegtsSegmenterService;
+import org.red5.server.net.udp.MulticastOutgoingService;
+import org.red5.server.net.udp.UDPDatagramConfig;
 
 
 public class Application extends ApplicationAdapter {
@@ -31,9 +33,7 @@ public class Application extends ApplicationAdapter {
 	/** {@inheritDoc} */
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
-
-		System.out.println(conn);
-
+ 
 		log.info("oflaDemo appConnect");
 		IScope appScope = conn.getScope();
 		log.debug("App connect called for scope: {}", appScope.getName());
@@ -104,17 +104,17 @@ public class Application extends ApplicationAdapter {
 		stream.addStreamListener(ss); 
 		
 		
-/*		MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
+ 		/*MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
 		UDPDatagramConfig config = new UDPDatagramConfig();
 		config.setReceiveBufferSize(8192);
 		config.setSendBufferSize(8192);
-		ms.register(stream, config, "0.0.0.0", 5050);
-		stream.addStreamListener(ms);*/
+		ms.register(stream, config, "224.0.0.1", 5050);
+		stream.addStreamListener(ms); */
 		super.streamPublishStart(stream);
 		
 		//保存流为文件
 		try { 
-			stream.saveAs(stream.getPublishedName(),false);
+			//stream.saveAs(stream.getPublishedName(),false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,9 +129,9 @@ public class Application extends ApplicationAdapter {
 		stream.removeStreamListener(ss);
 		ss.removeSegment(stream.getScope().getName(), stream.getPublishedName());
 		
-		/*MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
+		/* MulticastOutgoingService ms = MulticastOutgoingService.getInstance();
 		stream.removeStreamListener(ms);
-		ms.unregister(stream.getPublishedName());*/
+		ms.unregister(stream.getPublishedName()); */
  		
 		
 		super.streamBroadcastClose(stream);

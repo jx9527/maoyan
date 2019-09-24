@@ -50,7 +50,7 @@ public class HTTPMinaIoHandler extends IoHandlerAdapter {
 		HTTPMinaConnection conn = (HTTPMinaConnection)session.getAttribute(HTTPMinaConnection.HTTP_CONNECTION_KEY);
 		Red5.setConnectionLocal(conn);
 		if(message instanceof HTTPRequest) {	
-			HTTPRequest req = (HTTPRequest)message;
+			HTTPRequest req = (HTTPRequest)message; 
 			HTTPResponse resp = new DefaultHttpResponse(HTTP_1_1, OK);
 			String path = req.getUri().substring(1);	
 			String noAppPath = req.getUri();

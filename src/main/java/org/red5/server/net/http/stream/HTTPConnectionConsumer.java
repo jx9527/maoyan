@@ -48,7 +48,7 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 			if ("pendingVideoCount".equals(oobCtrlMsg.getServiceName())) {
 				long pendings = conn.getPendingMessages();
 				if(pendings > 500){
-					log.info("http pending packet:{}", pendings);
+					//log.info("http pending packet:{}", pendings);
 					oobCtrlMsg.setResult(pendings);
 				} else if(pendings > 1000) {
 					log.info("http pending packet > 1000, network is bad");

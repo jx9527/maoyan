@@ -33,10 +33,10 @@ public class HTTPFlvPlayerService extends BaseHTTPService implements IHTTPServic
 
 		resp.addHeader("Accept-Ranges", "bytes");
 		resp.addHeader(CONTENT_TYPE, "video/x-flv");
-		resp.addHeader(CONTENT_LENGTH, Integer.MAX_VALUE);  
+		//resp.addHeader(CONTENT_LENGTH, Integer.MAX_VALUE);  
 		resp.addHeader("Pragma", "no-cache"); 
 		resp.setHeader("Connection", "Keep-Alive");
-		resp.setHeader("Cache-Control", "no-cache");
+		resp.setHeader("Cache-Control", "no-cache"); 
 	}
 
 	@Override
