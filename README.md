@@ -8,19 +8,19 @@
 
 1. 首先运行SpringBootRed5Application启动red5服务器
 2. 使用VLC Mider player或其他软件播放 
-3. 例如 (测试通过)
-3.1 直播流
-rtmp://localhost:1935/oflaDemo/sssssss，播放推送流  - (rtmp)
-rtmp://localhost:1935/oflaDemo/sssssss.flv     - (rtmp)
-http://127.0.0.1/oflaDemo/sssssss/playlist.m3u8， 播放推送流   -(hls)
-http://127.0.0.1/oflaDemo/sssssss.flv/playlist.m3u8，播放本地文件   -(hls)
-http://127.0.0.1/oflaDemo/flv/sssssss ，等待时间较长    -(http-flv)
-rtsp://127.0.0.1/oflaDemo/sssssss   -(rtsp)
-3.2 播放文件(放到jar包同级目录webapps/../../下)
-rtmp://localhost:1935/oflaDemo/file.flv，播放推送流
-http://127.0.0.1/oflaDemo/file.flv/playlist.m3u8，播放本地文件
-http://127.0.0.1/oflaDemo/flv/file.flv
-rtsp://127.0.0.1/oflaDemo/file.flv
+3. 例如 (测试通过) <br/>
+3.1 直播流 <br/>
+rtmp://localhost:1935/oflaDemo/sssssss，播放推送流  - (rtmp) <br/>
+rtmp://localhost:1935/oflaDemo/sssssss.flv     - (rtmp) <br/>
+http://127.0.0.1/oflaDemo/sssssss/playlist.m3u8， 播放推送流   -(hls) <br/>
+http://127.0.0.1/oflaDemo/sssssss.flv/playlist.m3u8，播放本地文件   -(hls) <br/>
+http://127.0.0.1/oflaDemo/flv/sssssss ，等待时间较长    -(http-flv) <br/>
+rtsp://127.0.0.1/oflaDemo/sssssss   -(rtsp) <br/>
+3.2 播放文件(放到jar包同级目录webapps/../../下) <br/>
+rtmp://localhost:1935/oflaDemo/file.flv，播放推送流<br/>
+http://127.0.0.1/oflaDemo/file.flv/playlist.m3u8，播放本地文件 <br/>
+http://127.0.0.1/oflaDemo/flv/file.flv <br/>
+rtsp://127.0.0.1/oflaDemo/file.flv <br/>
 ### 感谢开源的道友
 
 1. red5服务器源码[https://github.com/Red5](https://github.com/Red5)
