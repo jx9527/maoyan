@@ -24,12 +24,9 @@ import org.red5.io.object.Input;
 import org.red5.io.object.Output;
 
 /**
- * Base interface for objects that can be made persistent.
- * 
- * Every object that complies to this interface must provide either a constructor that takes an input stream as only parameter or an empty constructor so it can be loaded from the persistence store.
- * 
- * However this is not required for objects that are created by the application and initialized afterwards.
- * 
+ * 可设为永久的对象的基本接口。
+ * 符合此接口的每个对象都必须提供一个只接受输入流作为参数的构造函数或一个空构造函数，以便可以从持久性存储加载它。
+ * 但是，对于由应用程序创建并随后初始化的对象，这不是必需的。
  * @see org.red5.io.object.Input
  * @see IPersistenceStore#load(String)
  * 
@@ -44,111 +41,35 @@ public interface IPersistable {
      * Prefix for attribute names that should not be made persistent.
      */
     public static final String TRANSIENT_PREFIX = "_transient";
-
-    /**
-     * Returns
-     * 
-     * <pre>
-     * true
-     * </pre>
-     * 
-     * if the object is persistent,
-     * 
-     * <pre>
-     * false
-     * </pre>
-     * 
-     * otherwise.
-     * 
-     * @return <pre>
-     * true
-     * </pre>
-     * 
-     *         if object is persistent,
-     * 
-     *         <pre>
-     * false
-     * </pre>
-     * 
-     *         otherwise
-     */
+ 
     public boolean isPersistent();
-
-    /**
-     * Set the persistent flag of the object.
-     * 
-     * @param persistent
-     *            <pre>
-     * true
-     * </pre>
-     * 
-     *            if object is persistent,
-     * 
-     *            <pre>
-     * false
-     * </pre>
-     * 
-     *            otherwise
-     */
+ 
     public void setPersistent(boolean persistent);
-
-    /**
-     * Returns the name of the persistent object.
-     * 
-     * @return Object name
-     */
+ 
     public String getName();
-
-    /**
-     * Set the name of the persistent object.
-     * 
-     * @param name
-     *            New object name
-     */
+ 
     public void setName(String name);
 
     /**
-     * Returns the type of the persistent object.
-     * 
-     * @return Object type
+     * Returns the type of the persistent object. 
      */
     public String getType();
 
     /**
-     * Returns the path of the persistent object.
-     * 
-     * @return Persisted object path
+     * 持久化对象路径
      */
     public String getPath();
-
-    /**
-     * Set the path of the persistent object.
-     * 
-     * @param path
-     *            New persisted object path
-     */
+ 
     public void setPath(String path);
 
     /**
-     * Returns the timestamp when the object was last modified.
-     * 
-     * @return Last modification date in milliseconds
+     * 返回最后一次修改的时间戳timestamp 
      */
     public long getLastModified();
 
-    /**
-     * Returns the persistence store this object is stored in
-     * 
-     * @return This object's persistence store
-     */
+   
     public IPersistenceStore getStore();
-
-    /**
-     * Store a reference to the persistence store in the object.
-     * 
-     * @param store
-     *            Store the object is saved in
-     */
+ 
     void setStore(IPersistenceStore store);
 
     /**

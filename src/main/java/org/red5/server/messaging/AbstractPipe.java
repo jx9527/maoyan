@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 /**
- * Abstract pipe that books providers/consumers and listeners. Aim to ease the implementation of concrete pipes. For more information on what pipe is, see IPipe interface documentation.
+ * 生产消费者模式
  * 抽象的管道 注册 生产者，消费者和监听者。目的是让子类更容易实现。
  * @author The Red5 Project
  * @author Steven Gong (steven.gong@gmail.com)
@@ -40,35 +40,18 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 public abstract class AbstractPipe implements IPipe {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPipe.class);
-
-    /**
-     * Pipe consumers list
-     */
+ 
     protected volatile CopyOnWriteArrayList<IConsumer> consumers = new CopyOnWriteArrayList<>();
-
-    /**
-     * Pipe providers list
-     */
+ 
     protected volatile CopyOnWriteArrayList<IProvider> providers = new CopyOnWriteArrayList<>();
-
-    /**
-     * Event listeners
-     */
+ 
     protected volatile CopyOnWriteArrayList<IPipeConnectionListener> listeners = new CopyOnWriteArrayList<>();
-
-    /**
-     * Executor service used to run pipe tasks.
-     */
+ 
     private static ExecutorService taskExecutor;
 
     /**
      * Connect consumer to this pipe. Doesn't allow to connect one consumer twice. Does register event listeners if instance of IPipeConnectionListener is given.
      *  连接消费者到管道上，不允许同一个消费者连接两次，如果是监听这就注册到监听上面。
-     * @param consumer
-     *            Consumer
-     * @param paramMap
-     *            Parameters passed with connection, used in concrete pipe implementations
-     * @return true if consumer was added, false otherwise
      */
     public boolean subscribe(IConsumer consumer, Map<String, Object> paramMap) {
         // pipe is possibly used by dozens of threads at once (like many subscribers for one server stream)
@@ -78,17 +61,8 @@ public abstract class AbstractPipe implements IPipe {
             listeners.addIfAbsent((IPipeConnectionListener) consumer);
         }
         return success;
-    }
-
-    /**
-     * Connect provider to this pipe. Doesn't allow to connect one provider twice. Does register event listeners if instance of IPipeConnectionListener is given.
-     * 同上
-     * @param provider
-     *            Provider
-     * @param paramMap
-     *            Parameters passed with connection, used in concrete pipe implementations
-     * @return true if provider was added, false otherwise
-     */
+    } 
+    
     public boolean subscribe(IProvider provider, Map<String, Object> paramMap) {
         boolean success = providers.addIfAbsent(provider);
         // register event listener if given and just added
@@ -105,7 +79,6 @@ public abstract class AbstractPipe implements IPipe {
      *            Provider that should be removed
      * @return true on success, false otherwise
      */
-    @SuppressWarnings("unlikely-arg-type")
     public boolean unsubscribe(IProvider provider) {
         if (providers.remove(provider)) {
             fireProviderConnectionEvent(provider, PipeConnectionEvent.EventType.PROVIDER_DISCONNECT, null);
@@ -122,7 +95,6 @@ public abstract class AbstractPipe implements IPipe {
      *            Consumer that should be removed
      * @return true on success, false otherwise
      */
-    @SuppressWarnings("unlikely-arg-type")
     public boolean unsubscribe(IConsumer consumer) {
         if (consumers.remove(consumer)) {
             fireConsumerConnectionEvent(consumer, PipeConnectionEvent.EventType.CONSUMER_DISCONNECT, null);
@@ -131,23 +103,11 @@ public abstract class AbstractPipe implements IPipe {
         }
         return false;
     }
-
-    /**
-     * Registers pipe connect events listener
-     * 
-     * @param listener
-     *            Listener
-     */
+ 
     public void addPipeConnectionListener(IPipeConnectionListener listener) {
         listeners.add(listener);
     }
-
-    /**
-     * Removes pipe connection listener
-     * 
-     * @param listener
-     *            Listener
-     */
+ 
     public void removePipeConnectionListener(IPipeConnectionListener listener) {
         listeners.remove(listener);
     }
@@ -187,69 +147,28 @@ public abstract class AbstractPipe implements IPipe {
             }
         }
     }
-
-    /**
-     * Getter for pipe connection events listeners
-     *
-     * @return Listeners
-     */
+ 
     public List<IPipeConnectionListener> getListeners() {
         return Collections.unmodifiableList(listeners);
     }
-
-    /**
-     * Setter for pipe connection events listeners
-     *
-     * @param newListeners
-     *            Listeners
-     */
+ 
     public void setListeners(List<IPipeConnectionListener> newListeners) {
         listeners.clear();
         listeners.addAll(newListeners);
     }
-
-    /**
-     * Getter for providers
-     *
-     * @return Providers list
-     */
+ 
     public List<IProvider> getProviders() {
         return Collections.unmodifiableList(providers);
     }
-
-    /**
-     * Getter for consumers
-     *
-     * @return consumers list
-     */
+ 
     public List<IConsumer> getConsumers() {
         return Collections.unmodifiableList(consumers);
     }
-
-    /**
-     * Broadcast consumer connection event
-     *
-     * @param consumer
-     *            Consumer that has connected
-     * @param type
-     *            Event type
-     * @param paramMap
-     *            Parameters passed with connection
-     */
+ 
     protected void fireConsumerConnectionEvent(IConsumer consumer, PipeConnectionEvent.EventType type, Map<String, Object> paramMap) {
         firePipeConnectionEvent(PipeConnectionEvent.build(this, type, consumer, paramMap));
     }
-
-    /**
-     * Broadcast provider connection event
-     * 
-     * @param provider
-     *            Provider that has connected
-     * @param type
-     *            Event type
-     * @param paramMap
-     *            Parameters passed with connection
-     */
+ 
     protected void fireProviderConnectionEvent(IProvider provider, PipeConnectionEvent.EventType type, Map<String, Object> paramMap) {
         firePipeConnectionEvent(PipeConnectionEvent.build(this, type, provider, paramMap));
     }
@@ -257,8 +176,6 @@ public abstract class AbstractPipe implements IPipe {
     /**
      * Fire any pipe connection event and run all it's tasks
      * 触发连接事件，同时运行全部的任务。
-     * @param event
-     *            Pipe connection event
      */
     protected void firePipeConnectionEvent(PipeConnectionEvent event) {
         for (IPipeConnectionListener element : listeners) {

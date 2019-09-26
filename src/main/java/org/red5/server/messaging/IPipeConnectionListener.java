@@ -25,11 +25,6 @@ package org.red5.server.messaging;
  * @author Steven Gong (steven.gong@gmail.com)
  */
 public interface IPipeConnectionListener {
-    /**
-     * Pipe connection event handler
-     * 
-     * @param event
-     *            Pipe connection event
-     */
+    
     void onPipeConnectionEvent(PipeConnectionEvent event);
 }

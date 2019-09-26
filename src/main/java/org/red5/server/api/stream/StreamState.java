@@ -24,7 +24,7 @@ package org.red5.server.api.stream;
  * @author Paul Gregoire (mondain@gmail.com)
  */
 public enum StreamState {
-  /*初始化         为初始              打开          关闭                 已开始              已关闭               发布中                         播放中             暂停            从新开始          结束           寻找    */
+  /*初始化         未初始              打开          关闭                 已开始              已关闭               发布中                         播放中             暂停            从新开始          结束           寻找    */
     INIT, UNINIT, OPEN, CLOSED, STARTED, STOPPED, PUBLISHING, PLAYING, PAUSED, RESUMED, END, SEEK;
 
 }

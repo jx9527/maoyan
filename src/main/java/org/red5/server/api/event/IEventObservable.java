@@ -22,32 +22,14 @@ import java.util.Set;
 
 /**
  * IEventObservable hold functionality of the well-known Observer pattern, that is it has a list of objects that listen to events.
+ * 观察者模式
  */
 public interface IEventObservable {
-
-    /**
-     * Add event listener to this observable
-     * 
-     * @param listener
-     *            Event listener
-     * @return true if listener is added and false otherwise
-     */
-    public boolean addEventListener(IEventListener listener);
-
-    /**
-     * Remove event listener from this observable
-     * 
-     * @param listener
-     *            Event listener
-     * @return true if listener is removed and false otherwise
-     */
+ 
+    public boolean addEventListener(IEventListener listener); 
+    
     public boolean removeEventListener(IEventListener listener);
-
-    /**
-     * Returns event listeners
-     *
-     * @return Event listeners iterator
-     */
+ 
     public Set<IEventListener> getEventListeners();
 
 }

@@ -25,13 +25,7 @@ package org.red5.server.api.scope;
  * @author Luke Hubbard (luke@codegent.com)
  */
 public interface IScopeAware {
-
-    /**
-     * Set the scope the object is located in.
-     * 
-     * @param scope
-     *            Scope for this object
-     */
+ 
     public void setScope(IScope scope);
 
 }

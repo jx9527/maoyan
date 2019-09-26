@@ -31,21 +31,13 @@ public interface IStreamPublishSecurity {
     /**
      * Check if publishing a stream with the given name is allowed.
      * 
-     * @param scope
-     *            Scope the stream is about to be published in.
-     * @param name
-     *            Name of the stream to publish.
-     * @param mode
-     *            Publishing mode.
+     * @param scope Scope the stream is about to be published in.
+     * @param name Name of the stream to publish.
+     * @param mode  Publishing mode.
      * @return <pre>
      * True
-     * </pre>
-     * 
-     *         if publishing is allowed, otherwise
-     * 
-     *         <pre>
-     * False
-     * </pre>
+     * </pre>if publishing is allowed, otherwise<pre>
+     * False</pre>
      */
     public boolean isPublishAllowed(IScope scope, String name, String mode);
 

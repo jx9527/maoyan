@@ -28,21 +28,9 @@ package org.red5.server.messaging;
  * @author Steven Gong (steven.gong@gmail.com)
  */
 public interface IPipe extends IMessageInput, IMessageOutput {
-
-    /**
-     * Add connection event listener to pipe
-     * 给管道添加监听时间
-     * @param listener
-     *            Connection event listener
-     */
+ 
     void addPipeConnectionListener(IPipeConnectionListener listener);
-
-    /**
-     * Add connection event listener to pipe
-     * 移除监听时间
-     * @param listener
-     *            Connection event listener
-     */
+ 
     void removePipeConnectionListener(IPipeConnectionListener listener);
 
 }

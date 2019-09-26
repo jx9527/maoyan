@@ -20,28 +20,15 @@ package org.red5.server.api.listeners;
 
 import org.red5.server.api.IConnection;
 
-/**
- * Interface for listeners to connection events.
- * 
+/** 
+ * 监听连接事件
  * @author The Red5 Project
  * @author Joachim Bauch (bauch@struktur.de)
  */
-public interface IConnectionListener {
-
-    /**
-     * A new connection was established.
-     * 
-     * @param conn
-     *            the new connection
-     */
-    public void notifyConnected(IConnection conn);
-
-    /**
-     * A connection was disconnected.
-     * 
-     * @param conn
-     *            the disconnected connection
-     */
+public interface IConnectionListener { 
+    
+    public void notifyConnected(IConnection conn); 
+    
     public void notifyDisconnected(IConnection conn);
 
 }

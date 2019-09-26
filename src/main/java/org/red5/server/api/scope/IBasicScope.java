@@ -32,78 +32,35 @@ import org.red5.server.api.persistence.IPersistenceStore;
  * @author The Red5 Project
  * @author Luke Hubbard (luke@codegent.com)
  */
-public interface IBasicScope extends ICoreObject, IEventObservable ,
-Iterable<IBasicScope>, IPersistable{
-
-    /**
-     * Does this scope have a parent? You can think of scopes as of tree items where scope may have a parent and children (child).
-     * 
-     * @return true if this scope has a parent, otherwise false
-     */
+public interface IBasicScope extends ICoreObject, IEventObservable , Iterable<IBasicScope>, IPersistable{
+ 
     public boolean hasParent();
-
-    /**
-     * Get this scopes parent.
-     * 
-     * @return parent scope, or null if this scope doesn't have a parent
-     */
-    public IScope getParent();
-
+ 
+    public IScope getParent(); 
     /**
      * Get the scopes depth, how far down the scope tree is it. The lowest depth is 0x00, the depth of Global scope. Application scope depth is 0x01. Room depth is 0x02, 0x03 and so forth.
-     * 
-     * @return the depth
-     */
+      */
     public int getDepth();
-
-    /**
-     * Get the name of this scope. Eg. someroom
-     * 
-     * @return the name
-     */
+ 
     public String getName();
-
-    /**
-     * Get the persistable store
-     * 持久的
-     * @return the store
-     */
+ 
     public IPersistenceStore getStore();
-
-    /**
-     * Get the full absolute path. Eg. host / myapp / someroom
-     * 
-     * @return absolute scope path
-     */
+ 
     public String getPath();
-
-    /**
-     * Get the type of the scope.
-     * 
-     * @return type of scope
-     */
-    public String getType();
-
+ 
+    public String getType(); 
     /**
      * Sets the amount of time to keep the scope available after the last disconnect.
-     * 
-     * @param keepDelay delay
      */
     public void setKeepDelay(int keepDelay);
 
     /**
-     * Validates a scope based on its name and type
-     * 
-     * @return true if both name and type are valid, false otherwise
+     * Validates a scope based on its name and type 
      */
     public boolean isValid();
 
     /**
-     * Provides a means to allow a scope to perform processing on a connection prior to the actual
-     * connection attempt or other handling.
-     * 
-     * @param conn connection
-     * @return true if connection is allowed and false if it is not allowed
+     * 允许作用域在实际连接之前对连接执行处理连接尝试或其他处理。
      */
     public boolean isConnectionAllowed(IConnection conn);
 

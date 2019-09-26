@@ -20,28 +20,15 @@ package org.red5.server.api.listeners;
 
 import org.red5.server.api.scope.IScope;
 
-/**
- * Interface for listeners to scope events.
- * 
+/** 
+ *  监听Scope事件
  * @author The Red5 Project
  * @author Joachim Bauch (bauch@struktur.de)
  */
 public interface IScopeListener {
-
-    /**
-     * A scope has been created.
-     * 
-     * @param scope
-     *            the new scope
-     */
+ 
     public void notifyScopeCreated(IScope scope);
-
-    /**
-     * A scope has been removed.
-     * 
-     * @param scope
-     *            the removed scope
-     */
+ 
     public void notifyScopeRemoved(IScope scope);
 
 }
