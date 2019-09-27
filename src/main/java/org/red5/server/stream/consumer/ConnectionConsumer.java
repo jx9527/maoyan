@@ -45,63 +45,35 @@ import org.red5.server.net.rtmp.message.Header;
 import org.red5.server.stream.message.RTMPMessage;
 import org.red5.server.stream.message.ResetMessage;
 import org.red5.server.stream.message.StatusMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * RTMP connection consumer.
  */
+@Slf4j
 public class ConnectionConsumer implements IPushableConsumer, IPipeConnectionListener {
-
-    private static final Logger log = LoggerFactory.getLogger(ConnectionConsumer.class);
-
     /**
      * Connection consumer class name
      */
     public static final String KEY = ConnectionConsumer.class.getName();
-
-    /**
-     * Connection object
-     */
+ 
     private RTMPConnection conn;
-
-    /**
-     * Video channel
-     */
+ 
     private Channel video;
-
-    /**
-     * Audio channel
-     */
+ 
     private Channel audio;
-
-    /**
-     * Data channel
-     */
-    private Channel data;
-
+ 
+    private Channel data; 
     /**
      * Chunk size. Packets are sent chunk-by-chunk.
      */
-    private int chunkSize = 1024; //TODO: Not sure of the best value here
-
+    private int chunkSize = 1024; //TODO: Not sure of the best value here 
     /**
      * Whether or not the chunk size has been sent. This seems to be required for h264.
      */
     private AtomicBoolean chunkSizeSent = new AtomicBoolean(false);
-
-    /**
-     * Create RTMP connection consumer for given connection and channels.
-     * 
-     * @param conn
-     *            RTMP connection
-     * @param videoChannel
-     *            Video channel
-     * @param audioChannel
-     *            Audio channel
-     * @param dataChannel
-     *            Data channel
-     */
+  
     public ConnectionConsumer(RTMPConnection conn, Channel videoChannel, Channel audioChannel, Channel dataChannel) {
         log.debug("Channel ids - video: {} audio: {} data: {}", new Object[] { videoChannel, audioChannel, dataChannel });
         this.conn = conn;
@@ -109,24 +81,12 @@ public class ConnectionConsumer implements IPushableConsumer, IPipeConnectionLis
         this.audio = audioChannel;
         this.data = dataChannel;
     }
-
-    /**
-     * Create connection consumer without an RTMP connection.
-     * 
-     * @param videoChannel
-     *            video channel
-     * @param audioChannel
-     *            audio channel
-     * @param dataChannel
-     *            data channel
-     */
+ 
     public ConnectionConsumer(Channel videoChannel, Channel audioChannel, Channel dataChannel) {
-        this.video = videoChannel;
-        this.audio = audioChannel;
-        this.data = dataChannel;
+        this(null, videoChannel, audioChannel, dataChannel); 
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void pushMessage(IPipe pipe, IMessage message) {
         //log.trace("pushMessage - type: {}", message.getMessageType());
         if (message instanceof ResetMessage) {
@@ -239,14 +199,13 @@ public class ConnectionConsumer implements IPushableConsumer, IPipeConnectionLis
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void onPipeConnectionEvent(PipeConnectionEvent event) {
         if (event.getType().equals(PipeConnectionEvent.EventType.PROVIDER_DISCONNECT)) {
             closeChannels();
         }
-    }
-
-    /** {@inheritDoc} */
+    } 
+    @Override
     public void onOOBControlMessage(IMessageComponent source, IPipe pipe, OOBControlMessage oobCtrlMsg) {
         if ("ConnectionConsumer".equals(oobCtrlMsg.getTarget())) {
             String serviceName = oobCtrlMsg.getServiceName();
@@ -277,21 +236,14 @@ public class ConnectionConsumer implements IPushableConsumer, IPipeConnectionLis
             }
         }
     }
-
-    /**
-     * Send the chunk size
-     */
+ 
     private void sendChunkSize() {
         if (chunkSizeSent.compareAndSet(false, true)) {
             log.debug("Sending chunk size: {}", chunkSize);
             ChunkSize chunkSizeMsg = new ChunkSize(chunkSize);
             conn.getChannel((byte) 2).write(chunkSizeMsg);
         }
-    }
-
-    /**
-     * Close all the channels
-     */
+    } 
     private void closeChannels() {
         conn.closeChannel(video.getId());
         conn.closeChannel(audio.getId());

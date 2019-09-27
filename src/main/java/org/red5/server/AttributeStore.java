@@ -147,77 +147,73 @@ public class AttributeStore implements ICastingAttributeStore {
     }
 
     /**
-     * Set an attribute on this object.
-     *
-     * @param name
-     *            the name of the attribute to change
-     * @param value
-     *            the new value of the attribute
-     * @return true if the attribute value was added or changed, otherwise false
+     * Set an attribute on this object. 
      */
     public boolean setAttribute(final String name, final Object value) {
         log.trace("setAttribute({}, {})", name, value);
         boolean result = false;
-        if (name != null && value != null) {
-            // get previous value
-            final Object previous = attributes.putIfAbsent(name, value);
-            // previous will be null if the attribute didn't exist and if it does it will equal the previous value
-            if (previous != null) {
-                // if the value is a collection, check the elements for modification
-                if (value instanceof Collection) {
-                    Collection<?> prevCollection = (Collection<?>) previous;
-                    Collection<?> newCollection = (Collection<?>) value;
-                    for (Object newCollectionEntry : newCollection) {
-                        int freq = Collections.frequency(prevCollection, newCollectionEntry);
-                        // first element that does not exist in the previous collection will trigger the modified result
-                        if (freq == 0) {
+        if(name == null || value == null){
+        	return result;
+        } 
+        // get previous value
+        final Object previous = attributes.putIfAbsent(name, value);
+        // 如果属性不存在，previous将为空，如果存在，它将等于previous值
+        if (previous == null) {
+        	result = true;
+        	return result;
+        } 
+        // if the value is a collection, check the elements for modification
+        if (value instanceof Collection) {
+            Collection<?> prevCollection = (Collection<?>) previous;
+            Collection<?> newCollection = (Collection<?>) value;
+            for (Object newCollectionEntry : newCollection) {
+                int freq = Collections.frequency(prevCollection, newCollectionEntry);
+                // first element that does not exist in the previous collection will trigger the modified result
+                if (freq == 0) {
+                    result = true;
+                    break;
+                }
+            }
+        } else if (value instanceof Map) {
+            Map<?, ?> prevMap = (Map<?, ?>) previous;
+            Map<?, ?> newMap = (Map<?, ?>) value;
+            // check key differences first
+            if (!prevMap.keySet().containsAll(newMap.keySet())) {
+                result = true;
+            } else {
+                // check entries
+                for (Entry<?, ?> newMapEntry : newMap.entrySet()) {
+                    Object prevValue = prevMap.get(newMapEntry.getKey());
+                    if (prevValue == null) {
+                        result = true;
+                        break;
+                    } else {
+                        if (!prevValue.equals(newMapEntry.getValue())) {
                             result = true;
                             break;
                         }
                     }
-                } else if (value instanceof Map) {
-                    Map<?, ?> prevMap = (Map<?, ?>) previous;
-                    Map<?, ?> newMap = (Map<?, ?>) value;
-                    // check key differences first
-                    if (!prevMap.keySet().containsAll(newMap.keySet())) {
-                        result = true;
-                    } else {
-                        // check entries
-                        for (Entry<?, ?> newMapEntry : newMap.entrySet()) {
-                            Object prevValue = prevMap.get(newMapEntry.getKey());
-                            if (prevValue == null) {
-                                result = true;
-                                break;
-                            } else {
-                                if (!prevValue.equals(newMapEntry.getValue())) {
-                                    result = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // whether or not the new incoming value is "equal" to the previous value; not equal equates to "modified"
-                    result = !value.equals(previous);
-                    if (log.isTraceEnabled()) {
-                        log.trace("Equality check - modified: {} previous: {} new: {}", result, previous, value);
-                        log.trace("Class: {} {}", previous.getClass(), value.getClass());
-                    }
-                    // if the new value is not equal to the current / previous value and its a base-type or array, replace it
-                    if (result && ConversionUtils.isBaseTypeOrArray(previous)) {
-                        if (attributes.replace(name, previous, value)) {
-                            log.trace("Value replaced");
-                        } else {
-                            log.trace("Value replacement failed");
-                        }
-                    }
                 }
-            } else {
-                result = true;
             }
+        } else {
+            // whether or not the new incoming value is "equal" to the previous value; not equal equates to "modified"
+            result = !value.equals(previous);
             if (log.isTraceEnabled()) {
-                log.trace("{}", attributes);
+                log.trace("Equality check - modified: {} previous: {} new: {}", result, previous, value);
+                log.trace("Class: {} {}", previous.getClass(), value.getClass());
             }
+            // if the new value is not equal to the current / previous value and its a base-type or array, replace it
+            if (result && ConversionUtils.isBaseTypeOrArray(previous)) {
+                if (attributes.replace(name, previous, value)) {
+                    log.trace("Value replaced");
+                } else {
+                    log.trace("Value replacement failed");
+                }
+            }
+        }
+        
+        if (log.isTraceEnabled()) {
+            log.trace("{}", attributes);
         }
         return result;
     }

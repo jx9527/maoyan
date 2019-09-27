@@ -41,36 +41,15 @@ import org.slf4j.LoggerFactory;
 public class CoreHandler implements IScopeHandler, CoreHandlerMXBean {
 
     protected static Logger log = LoggerFactory.getLogger(CoreHandler.class);
-
-    /** {@inheritDoc} */
+ 
     public boolean addChildScope(IBasicScope scope) {
         return true;
     }
-
-    /**
-     * Connects client to the scope
-     *
-     * @param conn
-     *            Client connection
-     * @param scope
-     *            Scope
-     * @return true if client was registered within scope, false otherwise
-     */
+ 
     public boolean connect(IConnection conn, IScope scope) {
         return connect(conn, scope, null);
     }
-
-    /**
-     * Connects client to the scope
-     *
-     * @param conn
-     *            Client connection
-     * @param scope
-     *            Scope
-     * @param params
-     *            Parameters passed from client side with connect call
-     * @return true if client was registered within scope, false otherwise
-     */
+ 
     public boolean connect(IConnection conn, IScope scope, Object[] params) {
         log.debug("connect - conn: {} scope: {}", conn, scope);
         // this is where we create the Client object that consolidates connections from a single client/FP. 
@@ -85,91 +64,80 @@ public class CoreHandler implements IScopeHandler, CoreHandlerMXBean {
         // Use client registry from scope the client connected to
         IScope connectionScope = conn.getScope();
         log.debug("Connection scope: {}", (connectionScope == null ? "is null" : "not null"));
-        // when the scope is null bad things seem to happen, if a null scope is OK then
-        // this block will need to be removed - Paul
-        if (connectionScope != null) {
-            // Get client registry for connection scope
-            IClientRegistry clientRegistry = connectionScope.getContext().getClientRegistry();
-            log.debug("Client registry: {}", (clientRegistry == null ? "is null" : "not null"));
-            if (clientRegistry != null) {
-            	 // Get client from registry by id or create a new one
-                IClient client = clientRegistry.hasClient(id) ? clientRegistry.lookupClient(id) : clientRegistry.newClient(params);    
-                /*IClient client = conn.getClient();
-                if (client == null) {
-                    if (!clientRegistry.hasClient(id)) {
-                        if (conn instanceof RTMPTConnection) {
-                            log.debug("Creating new client for RTMPT connection");
-                            // create a new client using the session id as the client's id
-                            client = new Client(id, (ClientRegistry) clientRegistry);
-                            clientRegistry.addClient(client);
-                            // set the client on the connection
-                            conn.setClient(client);
-                        } else if (conn instanceof RTMPConnection) {
-                            log.debug("Creating new client for RTMP connection");
-                            // this is a new connection, create a new client to hold it
-                            client = clientRegistry.newClient(params);
-                            // set the client on the connection
-                            conn.setClient(client);
-                        }
-                    } else {
-                        client = clientRegistry.lookupClient(id);
-                        conn.setClient(client);
-                    }
-                } else {
+        // 当作用域为空时，似乎会发生不好的事情，如果一个空作用域是可以的，那么
+        // 需要删除此块-paul
+        if (connectionScope == null) {
+        	log.error("No connection scope was found");
+        	return connect;
+        }
+        
+        //获取连接作用域的客户端注册表
+        IClientRegistry clientRegistry = connectionScope.getContext().getClientRegistry();
+        log.debug("Client registry: {}", (clientRegistry == null ? "is null" : "not null"));
+        if (clientRegistry == null) {
+        	log.error("No client registry was found, clients cannot be looked-up or created");
+        	return connect;
+        } 
+    	//按ID从注册表获取客户端或创建新客户端
+        IClient client = clientRegistry.hasClient(id) ? clientRegistry.lookupClient(id) : clientRegistry.newClient(params);    
+        
+        /*IClient client = conn.getClient();
+        if (client == null) {
+            if (!clientRegistry.hasClient(id)) {
+                if (conn instanceof RTMPTConnection) {
+                    log.debug("Creating new client for RTMPT connection");
+                    // create a new client using the session id as the client's id
+                    client = new Client(id, (ClientRegistry) clientRegistry);
+                    clientRegistry.addClient(client);
                     // set the client on the connection
                     conn.setClient(client);
-                }*/
-                // add any rtmp connections to the manager
-                IConnectionManager<RTMPConnection> connManager = RTMPConnManager.getInstance();
-                if (conn instanceof RTMPTConnection) {
-                    connManager.setConnection((RTMPTConnection) conn);
                 } else if (conn instanceof RTMPConnection) {
-                    connManager.setConnection((RTMPConnection) conn);
-                } else {
-                    log.warn("Connection was not added to manager: {}", conn);
+                    log.debug("Creating new client for RTMP connection");
+                    // this is a new connection, create a new client to hold it
+                    client = clientRegistry.newClient(params);
+                    // set the client on the connection
+                    conn.setClient(client);
                 }
-                // assign connection to client
-                conn.initialize(client);
-                // we could checked for banned clients here
-                connect = true;
             } else {
-                log.error("No client registry was found, clients cannot be looked-up or created");
+                client = clientRegistry.lookupClient(id);
+                conn.setClient(client);
             }
         } else {
-            log.error("No connection scope was found");
+            // set the client on the connection
+            conn.setClient(client);
+        }*/
+        // add any rtmp connections to the manager
+        IConnectionManager<RTMPConnection> connManager = RTMPConnManager.getInstance();
+        if (conn instanceof RTMPTConnection) {
+            connManager.setConnection((RTMPTConnection) conn);
+        } else if (conn instanceof RTMPConnection) {
+            connManager.setConnection((RTMPConnection) conn);
+        } else {
+            log.warn("Connection was not added to manager: {}", conn);
         }
+        // assign connection to client
+        conn.initialize(client);
+        // we could checked for banned clients here
+        connect = true;
         return connect;
     }
-
-    /** {@inheritDoc} */
+ 
     public void disconnect(IConnection conn, IScope scope) {
         // do nothing here
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean join(IClient client, IScope scope) {
         return true;
     }
-
-    /** {@inheritDoc} */
+ 
     public void leave(IClient client, IScope scope) {
         // do nothing here
     }
-
-    /** {@inheritDoc} */
+ 
     public void removeChildScope(IBasicScope scope) {
         // do nothing here
     }
-
-    /**
-     * Remote method invocation
-     *
-     * @param conn
-     *            Connection to invoke method on
-     * @param call
-     *            Service call context
-     * @return true on success
-     */
+ 
     public boolean serviceCall(IConnection conn, IServiceCall call) {
         final IContext context = conn.getScope().getContext();
         if (call.getServiceName() != null) {
@@ -179,18 +147,15 @@ public class CoreHandler implements IScopeHandler, CoreHandlerMXBean {
         }
         return true;
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean start(IScope scope) {
         return true;
     }
-
-    /** {@inheritDoc} */
+ 
     public void stop(IScope scope) {
         // do nothing here
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean handleEvent(IEvent event) {
         return false;
     }

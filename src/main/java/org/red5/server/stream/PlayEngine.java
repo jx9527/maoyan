@@ -37,7 +37,6 @@ import org.red5.codec.IVideoStreamCodec.FrameData;
 import org.red5.codec.StreamCodecInfo;
 import org.red5.io.amf.Output;
 import org.red5.io.utils.ObjectMap;
-import org.red5.logging.Red5LoggerFactory;
 import org.red5.server.api.scheduling.IScheduledJob;
 import org.red5.server.api.scheduling.ISchedulingService;
 import org.red5.server.api.scope.IBroadcastScope;
@@ -78,7 +77,8 @@ import org.red5.server.net.rtmp.status.StatusCodes;
 import org.red5.server.stream.message.RTMPMessage;
 import org.red5.server.stream.message.ResetMessage;
 import org.red5.server.stream.message.StatusMessage;
-import org.slf4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A play engine for playing a IPlayItem.
@@ -90,10 +90,9 @@ import org.slf4j.Logger;
  * @author Tiago Daniel Jacobs (tiago@imdt.com.br)
  * @author Vladimir Hmelyoff (vlhm@splitmedialabs.com)
  */
+@Slf4j
 public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnectionListener {
-
-    private static final Logger log = Red5LoggerFactory.getLogger(PlayEngine.class);
-
+ 
     private final AtomicReference<IMessageInput> msgInReference = new AtomicReference<>();
 
     private final AtomicReference<IMessageOutput> msgOutReference = new AtomicReference<>();
@@ -107,114 +106,86 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     private IProviderService providerService;
 
     private Number streamId;
-
-    /**
-     * Receive video?
-     */
+ 
     private boolean receiveVideo = true;
-
-    /**
-     * Receive audio?
-     */
+ 
     private boolean receiveAudio = true;
 
     private boolean pullMode;
 
     private String waitLiveJob;
-
-    /**
-     * timestamp of first sent packet
+    /**  
+     * 发送第一个包的时间戳
      */
     private AtomicInteger streamStartTS = new AtomicInteger(-1);
 
     private AtomicReference<IPlayItem> currentItem = new AtomicReference<>();
 
     private RTMPMessage pendingMessage;
-
-    /**
-     * Interval in ms to check for buffer underruns in VOD streams.
-     */
+ 
     private int bufferCheckInterval = 0;
-
-    /**
-     * Number of pending messages at which a <tt>NetStream.Play.InsufficientBW</tt> message is generated for VOD streams.
-     */
+ 
     private int underrunTrigger = 10;
-
-    /**
-     * Threshold for number of pending video frames
-     */
+ 
     private int maxPendingVideoFrames = 10;
 
     /**
-     * If we have more than 1 pending video frames, but less than maxPendingVideoFrames, continue sending until there are this many
-     * sequential frames with more than 1 pending
+     * 如果我们有超过1个挂起的视频帧，但小于最大挂起的视频帧，请继续发送，直到有这么多个超过1个挂起的连续帧
      */
     private int maxSequentialPendingVideoFrames = 10;
-
     /**
-     * the number of sequential video frames with > 0 pending frames
+     * 大于0个挂起帧的连续视频帧数
      */
     private int numSequentialPendingVideoFrames = 0;
-
     /**
-     * State machine for video frame dropping in live streams
+     * 实时流中视频帧丢弃的状态机
      */
     private IFrameDropper videoFrameDropper = new VideoFrameDropper();
 
     private int timestampOffset = 0;
-
     /**
-     * Timestamp of the last message sent to the client.
+     * 上次发送到客户端的消息的时间戳。
      */
     private int lastMessageTs = -1;
-
     /**
      * Number of bytes sent.
+     * 发送bytes的数目
      */
     private AtomicLong bytesSent = new AtomicLong(0);
 
     /**
-     * Start time of stream playback. It's not a time when the stream is being played but the time when the stream should be played if it's
-     * played from the very beginning. Eg. A stream is played at timestamp 5s on 1:00:05. The playbackStart is 1:00:00.
-     */
+     *	流播放的开始时间。不是播放流的时间，而是应该播放流的时间如果
+     *	从一开始就演奏。在时间戳5s的1:00:05播放流。后场是1:00:00。
+     **/
     private volatile long playbackStart;
-
     /**
-     * Flag denoting whether or not the push and pull job is scheduled. The job makes sure messages are sent to the client.
+     * 指示是否计划推拉作业的标志。作业确保将消息发送到客户端
      */
-    private volatile String pullAndPush;
-
+    private volatile String pullAndPush; 
     /**
-     * Flag denoting whether or not the job that closes stream after buffer runs out is scheduled.
+     *指示是否调度缓冲区用完后关闭流的作业的标志。
      */
-    private volatile String deferredStop;
-
+    private volatile String deferredStop; 
     /**
-     * Monitor guarding completion of a given push/pull run. Used to wait for job cancellation to finish.
+     * 监控给定推拉运行的防护完成情况。用于等待作业取消完成。
      */
-    private final AtomicBoolean pushPullRunning = new AtomicBoolean(false);
-
+    private final AtomicBoolean pushPullRunning = new AtomicBoolean(false); 
     /**
-     * Offset in milliseconds where the stream started.
+     * 流开始处的偏移量（毫秒）。
      */
-    private int streamOffset;
-
+    private int streamOffset; 
     /**
-     * Timestamp when buffer should be checked for underruns next.
+     *下一步应检查缓冲区是否不足的时间戳。
      */
-    private long nextCheckBufferUnderrun;
-
+    private long nextCheckBufferUnderrun; 
     /**
-     * Send blank audio packet next?
+     * 下一步发送空白音频包
      */
-    private boolean sendBlankAudio;
-
+    private boolean sendBlankAudio; 
     /**
      * Decision: 0 for Live, 1 for File, 2 for Wait, 3 for N/A
      */
-    private int playDecision = 3;
-
+    private int playDecision = 3; 
     /**
      * Index of the buffered interframe to send instead of current frame
      */
@@ -244,51 +215,9 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         providerService = builder.providerService;
         // get the stream id
         streamId = subscriberStream.getStreamId();
-    }
-
+    } 
     /**
-     * Builder pattern
-     */
-    public final static class Builder {
-        //Required for play engine
-        private ISubscriberStream subscriberStream;
-
-        //Required for play engine
-        private ISchedulingService schedulingService;
-
-        //Required for play engine
-        private IConsumerService consumerService;
-
-        //Required for play engine
-        private IProviderService providerService;
-
-        public Builder(ISubscriberStream subscriberStream, ISchedulingService schedulingService, IConsumerService consumerService, IProviderService providerService) {
-            this.subscriberStream = subscriberStream;
-            this.schedulingService = schedulingService;
-            this.consumerService = consumerService;
-            this.providerService = providerService;
-        }
-
-        public PlayEngine build() {
-            return new PlayEngine(this);
-        }
-
-    }
-
-    public void setBufferCheckInterval(int bufferCheckInterval) {
-        this.bufferCheckInterval = bufferCheckInterval;
-    }
-
-    public void setUnderrunTrigger(int underrunTrigger) {
-        this.underrunTrigger = underrunTrigger;
-    }
-
-    void setMessageOut(IMessageOutput msgOut) {
-        this.msgOutReference.set(msgOut);
-    }
-
-    /**
-     * Start stream
+     * 更新IMessageOutput 为当前subscriberStream的输出
      */
     public void start() {
         if (log.isDebugEnabled()) {
@@ -296,9 +225,10 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         switch (subscriberStream.getState()) {
             case UNINIT:
-                // allow start if uninitialized and change state to stopped
+                // 如果在运行中先关闭在重新开始
                 subscriberStream.setState(StreamState.STOPPED);
                 IMessageOutput out = consumerService.getConsumerOutput(subscriberStream);
+                //初始值为null  所以  null == null 更新 为out
                 if (msgOutReference.compareAndSet(null, out)) {
                     out.subscribe(this, null);
                 } else if (log.isDebugEnabled()) {
@@ -311,36 +241,14 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Play stream
-     * 
-     * @param item
-     *            Playlist item
-     * @throws StreamNotFoundException
-     *             Stream not found
-     * @throws IllegalStateException
-     *             Stream is in stopped state
-     * @throws IOException
-     *             Stream had io exception
+     * Play stream 
      */
     public void play(IPlayItem item) throws StreamNotFoundException, IllegalStateException, IOException {
         play(item, true);
     }
 
-    /**
-     * Play stream
-     * 
+    /** 
      * See: https://www.adobe.com/devnet/adobe-media-server/articles/dynstream_actionscript.html
-     * 
-     * @param item
-     *            Playlist item
-     * @param withReset
-     *            Send reset status before playing.
-     * @throws StreamNotFoundException
-     *             Stream not found
-     * @throws IllegalStateException
-     *             Stream is in stopped state
-     * @throws IOException
-     *             Stream had IO exception
      */
     public void play(IPlayItem item, boolean withReset) throws StreamNotFoundException, IllegalStateException, IOException {
         IMessageInput in = null;
@@ -521,95 +429,90 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Performs the processes needed for live streams. The following items are sent if they exist:
-     * <ul>
-     * <li>Metadata</li>
-     * <li>Decoder configurations (ie. AVC codec)</li>
-     * <li>Most recent keyframe</li>
-     * </ul>
-     * 
-     * @throws IOException
+     * 在线流播放方法的逻辑
+     * 1、变更播放状态
+     * 2、获取与输入和输出流绑定的IMessageInput，IMessageOutput
+     * 3、检测并发送 metadata数据
+     * 4、发送vido的配置和关键帧
+     * 5、发送audio的配置
      */
     private final void playLive() throws IOException {
-        // change state
+        //1---变为播放状态---
         subscriberStream.setState(StreamState.PLAYING);
+        //2---获取与输入和输出---
         IMessageInput in = msgInReference.get();
         IMessageOutput out = msgOutReference.get();
-        if (in != null && out != null) {
-            // get the stream so that we can grab any metadata and decoder configs
-            IBroadcastStream stream = (IBroadcastStream) ((IBroadcastScope) in).getClientBroadcastStream();
-            // prevent an NPE when a play list is created and then immediately flushed
-            int ts = 0;
-            if (stream != null) {
-                Notify metaData = stream.getMetaData();
-                //check for metadata to send
-                if (metaData != null) {
-                    ts = metaData.getTimestamp();
-                    log.debug("Metadata is available");
-                    RTMPMessage metaMsg = RTMPMessage.build(metaData, metaData.getTimestamp());
-                    sendMessage(metaMsg);
-                } else {
-                    log.debug("No metadata available");
-                }
-                IStreamCodecInfo codecInfo = stream.getCodecInfo();
-                log.debug("Codec info: {}", codecInfo);
-                if (codecInfo instanceof StreamCodecInfo) {
-                    StreamCodecInfo info = (StreamCodecInfo) codecInfo;
-                    // handle video codec with configuration
-                    IVideoStreamCodec videoCodec = info.getVideoCodec();
-                    log.debug("Video codec: {}", videoCodec);
-                    if (videoCodec != null) {
-                        // check for decoder configuration to send
-                        IoBuffer config = videoCodec.getDecoderConfiguration();
-                        if (config != null) {
-                            log.debug("Decoder configuration is available for {}", videoCodec.getName());
-                            VideoData conf = new VideoData(config, true);
-                            log.debug("Pushing video decoder configuration");
-                            sendMessage(RTMPMessage.build(conf, ts));
-                        }
-                        // check for keyframes to send
-                        FrameData[] keyFrames = videoCodec.getKeyframes();
-                        for (FrameData keyframe : keyFrames) {
-                            log.debug("Keyframe is available");
-                            VideoData video = new VideoData(keyframe.getFrame(), true);
-                            log.debug("Pushing keyframe");
-                            sendMessage(RTMPMessage.build(video, ts));
-                        }
-                    } else {
-                        log.debug("No video decoder configuration available");
-                    }
-                    // handle audio codec with configuration
-                    IAudioStreamCodec audioCodec = info.getAudioCodec();
-                    log.debug("Audio codec: {}", audioCodec);
-                    if (audioCodec != null) {
-                        // check for decoder configuration to send
-                        IoBuffer config = audioCodec.getDecoderConfiguration();
-                        if (config != null) {
-                            log.debug("Decoder configuration is available for {}", audioCodec.getName());
-                            AudioData conf = new AudioData(config.asReadOnlyBuffer());
-                            log.debug("Pushing audio decoder configuration");
-                            sendMessage(RTMPMessage.build(conf, ts));
-                        }
-                    } else {
-                        log.debug("No audio decoder configuration available");
-                    }
-                }
-            }
-        } else {
-            throw new IOException(String.format("A message pipe is null - in: %b out: %b", (msgInReference == null), (msgOutReference == null)));
-        }
+        if(in == null || out == null){
+        	 throw new IOException(String.format("A message pipe is null - in: %b out: %b", (msgInReference == null), (msgOutReference == null)));
+        } 
         configsDone = true;
+        // 获取流以便我们可以获取任何元数据和解码器配置
+        IBroadcastStream stream = (IBroadcastStream) ((IBroadcastScope) in).getClientBroadcastStream();
+        // 创建播放列表并立即刷新时阻止NPE
+        if (stream == null) {
+        	return ;
+        } 
+        int ts = 0; 
+        Notify metaData = stream.getMetaData();
+        //3---检测并发送 metadata数据---
+        if (metaData != null) {
+            ts = metaData.getTimestamp();
+            log.debug("Metadata is available");
+            RTMPMessage metaMsg = RTMPMessage.build(metaData, metaData.getTimestamp());
+            sendMessage(metaMsg);
+        } else {
+            log.debug("No metadata available");
+        }
+        IStreamCodecInfo codecInfo = stream.getCodecInfo();
+        log.debug("Codec info: {}", codecInfo);
+        if (!(codecInfo instanceof StreamCodecInfo)) {
+        	return ;
+        }
+	    StreamCodecInfo info = (StreamCodecInfo) codecInfo; 
+	    IVideoStreamCodec videoCodec = info.getVideoCodec();
+	    log.debug("Video codec: {}", videoCodec);
+	    //4、---发送vido的配置和关键帧---
+	    if (videoCodec != null) {
+	        // check for decoder configuration to send
+	        IoBuffer config = videoCodec.getDecoderConfiguration();
+	        if (config != null) {
+	            log.debug("Decoder configuration is available for {}", videoCodec.getName());
+	            VideoData conf = new VideoData(config, true);
+	            log.debug("Pushing video decoder configuration");
+	            sendMessage(RTMPMessage.build(conf, ts));
+	        }
+	        // check for keyframes to send
+	        FrameData[] keyFrames = videoCodec.getKeyframes();
+	        for (FrameData keyframe : keyFrames) {
+	            log.debug("Keyframe is available");
+	            VideoData video = new VideoData(keyframe.getFrame(), true);
+	            log.debug("Pushing keyframe");
+	            sendMessage(RTMPMessage.build(video, ts));
+	        }
+	    } else {
+	        log.debug("No video decoder configuration available");
+	    }
+	     
+	    IAudioStreamCodec audioCodec = info.getAudioCodec();
+	    log.debug("Audio codec: {}", audioCodec);
+	    //5、---发送audio的配置---
+	    if (audioCodec != null) {
+	        // check for decoder configuration to send
+	        IoBuffer config = audioCodec.getDecoderConfiguration();
+	        if (config != null) {
+	            log.debug("Decoder configuration is available for {}", audioCodec.getName());
+	            AudioData conf = new AudioData(config.asReadOnlyBuffer());
+	            log.debug("Pushing audio decoder configuration");
+	            sendMessage(RTMPMessage.build(conf, ts));
+	        }
+	    } else {
+	        log.debug("No audio decoder configuration available");
+	    }
     }
 
     /**
-     * Performs the processes needed for VOD / pre-recorded streams.
-     * 
-     * @param withReset
-     *            whether or not to perform reset on the stream
-     * @param itemLength
-     *            length of the item to be played
-     * @return message for the consumer
-     * @throws IOException
+     * Performs the processes needed for VOD / pre-recorded streams. 
+     * 播放vod方法
      */
     private final IMessage playVOD(boolean withReset, long itemLength) throws IOException {
         IMessage msg = null;
@@ -619,11 +522,11 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             releasePendingMessage();
         }
         sendVODInitCM(currentItem.get());
-        // Don't use pullAndPush to detect IOExceptions prior to sending NetStream.Play.Start
+        //在发送netstream.play.start之前，不要使用pullAndPush来检测IOExceptions 
         int start = (int) currentItem.get().getStart();
         if (start > 0) {
             streamOffset = sendVODSeekCM(start);
-            // We seeked to the nearest keyframe so use real timestamp now
+            // 我们找到了最近的关键帧，所以现在就使用真正的时间戳
             if (streamOffset == -1) {
                 streamOffset = start;
             }
@@ -932,7 +835,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Make sure the pull and push processing is running.
+     * 确保推拉处理正在运行。
      */
     private void ensurePullAndPushRunning() {
         log.trace("State should be PLAYING to running this task: {}", subscriberStream.getState());
@@ -980,25 +883,29 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             String msgType = message.getMessageType();
             log.trace("doPushMessage: {}", msgType);
         }
+        
         IMessageOutput out = msgOutReference.get();
-        if (out != null) {
-            try {
-                out.pushMessage(message);
-                if (message instanceof RTMPMessage) {
-                    IRTMPEvent body = ((RTMPMessage) message).getBody();
-                    // update the last message sent's timestamp
-                    lastMessageTs = body.getTimestamp();
-                    IoBuffer streamData = null;
-                    if (body instanceof IStreamData && (streamData = ((IStreamData<?>) body).getData()) != null) {
-                        bytesSent.addAndGet(streamData.limit());
-                    }
+        if(out == null){
+        	log.warn("Push message failed due to null output pipe");
+        	return;
+        } 
+        
+        try {
+            out.pushMessage(message);
+            
+            if (message instanceof RTMPMessage) {
+                IRTMPEvent body = ((RTMPMessage) message).getBody();
+                //更新上次发送的消息的时间戳
+                lastMessageTs = body.getTimestamp();
+                IoBuffer streamData = null;
+                if (body instanceof IStreamData && (streamData = ((IStreamData<?>) body).getData()) != null) {
+                    bytesSent.addAndGet(streamData.limit());
                 }
-            } catch (IOException err) {
-                log.warn("Error while pushing message", err);
             }
-        } else {
-            log.warn("Push message failed due to null output pipe");
+        } catch (IOException err) {
+            log.warn("Error while pushing message", err);
         }
+         
     }
 
     /**
@@ -1024,11 +931,11 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
                 event = new Notify(((Notify) eventIn).getData());
                 break;
         }
-        // get the incoming event time
+        // 获取传入事件时间
         int eventTime = eventIn.getTimestamp();
-        // get the incoming event source type and set on the outgoing event
+        // 获取传入事件源类型并设置传出事件
         event.setSourceType(eventIn.getSourceType());
-        // instance the outgoing message
+        // 实例化传出消息
         RTMPMessage messageOut = RTMPMessage.build(event, eventTime);
         if (log.isTraceEnabled()) {
             log.trace("Source type - in: {} out: {}", eventIn.getSourceType(), messageOut.getBody().getSourceType());
@@ -1053,14 +960,14 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
                 }
             }
         } else {
-            // don't reset streamStartTS to 0 for live streams
+            // 对于实时流，不要将streamstartts重置为0
             if (eventTime > 0 && streamStartTS.compareAndSet(-1, eventTime)) {
                 log.debug("sendMessage: set streamStartTS");
             }
-            // relative timestamp adjustment for live streams
+            //实时流的相对时间戳调整
             int startTs = streamStartTS.get();
             if (startTs > 0) {
-                // subtract the offset time of when the stream started playing for the client
+                // 减去流开始为客户端播放时的偏移时间
                 eventTime -= startTs;
                 messageOut.getBody().setTimestamp(eventTime);
                 if (log.isTraceEnabled()) {
@@ -1439,12 +1346,10 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         if (now - droppedPacketsCountLastLogTimestamp > droppedPacketsCountLogInterval) {
             droppedPacketsCountLastLogTimestamp = now;
             return true;
-        }
-
+        } 
         return false;
     }
-
-    /** {@inheritDoc} */
+    @Override
     public void pushMessage(IPipe pipe, IMessage message) throws IOException {
         if (!pullMode) {
             if (!configsDone) {
@@ -1454,110 +1359,119 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         String sessionId = subscriberStream.getConnection().getSessionId();
         if (message instanceof RTMPMessage) {
-            IMessageInput msgIn = msgInReference.get();
+            
+        	IMessageInput msgIn = msgInReference.get();
             RTMPMessage rtmpMessage = (RTMPMessage) message;
             IRTMPEvent body = rtmpMessage.getBody();
-            if (body instanceof IStreamData) {
-                // the subscriber paused 
-                if (subscriberStream.getState() == StreamState.PAUSED) {
+            
+            if(!(body instanceof IStreamData)){
+            	throw new RuntimeException(String.format("Expected IStreamData but got %s (type %s)", body.getClass(), body.getDataType()));
+            }  
+            // the subscriber paused 
+            if (subscriberStream.getState() == StreamState.PAUSED) {
+                if (log.isInfoEnabled() && shouldLogPacketDrop()) {
+                    log.info("Dropping packet because we are paused. sessionId={} stream={} count={}", sessionId, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount);
+                }
+                videoFrameDropper.dropPacket(rtmpMessage);
+                return;
+            }
+            
+            if (body instanceof VideoData && body.getSourceType() == Constants.SOURCE_TYPE_LIVE) {
+                // 我们只想从实时流中丢弃数据包。视频点播流我们让它缓冲。
+                // 我们不希望观看电影的用户因为带宽低而观看不稳定的视频。
+            	if (!(msgIn instanceof IBroadcastScope)) {
+            		sendMessage(rtmpMessage);
+            		return;
+            	} 
+                 
+                IBroadcastStream stream = (IBroadcastStream) ((IBroadcastScope) msgIn).getClientBroadcastStream();
+                if (stream == null || stream.getCodecInfo() == null) {
+                	sendMessage(rtmpMessage);
+            		return;
+                } 
+                	
+                IVideoStreamCodec videoCodec = stream.getCodecInfo().getVideoCodec();
+                // 如果视频编解码器为空，不要尝试丢弃帧
+                if (videoCodec == null || !videoCodec.canDropFrames()) {
+                	sendMessage(rtmpMessage);
+            		return;
+                }
+                
+                if (!receiveVideo) {
+                    videoFrameDropper.dropPacket(rtmpMessage);
+                    droppedPacketsCount++;
                     if (log.isInfoEnabled() && shouldLogPacketDrop()) {
-                        log.info("Dropping packet because we are paused. sessionId={} stream={} count={}", sessionId, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount);
+                        // client disabled video or the app doesn't have enough bandwidth allowed for this stream
+                        log.info("Drop packet. Failed to acquire token or no video. sessionId={} stream={} count={}", sessionId, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount);
+                    }
+                    return;
+                }
+                //对视频流实施某种背压。当客户处于拥挤状态时connection，red5无法足够快地发送数据包。米娜把这些包放进
+                //unbounded队列。如果我们生成视频包足够快，队列就会变大 可能会触发OutOfMemory异常。为了缓解这种情况，我们检查
+                //挂起视频消息并丢弃视频数据包，直到队列低于阈值。仅检查编解码器是否支持帧丢弃
+                long pendingVideos = pendingVideoMessages();
+                if (log.isTraceEnabled()) {
+                    log.trace("Pending messages sessionId={} pending={} threshold={} sequential={} stream={}, count={}", new Object[] { sessionId, pendingVideos, maxPendingVideoFrames, numSequentialPendingVideoFrames, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount });
+                }
+                if (!videoFrameDropper.canSendPacket(rtmpMessage, pendingVideos)) {
+                    // 删除帧，因为它依赖于以前删除的其他帧
+                    droppedPacketsCount++;
+                    if (log.isInfoEnabled() && shouldLogPacketDrop()) {
+                        log.info("Frame dropper says to drop packet. sessionId={} stream={} count={}", sessionId, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount);
+                    }
+                    return;
+                }
+                // 按顺序增加挂起视频帧的次数
+                if (pendingVideos > 1) {
+                    numSequentialPendingVideoFrames++;
+                } else {
+                    //如果1或0挂起，则重置顺序挂起的帧数
+                    numSequentialPendingVideoFrames = 0;
+                }
+                if (pendingVideos > maxPendingVideoFrames || numSequentialPendingVideoFrames > maxSequentialPendingVideoFrames) {
+                    droppedPacketsCount++;
+                    if (log.isInfoEnabled() && shouldLogPacketDrop()) {
+                        log.info("Drop packet. Pending above threshold. sessionId={} pending={} threshold={} sequential={} stream={} count={}", new Object[] { sessionId, pendingVideos, maxPendingVideoFrames, numSequentialPendingVideoFrames, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount });
+                    }
+                    // drop because the client has insufficient bandwidth
+                    long now = System.currentTimeMillis();
+                    if (bufferCheckInterval > 0 && now >= nextCheckBufferUnderrun) {
+                        // notify client about frame dropping (keyframe)
+                        sendInsufficientBandwidthStatus(currentItem.get());
+                        nextCheckBufferUnderrun = now + bufferCheckInterval;
                     }
                     videoFrameDropper.dropPacket(rtmpMessage);
                     return;
                 }
-                if (body instanceof VideoData && body.getSourceType() == Constants.SOURCE_TYPE_LIVE) {
-                    // We only want to drop packets from a live stream. VOD streams we let it buffer.
-                    // We don't want a user watching a movie to see a choppy video due to low bandwidth.
-                    if (msgIn instanceof IBroadcastScope) {
-                        IBroadcastStream stream = (IBroadcastStream) ((IBroadcastScope) msgIn).getClientBroadcastStream();
-                        if (stream != null && stream.getCodecInfo() != null) {
-                            IVideoStreamCodec videoCodec = stream.getCodecInfo().getVideoCodec();
-                            // dont try to drop frames if video codec is null
-                            if (videoCodec != null && videoCodec.canDropFrames()) {
-                                if (!receiveVideo) {
-                                    videoFrameDropper.dropPacket(rtmpMessage);
-                                    droppedPacketsCount++;
-                                    if (log.isInfoEnabled() && shouldLogPacketDrop()) {
-                                        // client disabled video or the app doesn't have enough bandwidth allowed for this stream
-                                        log.info("Drop packet. Failed to acquire token or no video. sessionId={} stream={} count={}", sessionId, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount);
-                                    }
-                                    return;
-                                }
-                                // Implement some sort of back-pressure on video streams. When the client is on a congested
-                                // connection, Red5 cannot send packets fast enough. Mina puts these packets into an
-                                // unbounded queue. If we generate video packets fast enough, the queue would get large
-                                // which may trigger an OutOfMemory exception. To mitigate this, we check the size of
-                                // pending video messages and drop video packets until the queue is below the threshold.
-                                // only check for frame dropping if the codec supports it
-                                long pendingVideos = pendingVideoMessages();
-                                if (log.isTraceEnabled()) {
-                                    log.trace("Pending messages sessionId={} pending={} threshold={} sequential={} stream={}, count={}", new Object[] { sessionId, pendingVideos, maxPendingVideoFrames, numSequentialPendingVideoFrames, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount });
-                                }
-                                if (!videoFrameDropper.canSendPacket(rtmpMessage, pendingVideos)) {
-                                    // drop frame as it depends on other frames that were dropped before
-                                    droppedPacketsCount++;
-                                    if (log.isInfoEnabled() && shouldLogPacketDrop()) {
-                                        log.info("Frame dropper says to drop packet. sessionId={} stream={} count={}", sessionId, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount);
-                                    }
-                                    return;
-                                }
-                                // increment the number of times we had pending video frames sequentially
-                                if (pendingVideos > 1) {
-                                    numSequentialPendingVideoFrames++;
-                                } else {
-                                    // reset number of sequential pending frames if 1 or 0 are pending
-                                    numSequentialPendingVideoFrames = 0;
-                                }
-                                if (pendingVideos > maxPendingVideoFrames || numSequentialPendingVideoFrames > maxSequentialPendingVideoFrames) {
-                                    droppedPacketsCount++;
-                                    if (log.isInfoEnabled() && shouldLogPacketDrop()) {
-                                        log.info("Drop packet. Pending above threshold. sessionId={} pending={} threshold={} sequential={} stream={} count={}", new Object[] { sessionId, pendingVideos, maxPendingVideoFrames, numSequentialPendingVideoFrames, subscriberStream.getBroadcastStreamPublishName(), droppedPacketsCount });
-                                    }
-                                    // drop because the client has insufficient bandwidth
-                                    long now = System.currentTimeMillis();
-                                    if (bufferCheckInterval > 0 && now >= nextCheckBufferUnderrun) {
-                                        // notify client about frame dropping (keyframe)
-                                        sendInsufficientBandwidthStatus(currentItem.get());
-                                        nextCheckBufferUnderrun = now + bufferCheckInterval;
-                                    }
-                                    videoFrameDropper.dropPacket(rtmpMessage);
-                                    return;
-                                }
-                                // we are ok to send, check if we should send buffered frame
-                                if (bufferedInterframeIdx > -1) {
-                                    IVideoStreamCodec.FrameData fd = videoCodec.getInterframe(bufferedInterframeIdx++);
-                                    if (fd != null) {
-                                        VideoData interframe = new VideoData(fd.getFrame());
-                                        interframe.setTimestamp(body.getTimestamp());
-                                        rtmpMessage = RTMPMessage.build(interframe);
-                                    } else {
-                                        // it means that new keyframe was received and we should send current frames instead of buffered
-                                        bufferedInterframeIdx = -1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (body instanceof AudioData) {
-                    if (!receiveAudio && sendBlankAudio) {
-                        // send blank audio packet to reset player
-                        sendBlankAudio = false;
-                        body = new AudioData();
-                        if (lastMessageTs > 0) {
-                            body.setTimestamp(lastMessageTs);
-                        } else {
-                            body.setTimestamp(0);
-                        }
-                        rtmpMessage = RTMPMessage.build(body);
-                    } else if (!receiveAudio) {
-                        return;
+                // we are ok to send, check if we should send buffered frame
+                if (bufferedInterframeIdx > -1) {
+                    IVideoStreamCodec.FrameData fd = videoCodec.getInterframe(bufferedInterframeIdx++);
+                    if (fd != null) {
+                        VideoData interframe = new VideoData(fd.getFrame());
+                        interframe.setTimestamp(body.getTimestamp());
+                        rtmpMessage = RTMPMessage.build(interframe);
+                    } else {
+                        // it means that new keyframe was received and we should send current frames instead of buffered
+                        bufferedInterframeIdx = -1;
                     }
                 }
-                sendMessage(rtmpMessage);
-            } else {
-                throw new RuntimeException(String.format("Expected IStreamData but got %s (type %s)", body.getClass(), body.getDataType()));
+            } else if (body instanceof AudioData) {
+                if (!receiveAudio && sendBlankAudio) {
+                    // send blank audio packet to reset player
+                    sendBlankAudio = false;
+                    body = new AudioData();
+                    if (lastMessageTs > 0) {
+                        body.setTimestamp(lastMessageTs);
+                    } else {
+                        body.setTimestamp(0);
+                    }
+                    rtmpMessage = RTMPMessage.build(body);
+                } else if (!receiveAudio) {
+                    return;
+                }
             }
+            sendMessage(rtmpMessage);
+            
         } else if (message instanceof ResetMessage) {
             sendReset();
         } else {
@@ -1619,9 +1533,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Returns true if the engine currently receives audio.
-     * 
-     * @return receive audio
+     * Returns true if the engine currently receives audio. 
      */
     public boolean receiveAudio() {
         return receiveAudio;
@@ -1629,10 +1541,6 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
 
     /**
      * Returns true if the engine currently receives audio and sets the new value.
-     * 
-     * @param receive
-     *            new value
-     * @return old value
      */
     public boolean receiveAudio(boolean receive) {
         boolean oldValue = receiveAudio;
@@ -1672,13 +1580,14 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
      * Releases pending message body, nullifies pending message object
      */
     private void releasePendingMessage() {
-        if (pendingMessage != null) {
-            IRTMPEvent body = pendingMessage.getBody();
-            if (body instanceof IStreamData && ((IStreamData<?>) body).getData() != null) {
-                ((IStreamData<?>) body).getData().free();
-            }
-            pendingMessage = null;
+        if (pendingMessage == null) {
+        	return;
+        } 
+        IRTMPEvent body = pendingMessage.getBody();
+        if (body instanceof IStreamData && ((IStreamData<?>) body).getData() != null) {
+            ((IStreamData<?>) body).getData().free();
         }
+        pendingMessage = null; 
     }
 
     /**
@@ -1773,7 +1682,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             sendSeekStatus(currentItem.get(), position);
             sendStartStatus(currentItem.get());
             int seekPos = sendVODSeekCM(position);
-            // we seeked to the nearest keyframe so use real timestamp now
+            // 我们找到了最近的关键帧，所以现在就使用真正的时间戳
             if (seekPos == -1) {
                 seekPos = position;
             }
@@ -1782,9 +1691,9 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             playbackStart = System.currentTimeMillis() - seekPos;
             log.trace("Playback start: {} seek pos: {}", playbackStart, seekPos);
             subscriberStream.onChange(StreamState.SEEK, currentItem.get(), seekPos);
-            // start off with not having sent any message
+            //从没有发送任何消息开始
             boolean messageSent = false;
-            // read our client state
+            //阅读我们的客户状态
             switch (subscriberStream.getState()) {
                 case PAUSED:
                 case STOPPED:
@@ -1877,93 +1786,97 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Periodically triggered by executor to send messages to the client.
+     * 由执行器定期触发以向客户端发送消息。
      */
-    private final class PullAndPushRunnable implements IScheduledJob {
-
+    private final class PullAndPushRunnable implements IScheduledJob{ 
         /**
-         * Trigger sending of messages.
+         * 触发消息发送。
          */
         public void execute(ISchedulingService svc) {
-            // ensure the job is not already running
-            if (pushPullRunning.compareAndSet(false, true)) {
-                try {
-                    // handle any pending operations
-                    Runnable worker = null;
-                    while (!pendingOperations.isEmpty()) {
-                        log.debug("Pending operations: {}", pendingOperations.size());
-                        // remove the first operation and execute it 
-                        worker = pendingOperations.remove();
-                        log.debug("Worker: {}", worker);
-                        // if the operation is seek, ensure it is the last request in the set
-                        while (worker instanceof SeekRunnable) {
-                            Runnable tmp = pendingOperations.peek();
-                            if (tmp != null && tmp instanceof SeekRunnable) {
-                                worker = pendingOperations.remove();
-                            } else {
-                                break;
-                            }
-                        }
-                        if (worker != null) {
-                            log.debug("Executing pending operation");
-                            worker.run();
-                        }
-                    }
-                    // receive then send if message is data (not audio or video)
-                    if (subscriberStream.getState() == StreamState.PLAYING && pullMode) {
-                        if (pendingMessage != null) {
-                            IRTMPEvent body = pendingMessage.getBody();
-                            if (okayToSendMessage(body)) {
-                                sendMessage(pendingMessage);
-                                releasePendingMessage();
-                            } else {
-                                return;
-                            }
+            // 确保作业尚未运行
+        	if (!pushPullRunning.compareAndSet(false, true)) {
+        		log.debug("Push / pull already running");
+        	}
+            
+            try {
+                // 处理任何挂起的操作
+                Runnable worker = null;
+                while (!pendingOperations.isEmpty()) {
+                    log.debug("Pending operations: {}", pendingOperations.size());
+                    //删除第一个操作并执行它
+                    worker = pendingOperations.remove();
+                    log.debug("Worker: {}", worker);
+                    // 如果操作是seek，请确保它是集合中的最后一个请求
+                    while (worker instanceof SeekRunnable) {
+                        Runnable tmp = pendingOperations.peek();
+                        if (tmp != null && tmp instanceof SeekRunnable) {
+                            worker = pendingOperations.remove();
                         } else {
-                            IMessage msg = null;
-                            IMessageInput in = msgInReference.get();
-                            do {
-                                msg = in.pullMessage();
-                                if (msg != null) {
-                                    if (msg instanceof RTMPMessage) {
-                                        RTMPMessage rtmpMessage = (RTMPMessage) msg;
-                                        if (checkSendMessageEnabled(rtmpMessage)) {
-                                            // Adjust timestamp when playing lists
-                                            IRTMPEvent body = rtmpMessage.getBody();
-                                            body.setTimestamp(body.getTimestamp() + timestampOffset);
-                                            if (okayToSendMessage(body)) {
-                                                log.trace("ts: {}", rtmpMessage.getBody().getTimestamp());
-                                                sendMessage(rtmpMessage);
-                                                IoBuffer data = ((IStreamData<?>) body).getData();
-                                                if (data != null) {
-                                                    data.free();
-                                                }
-                                            } else {
-                                                pendingMessage = rtmpMessage;
-                                            }
-                                            ensurePullAndPushRunning();
-                                            break;
-                                        }
-                                    }
-                                } else {
-                                    // No more packets to send
-                                    log.debug("Ran out of packets");
-                                    runDeferredStop();
-                                }
-                            } while (msg != null);
+                            break;
                         }
                     }
-                } catch (IOException err) {
-                    // we couldn't get more data, stop stream.
-                    log.warn("Error while getting message", err);
-                    runDeferredStop();
-                } finally {
-                    // reset running flag
-                    pushPullRunning.compareAndSet(true, false);
+                    if (worker != null) {
+                        log.debug("Executing pending operation");
+                        worker.run();
+                    }
                 }
-            } else {
-                log.debug("Push / pull already running");
+                // 如果消息是数据（不是音频或视频），则接收然后发送
+                if (subscriberStream.getState() != StreamState.PLAYING || !pullMode) {
+                	return;
+                }
+                 
+                if (pendingMessage != null) {
+                    IRTMPEvent body = pendingMessage.getBody();
+                    if (okayToSendMessage(body)) {
+                        sendMessage(pendingMessage);
+                        releasePendingMessage();
+                    } else {
+                        return;
+                    }
+                } else {
+                	IMessage msg = null;
+                    IMessageInput in = msgInReference.get();
+                    do { 
+                    	msg = in.pullMessage();
+                        if (msg == null) {
+                        	// No more packets to send
+                            log.debug("Ran out of packets");
+                            runDeferredStop();
+                            continue;
+                        }
+                        if (!(msg instanceof RTMPMessage)){
+                        	continue;
+                        }
+                        
+                        RTMPMessage rtmpMessage = (RTMPMessage) msg;
+                        if (checkSendMessageEnabled(rtmpMessage)) {
+                            // Adjust timestamp when playing lists
+                            IRTMPEvent body = rtmpMessage.getBody();
+                            body.setTimestamp(body.getTimestamp() + timestampOffset);
+                            if (okayToSendMessage(body)) {
+                                log.trace("ts: {}", rtmpMessage.getBody().getTimestamp());
+                                sendMessage(rtmpMessage);
+                                IoBuffer data = ((IStreamData<?>) body).getData();
+                                if (data != null) {
+                                    data.free();
+                                }
+                            } else {
+                                pendingMessage = rtmpMessage;
+                            }
+                            ensurePullAndPushRunning();
+                            break;
+                        }
+                    } while (msg != null);
+                } 
+            } catch (IOException err) {
+                // 我们无法获取更多数据，请停止流。
+                log.warn("Error while getting message", err);
+                runDeferredStop();
+            } finally {
+                // 重置运行标志
+                pushPullRunning.compareAndSet(true, false);
             }
+             
         }
     }
 
@@ -1994,4 +1907,44 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         this.maxSequentialPendingVideoFrames = maxSequentialPendingVideoFrames;
     }
 
+    public void setBufferCheckInterval(int bufferCheckInterval) {
+        this.bufferCheckInterval = bufferCheckInterval;
+    }
+
+    public void setUnderrunTrigger(int underrunTrigger) {
+        this.underrunTrigger = underrunTrigger;
+    }
+
+    void setMessageOut(IMessageOutput msgOut) {
+        this.msgOutReference.set(msgOut);
+    }
+
+    /**
+     * Builder pattern
+     */
+    public final static class Builder {
+        //Required for play engine
+        private ISubscriberStream subscriberStream;
+
+        //Required for play engine
+        private ISchedulingService schedulingService;
+
+        //Required for play engine
+        private IConsumerService consumerService;
+
+        //Required for play engine
+        private IProviderService providerService;
+
+        public Builder(ISubscriberStream subscriberStream, ISchedulingService schedulingService, IConsumerService consumerService, IProviderService providerService) {
+            this.subscriberStream = subscriberStream;
+            this.schedulingService = schedulingService;
+            this.consumerService = consumerService;
+            this.providerService = providerService;
+        }
+
+        public PlayEngine build() {
+            return new PlayEngine(this);
+        }
+
+    }
 }

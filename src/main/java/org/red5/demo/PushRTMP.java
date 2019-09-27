@@ -11,7 +11,7 @@ public class PushRTMP {
 
 	public static void run() throws Exception {
 		System.out.println("start...");
-		String rtmpPath = "rtmp://ns8.indexforce.com/home/mystream";
+		String rtmpPath = "rtmp://58.200.131.2:1935/livetv/gxtv";
 		String rtspPath = "rtmp://localhost:1935/oflaDemo/sssssss"; //oflaDemo
 		//String rtspPath = "rtmp://58.200.131.2:1935/livetv/gxtvvvvv";
 		int audioRecord = 0; // 0 = 不录制，1=录制

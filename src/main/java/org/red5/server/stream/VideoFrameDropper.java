@@ -22,8 +22,6 @@ import org.red5.server.net.rtmp.event.IRTMPEvent;
 import org.red5.server.net.rtmp.event.VideoData;
 import org.red5.server.net.rtmp.event.VideoData.FrameType;
 import org.red5.server.stream.message.RTMPMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * State machine for video frame dropping in live streams.
@@ -44,29 +42,22 @@ import org.slf4j.LoggerFactory;
  * @author The Red5 Project
  * @author Joachim Bauch (jojo@struktur.de)
  */
-public class VideoFrameDropper implements IFrameDropper {
-
-    protected static Logger log = LoggerFactory.getLogger(VideoFrameDropper.class.getName());
-
-    /** Current state. */
+public class VideoFrameDropper implements IFrameDropper { 
+    
     private int state;
-
-    /** Constructs a new VideoFrameDropper. */
+ 
     public VideoFrameDropper() {
         reset();
     }
-
-    /** {@inheritDoc} */
+ 
     public void reset() {
         reset(SEND_ALL);
     }
-
-    /** {@inheritDoc} */
+ 
     public void reset(int state) {
         this.state = state;
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean canSendPacket(RTMPMessage message, long pending) {
         IRTMPEvent packet = message.getBody();
         boolean result = true;
@@ -109,8 +100,7 @@ public class VideoFrameDropper implements IFrameDropper {
         }
         return result;
     }
-
-    /** {@inheritDoc} */
+ 
     public void dropPacket(RTMPMessage message) {
         IRTMPEvent packet = message.getBody();
         // Only check video packets.
@@ -157,11 +147,6 @@ public class VideoFrameDropper implements IFrameDropper {
                 default:
             }
         }
-    }
-
-    /** {@inheritDoc} */
-    public void sendPacket(RTMPMessage message) {
-
-    }
-
+    } 
+    public void sendPacket(RTMPMessage message) {} 
 }

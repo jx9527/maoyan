@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.red5.io.object.StreamAction;
-import org.red5.logging.Red5LoggerFactory;
 import org.red5.server.ScopeContextBean;
 import org.red5.server.api.IConnection.Encoding;
 import org.red5.server.api.IContext;
@@ -65,14 +64,14 @@ import org.red5.server.so.SharedObjectMessage;
 import org.red5.server.so.SharedObjectService;
 import org.red5.server.stream.StreamService;
 import org.red5.server.util.ScopeUtils;
-import org.slf4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * RTMP events handler.
+ * rtmp事件处理程序。
  */
-public class RTMPHandler extends BaseRTMPHandler {
-
-    protected static Logger log = Red5LoggerFactory.getLogger(RTMPHandler.class);
+@Slf4j
+public class RTMPHandler extends BaseRTMPHandler { 
 
     /**
      * Status object service.
@@ -106,20 +105,14 @@ public class RTMPHandler extends BaseRTMPHandler {
 		this.globalScopeConnectionAllowed = globalScopeConnectionAllowed;
 	}
     /**
-     * Setter for server object.
-     * 
-     * @param server
-     *            Red5 server instance
+     * Setter for server object. 
      */
     public void setServer(IServer server) {
         this.server = server;
     }
 
     /**
-     * Setter for status object service.
-     * 
-     * @param statusObjectService
-     *            Status object service.
+     * Setter for status object service. 
      */
     public void setStatusObjectService(StatusObjectService statusObjectService) {
         this.statusObjectService = statusObjectService;
@@ -147,11 +140,7 @@ public class RTMPHandler extends BaseRTMPHandler {
     public void setDispatchStreamActions(boolean dispatchStreamActions) {
         this.dispatchStreamActions = dispatchStreamActions;
     }
-    
-    
-    
-
-    /** {@inheritDoc} */
+     
     @Override
     protected void onChunkSize(RTMPConnection conn, Channel channel, Header source, ChunkSize chunkSize) {
         int requestedChunkSize = chunkSize.getSize();
@@ -183,12 +172,7 @@ public class RTMPHandler extends BaseRTMPHandler {
     }
 
     /**
-     * Remoting call invocation handler.
-     * 
-     * @param conn
-     *            RTMP connection
-     * @param call
-     *            Service call
+     * Remoting call invocation handler. 
      */
     protected void invokeCall(RTMPConnection conn, IServiceCall call) {
         final IScope scope = conn.getScope();
@@ -211,15 +195,7 @@ public class RTMPHandler extends BaseRTMPHandler {
     }
 
     /**
-     * Remoting call invocation handler.
-     * 
-     * @param conn
-     *            RTMP connection
-     * @param call
-     *            Service call
-     * @param service
-     *            Server-side service object
-     * @return true if the call was performed, otherwise false
+     * Remoting call invocation handler. 
      */
     private boolean invokeCall(RTMPConnection conn, IServiceCall call, Object service) {
         final IScope scope = conn.getScope();
@@ -250,7 +226,7 @@ public class RTMPHandler extends BaseRTMPHandler {
             return;
         }
         boolean disconnectOnReturn = false;
-        // "connected" here means that there is a scope associated with the connection (post-"connect")
+        // 此处的“connected”表示存在与连接相关联的作用域（post-“connect”）
         boolean connected = conn.isConnected();
         if (connected) {
             // If this is not a service call then handle connection...
@@ -312,7 +288,7 @@ public class RTMPHandler extends BaseRTMPHandler {
                 // handle service calls
                 invokeCall(conn, call);
             }
-        } else if (StreamAction.CONNECT.equals(action)) {
+        } else if (StreamAction.CONNECT.equals(StreamAction.getEnum(action))) {
             // Handle connection
             log.debug("connect - transaction id: {}", transId);
             // Get parameters passed from client to NetConnection#connection
@@ -488,7 +464,7 @@ public class RTMPHandler extends BaseRTMPHandler {
                 IPendingServiceCall psc = (IPendingServiceCall) call;
                 Object result = psc.getResult();
                 if (result instanceof DeferredResult) {
-                    // Remember the deferred result to be sent later
+                    //Remember the deferred result to be sent later
                     DeferredResult dr = (DeferredResult) result;
                     dr.setServiceCall(psc);
                     dr.setChannel(channel);

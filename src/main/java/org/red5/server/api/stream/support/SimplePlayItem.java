@@ -20,32 +20,17 @@ package org.red5.server.api.stream.support;
 
 import org.red5.server.api.stream.IPlayItem;
 import org.red5.server.messaging.IMessageInput;
-
-/**
- * Simple playlist item implementation
- */
+ 
 public class SimplePlayItem implements IPlayItem, Comparable<SimplePlayItem> {
 
     private long created = System.nanoTime();
-
-    /**
-     * Playlist item name
-     */
+ 
     protected final String name;
-
-    /**
-     * Start mark
-     */
+ 
     protected final long start;
-
-    /**
-     * Length - amount to play
-     */
+ 
     protected final long length;
-
-    /**
-     * Message source
-     */
+ 
     protected IMessageInput msgInput;
 
     private SimplePlayItem(String name) {
@@ -58,72 +43,36 @@ public class SimplePlayItem implements IPlayItem, Comparable<SimplePlayItem> {
         this.name = name;
         this.start = start;
         this.length = length;
-    }
-
-    /**
-     * Returns play item length in milliseconds
-     * 
-     * @return Play item length in milliseconds
-     */
+    } 
+     
     public long getLength() {
         return length;
     }
-
-    /**
-     * Returns IMessageInput object. IMessageInput is an endpoint for a consumer to connect.
-     * 
-     * @return IMessageInput object
-     */
+ 
     public IMessageInput getMessageInput() {
         return msgInput;
     }
-
-    /**
-     * Returns item name
-     * 
-     * @return item name
-     */
+ 
     public String getName() {
         return name;
     }
-
-    /**
-     * Returns boolean value that specifies whether item can be played
-     */
+ 
     public long getStart() {
         return start;
     }
-
-    /**
-     * Alias for getMessageInput
-     * 
-     * @return Message input source
-     */
+ 
     public IMessageInput getMsgInput() {
         return msgInput;
     }
-
-    /**
-     * Setter for message input
-     *
-     * @param msgInput
-     *            Message input
-     */
+ 
     public void setMsgInput(IMessageInput msgInput) {
         this.msgInput = msgInput;
     }
-
-    /**
-     * @return the created
-     */
+ 
     public long getCreated() {
         return created;
     }
-
-    /**
-     * @param created
-     *            the created to set
-     */
+ 
     public void setCreated(long created) {
         this.created = created;
     }
@@ -165,38 +114,17 @@ public class SimplePlayItem implements IPlayItem, Comparable<SimplePlayItem> {
         }
         return 0;
     }
-
-    /**
-     * Builder for SimplePlayItem
-     * 
-     * @param name
-     *            name
-     * @return play item instance
-     */
+ 
     public static SimplePlayItem build(String name) {
         SimplePlayItem playItem = new SimplePlayItem(name);
         return playItem;
     }
-
-    /**
-     * Builder for SimplePlayItem
-     * 
-     * @param name
-     *            name
-     * @param start
-     *            start
-     * @param length
-     *            length
-     * @return play item instance
-     */
+ 
     public static SimplePlayItem build(String name, long start, long length) {
         SimplePlayItem playItem = new SimplePlayItem(name, start, length);
         return playItem;
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+ 
     @Override
     public String toString() {
         return "SimplePlayItem [created=" + created + ", name=" + name + ", start=" + start + ", length=" + length + "]";

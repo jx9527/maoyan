@@ -11,20 +11,19 @@ import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.transport.socket.SocketAcceptor;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.red5.conf.ExtConfiguration;
 import org.red5.server.util.CustomizableThreadFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * HTTP Server Transport
  * @author pengliren
  *
  */
+@Slf4j
 public class HTTPMinaTransport {
-
-	private static final Logger log = LoggerFactory.getLogger(HTTPMinaTransport.class);
-	
+ 
 	private SocketAcceptor acceptor;
 	private IoHandler ioHandler;
 	protected boolean useHeapBuffers = true; 
@@ -48,7 +47,7 @@ public class HTTPMinaTransport {
 		sessionConf.setReceiveBufferSize(ExtConfiguration.HTTP_RECEIVE_BUFFER_SIZE);
 		sessionConf.setMaxReadBufferSize(ExtConfiguration.HTTP_RECEIVE_BUFFER_SIZE);
 		sessionConf.setSendBufferSize(ExtConfiguration.HTTP_SEND_BUFFER_SIZE);		
-		//set reuse address on the socket acceptor as well
+		//在套接字接受程序上设置重用地址
 		acceptor.setReuseAddress(true);		
 		OrderedThreadPoolExecutor executor = new OrderedThreadPoolExecutor(ExtConfiguration.HTTP_WORKER_THREADS);
 		executor.setThreadFactory(new CustomizableThreadFactory("HttpWorkerExecutor-"));

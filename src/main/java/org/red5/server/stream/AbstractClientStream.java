@@ -27,20 +27,11 @@ import org.red5.server.api.stream.IStreamCapableConnection;
  * Abstract base for client streams
  */
 public abstract class AbstractClientStream extends AbstractStream implements IClientStream {
-
-    /**
-     * Stream identifier. Unique across server.
-     */
+ 
     private Number streamId = 0.0d;
-
-    /**
-     * Stream name of the broadcasting stream.
-     */
+ 
     private String broadcastStreamPublishName;
-
-    /**
-     * Connection that works with streams
-     */
+ 
     private WeakReference<IStreamCapableConnection> conn;
 
     /**

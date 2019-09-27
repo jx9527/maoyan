@@ -19,19 +19,15 @@
 package org.red5.server.api.service;
 
 /**
- * Callback that will be executed when the result of a pending service call has been received.
+ * 在收到挂起服务调用的结果时将执行的回调。
  * 
  * @author The Red5 Project
  * @author Joachim Bauch (jojo@struktur.de)
  *
  */
-public interface IPendingServiceCallback {
-
+public interface IPendingServiceCallback { 
     /**
-     * Triggered when results are recieved
-     * 
-     * @param call
-     *            Call object this callback is applied to
+     * 收到结果时触发
      */
     public void resultReceived(IPendingServiceCall call);
 

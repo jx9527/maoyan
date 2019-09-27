@@ -60,173 +60,65 @@ public class BroadcastScope extends BasicScope implements IBroadcastScope, IPipe
      * Whether or not this "scope" has been removed
      */
     private volatile boolean removed;
-
-    /**
-     * Creates broadcast scope
-     * 
-     * @param parent
-     *            Parent scope
-     * @param name
-     *            Scope name
-     */
+ 
     public BroadcastScope(IScope parent, String name) {
         super(parent, ScopeType.BROADCAST, name, false);
         pipe = new InMemoryPushPushPipe(this);
         keepOnDisconnect = true;
     }
-
-    /**
-     * Register pipe connection event listener with this scope's pipe. A listener that wants to listen to events when provider/consumer connects to or disconnects from a specific pipe.
-     * 
-     * @param listener
-     *            Pipe connection event listener
-     * @see org.red5.server.messaging.IPipeConnectionListener
-     */
+ 
     public void addPipeConnectionListener(IPipeConnectionListener listener) {
         pipe.addPipeConnectionListener(listener);
     }
-
-    /**
-     * Unregisters pipe connection event listener with this scope's pipe
-     * 
-     * @param listener
-     *            Pipe connection event listener
-     * @see org.red5.server.messaging.IPipeConnectionListener
-     */
+ 
     public void removePipeConnectionListener(IPipeConnectionListener listener) {
         pipe.removePipeConnectionListener(listener);
     }
-
-    /**
-     * Pull message from pipe
-     * 
-     * @return Message object
-     * @see org.red5.server.messaging.IMessage
-     */
+ 
     public IMessage pullMessage() {
         return pipe.pullMessage();
     }
-
-    /**
-     * Pull message with timeout
-     * 
-     * @param wait
-     *            Timeout
-     * @return Message object
-     * @see org.red5.server.messaging.IMessage
-     */
+ 
     public IMessage pullMessage(long wait) {
         return pipe.pullMessage(wait);
     }
-
-    /**
-     * Connect scope's pipe to given consumer
-     *
-     * @param consumer
-     *            Consumer
-     * @param paramMap
-     *            Parameters passed with connection
-     * @return true on success, false otherwise
-     */
+ 
     public boolean subscribe(IConsumer consumer, Map<String, Object> paramMap) {
         return !removed && pipe.subscribe(consumer, paramMap);
     }
-
-    /**
-     * Disconnects scope's pipe from given consumer
-     * 
-     * @param consumer
-     *            Consumer
-     * @return true on success, false otherwise
-     */
+ 
     public boolean unsubscribe(IConsumer consumer) {
         return pipe.unsubscribe(consumer);
     }
-
-    /**
-     * Getter for pipe consumers
-     * 
-     * @return Pipe consumers
-     */
+ 
     public List<IConsumer> getConsumers() {
         return pipe.getConsumers();
     }
-
-    /**
-     * Send out-of-band ("special") control message
-     *
-     * @param consumer
-     *            Consumer, may be used in concrete implementations
-     * @param oobCtrlMsg
-     *            Out-of-band control message
-     */
+ 
     public void sendOOBControlMessage(IConsumer consumer, OOBControlMessage oobCtrlMsg) {
         pipe.sendOOBControlMessage(consumer, oobCtrlMsg);
     }
-
-    /**
-     * Push a message to this output endpoint. May block the pusher when output can't handle the message at the time.
-     * 
-     * @param message
-     *            Message to be pushed
-     * @throws IOException
-     *             If message could not be pushed
-     */
+ 
     public void pushMessage(IMessage message) throws IOException {
         pipe.pushMessage(message);
     }
-
-    /**
-     * Connect scope's pipe with given provider
-     * 
-     * @param provider
-     *            Provider
-     * @param paramMap
-     *            Parameters passed on connection
-     * @return true on success, false otherwise
-     */
+ 
     public boolean subscribe(IProvider provider, Map<String, Object> paramMap) {
         return !removed && pipe.subscribe(provider, paramMap);
     }
-
-    /**
-     * Disconnects scope's pipe from given provider
-     * 
-     * @param provider
-     *            Provider
-     * @return true on success, false otherwise
-     */
+ 
     public boolean unsubscribe(IProvider provider) {
         return pipe.unsubscribe(provider);
     }
-
-    /**
-     * Getter for providers list
-     * 
-     * @return List of providers
-     */
+ 
     public List<IProvider> getProviders() {
         return pipe.getProviders();
     }
-
-    /**
-     * Send out-of-band ("special") control message
-     *
-     * @param provider
-     *            Provider, may be used in concrete implementations
-     * @param oobCtrlMsg
-     *            Out-of-band control message
-     */
+ 
     public void sendOOBControlMessage(IProvider provider, OOBControlMessage oobCtrlMsg) {
         pipe.sendOOBControlMessage(provider, oobCtrlMsg);
     }
-
-    /**
-     * Pipe connection event handler
-     * 
-     * @param event
-     *            Pipe connection event
-     */
+ 
     public void onPipeConnectionEvent(PipeConnectionEvent event) {
         // Switch event type
         switch (event.getType()) {
@@ -253,30 +145,18 @@ public class BroadcastScope extends BasicScope implements IBroadcastScope, IPipe
                 throw new UnsupportedOperationException("Event type not supported: " + event.getType());
         }
     }
-
-    /**
-     * Returns the client broadcast stream
-     */
+ 
     public IClientBroadcastStream getClientBroadcastStream() {
         return clientBroadcastStream;
     }
-
-    /**
-     * Sets the client broadcast stream
-     * 
-     * @param clientBroadcastStream
-     *            stream
-     */
+ 
     public void setClientBroadcastStream(IClientBroadcastStream clientBroadcastStream) {
         if (this.clientBroadcastStream != null) {
             log.info("ClientBroadcastStream already exists: {} new: {}", this.clientBroadcastStream, clientBroadcastStream);
         }
         this.clientBroadcastStream = clientBroadcastStream;
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+ 
     @Override
     public String toString() {
         return "BroadcastScope [clientBroadcastStream=" + clientBroadcastStream + ", compCounter=" + compCounter + ", removed=" + removed + "]";

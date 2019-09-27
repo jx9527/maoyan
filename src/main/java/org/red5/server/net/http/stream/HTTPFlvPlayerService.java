@@ -33,7 +33,7 @@ public class HTTPFlvPlayerService extends BaseHTTPService implements IHTTPServic
 
 		resp.addHeader("Accept-Ranges", "bytes");
 		resp.addHeader(CONTENT_TYPE, "video/x-flv");
-		//resp.addHeader(CONTENT_LENGTH, Integer.MAX_VALUE);  
+		//resp.addHeader(CONTENT_LENGTH, 1000);  
 		resp.addHeader("Pragma", "no-cache"); 
 		resp.setHeader("Connection", "Keep-Alive");
 		resp.setHeader("Cache-Control", "no-cache"); 
@@ -44,7 +44,6 @@ public class HTTPFlvPlayerService extends BaseHTTPService implements IHTTPServic
 
 		HTTPMinaConnection conn = (HTTPMinaConnection)Red5.getConnectionLocal();
 		if (!REQUEST_GET_METHOD.equalsIgnoreCase(req.getMethod().toString())) {
-			// Bad request - return simple error page
 			sendError(req, resp, HTTPResponseStatus.BAD_REQUEST);
 			return;
 		}

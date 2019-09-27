@@ -64,8 +64,7 @@ public class ClientRegistry implements IClientRegistry, ClientRegistryMXBean {
      */
     private String name;
 
-    public ClientRegistry() {
-    }
+    public ClientRegistry(){}
 
     //allows for setting a "name" to be used with jmx for lookup
     public ClientRegistry(String name) {
@@ -82,10 +81,7 @@ public class ClientRegistry implements IClientRegistry, ClientRegistryMXBean {
     }
 
     /**
-     * Add client to registry
-     * 
-     * @param client
-     *            Client to add
+     * Add client to registry 
      */
     public void addClient(IClient client) {
         addClient(client.getId(), client);
@@ -123,17 +119,7 @@ public class ClientRegistry implements IClientRegistry, ClientRegistryMXBean {
     }
 
     /**
-     * Check if client registry contains clients.
-     *
-     * @return <pre>
-     * True
-     * </pre>
-     * 
-     *         if clients exist, otherwise
-     * 
-     *         <pre>
-     * False
-     * </pre>
+     * Check if client registry contains clients. 
      */
     protected boolean hasClients() {
         return !clients.isEmpty();
@@ -155,10 +141,6 @@ public class ClientRegistry implements IClientRegistry, ClientRegistryMXBean {
 
     /**
      * Check whether registry has client with given id
-     *
-     * @param id
-     *            Client id
-     * @return true if client with given id was register with this registry, false otherwise
      */
     public boolean hasClient(String id) {
         if (id == null) {
@@ -169,28 +151,14 @@ public class ClientRegistry implements IClientRegistry, ClientRegistryMXBean {
     }
 
     /**
-     * Return client by id
-     *
-     * @param id
-     *            Client id
-     * @return Client object associated with given id
-     * @throws ClientNotFoundException
-     *             if we can't find client
+     * Return client by id 
      */
     public IClient lookupClient(String id) throws ClientNotFoundException {
         return getClient(id);
     }
 
     /**
-     * Return client from next id with given params
-     *
-     * @param params
-     *            Client params
-     * @return Client object
-     * @throws ClientNotFoundException
-     *             if client not found
-     * @throws ClientRejectedException
-     *             if client rejected
+     * Return client from next id with given params 
      */
     public IClient newClient(Object[] params) throws ClientNotFoundException, ClientRejectedException {
         // derive client id from the connection params or use next
@@ -218,20 +186,12 @@ public class ClientRegistry implements IClientRegistry, ClientRegistryMXBean {
     }
 
     /**
-     * Return previous client id
-     * 
-     * @return Previous client id
+     * Return previous client id 
      */
     public String previousId() {
         return String.format("%d", nextId.get());
     }
-
-    /**
-     * Removes client from registry
-     * 
-     * @param client
-     *            Client to remove
-     */
+ 
     protected void removeClient(IClient client) {
         clients.remove(client.getId());
     }

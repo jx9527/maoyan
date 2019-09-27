@@ -19,8 +19,6 @@
 package org.red5.server.messaging;
 
 /**
- * Filter marker interface groups consumer and provider interfaces
+ * 筛选标记接口组使用者和提供程序接口
  */
-public interface IFilter extends IConsumer, IProvider {
-
-}
+public interface IFilter extends IConsumer, IProvider {}

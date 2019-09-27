@@ -433,12 +433,12 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
      */
     @ConstructorProperties({ "type" })
     public RTMPConnection(String type) {
-        // We start with an anonymous connection without a scope.
-        // These parameters will be set during the call of "connect" later.
+        // 我们从没有作用域的匿名连接开始.
+        // 这些参数将在稍后调用“connect”时设置。
         super(type);
-        // create a decoder state
+        // 创建解码器状态
         decoderState = new RTMPDecodeState(getSessionId());
-        // set running flag
+        // 设置运行标识
         running = new AtomicBoolean(false);
     }
 
@@ -500,9 +500,9 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         return decoderState;
     }
 
-    /** {@inheritDoc} */
+    
     public void setBandwidth(int mbits) {
-        // tell the flash player how fast we want data and how fast we shall send it
+        // 告诉flash播放器我们需要数据的速度，以及我们发送数据的速度
         getChannel(2).write(new ServerBW(mbits));
         // second param is the limit type (0=hard,1=soft,2=dynamic)
         getChannel(2).write(new ClientBW(mbits, (byte) limitType));
@@ -551,19 +551,20 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     }
 
     /**
-     * Start waiting for a valid handshake.
+     * 开始等待有效的握手。
      */
     public void startWaitForHandshake() {
         if (log.isDebugEnabled()) {
             log.debug("startWaitForHandshake - {}", sessionId);
+        } 
+        if (scheduler == null) {
+            return;
         }
-        // start the handshake checker after maxHandshakeTimeout milliseconds
-        if (scheduler != null) {
-            try {
-                waitForHandshakeTask = scheduler.schedule(new WaitForHandshakeTask(), new Date(System.currentTimeMillis() + maxHandshakeTimeout));
-            } catch (TaskRejectedException e) {
-                log.error("WaitForHandshake task was rejected for {}", sessionId, e);
-            }
+        // 在maxhandshaketimeout毫秒后启动握手检查器
+        try {
+            waitForHandshakeTask = scheduler.schedule(new WaitForHandshakeTask(), new Date(System.currentTimeMillis() + maxHandshakeTimeout));
+        } catch (TaskRejectedException e) {
+            log.error("WaitForHandshake task was rejected for {}", sessionId, e);
         }
     }
 
@@ -584,24 +585,25 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
      * Starts measurement.
      */
     protected void startRoundTripMeasurement() {
-        if (scheduler != null) {
-            if (pingInterval > 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("startRoundTripMeasurement - {}", sessionId);
-                }
-                try {
-                    // schedule with an initial delay of now + 2s to prevent ping messages during connect post processes
-                    keepAliveTask = scheduler.scheduleWithFixedDelay(new KeepAliveTask(), new Date(System.currentTimeMillis() + 2000L), pingInterval);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Keep alive scheduled for {}", sessionId);
-                    }
-                } catch (Exception e) {
-                    log.error("Error creating keep alive job for {}", sessionId, e);
-                }
-            }
-        } else {
-            log.error("startRoundTripMeasurement cannot be executed due to missing scheduler. This can happen if a connection drops before handshake is complete");
+    	if (scheduler == null) {
+    		log.error("startRoundTripMeasurement cannot be executed due to missing scheduler. This can happen if a connection drops before handshake is complete");
+    		return;
+    	}
+        if(pingInterval <= 0){
+        	return;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("startRoundTripMeasurement - {}", sessionId);
+        }
+        try {
+            // 以现在+2s的初始延迟计划，以防止在connect post过程中ping消息
+            keepAliveTask = scheduler.scheduleWithFixedDelay(new KeepAliveTask(), new Date(System.currentTimeMillis() + 2000L), pingInterval);
+            if (log.isDebugEnabled()) {
+                log.debug("Keep alive scheduled for {}", sessionId);
+            }
+        } catch (Exception e) {
+            log.error("Error creating keep alive job for {}", sessionId, e);
+        } 
     }
 
     /**
@@ -618,14 +620,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     }
 
     /**
-     * Initialize connection.
-     * 
-     * @param host
-     *            Connection host
-     * @param path
-     *            Connection path
-     * @param params
-     *            Params passed from client
+     * Initialize connection. 
      */
     public void setup(String host, String path, Map<String, Object> params) {
         this.host = host;
@@ -641,12 +636,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     
 	 
     /**
-	 * Initialize connection.
-	 * 
-	 * @param host Connection host
-	 * @param path Connection path
-	 * @param sessionId Connection session id
-	 * @param params Params passed from client
+	 * Initialize connection. 
 	 */
 	public void setup(String host, String path, String sessionId, Map<String, Object> params) {
 		this.host = host;
@@ -683,23 +673,12 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     }
 
     /**
-     * Checks whether channel is used.
-     * 
-     * @param channelId
-     *            Channel id
-     * @return true if channel is in use, false otherwise
+     * Checks whether channel is used. 
      */
     public boolean isChannelUsed(int channelId) {
         return channels.get(channelId) != null;
     }
-
-    /**
-     * Return channel by id.
-     * 
-     * @param channelId
-     *            Channel id
-     * @return Channel by id
-     */
+ 
     public Channel getChannel(int channelId) {
         Channel channel = channels.putIfAbsent(channelId, new Channel(this, channelId));
         if (channel == null) {
@@ -707,13 +686,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return channel;
     }
-
-    /**
-     * Closes channel.
-     * 
-     * @param channelId
-     *            Channel id
-     */
+ 
     public void closeChannel(int channelId) {
         if (log.isTraceEnabled()) {
             log.trace("closeChannel: {}", channelId);
@@ -740,12 +713,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         */
         chan = null;
     }
-
-    /**
-     * Getter for client streams.
-     * 
-     * @return Client streams as array
-     */
+ 
     protected Collection<IClientStream> getStreams() {
         return streams.values();
     }
@@ -753,8 +721,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     public Map<Number, IClientStream> getStreamsMap() {
         return Collections.unmodifiableMap(streams);
     }
-
-    /** {@inheritDoc} */
+ 
     public Number reserveStreamId() {
         double d = 1.0d;
         for (; d < MAX_RESERVED_STREAMS; d++) {
@@ -767,8 +734,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return d;
     }
-
-    /** {@inheritDoc} */
+ 
     public Number reserveStreamId(Number streamId) {
         if (log.isTraceEnabled()) {
             log.trace("Reserve stream id: {}", streamId);
@@ -778,14 +744,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return reserveStreamId();
     }
-
-    /**
-     * Returns whether or not a given stream id is valid.
-     * 
-     * @param streamId
-     *            stream id
-     * @return true if its valid, false if its invalid
-     */
+ 
     public boolean isValidStreamId(Number streamId) {
         double d = streamId.doubleValue();
         if (log.isTraceEnabled()) {
@@ -808,9 +767,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     }
 
     /**
-     * Returns whether or not the connection has been idle for a maximum period.
-     * 
-     * @return true if max idle period has been exceeded, false otherwise
+     * Returns whether or not the connection has been idle for a maximum period. 
      */
     public boolean isIdle() {
         long lastPingTime = lastPingSentOn.get();
@@ -830,8 +787,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     public boolean isDisconnected() {
         return state.getState() == RTMP.STATE_DISCONNECTED;
     }
-
-    /** {@inheritDoc} */
+ 
     public IClientBroadcastStream newBroadcastStream(Number streamId) {
         if (isValidStreamId(streamId)) {
             // get ClientBroadcastStream defined as a prototype in red5-common.xml
@@ -844,8 +800,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return null;
     }
-
-    /** {@inheritDoc} */
+ 
     public ISingleItemSubscriberStream newSingleItemSubscriberStream(Number streamId) {
         if (isValidStreamId(streamId)) {
             // get SingleItemSubscriberStream defined as a prototype in red5-common.xml
@@ -858,8 +813,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return null;
     }
-
-    /** {@inheritDoc} */
+ 
     public IPlaylistSubscriberStream newPlaylistSubscriberStream(Number streamId) {
         if (isValidStreamId(streamId)) {
             // get PlaylistSubscriberStream defined as a prototype in red5-common.xml
@@ -886,28 +840,15 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     public void removeClientStream(Number streamId) {
         unreserveStreamId(streamId);
     }
-
-    /**
-     * Getter for used stream count.
-     * 
-     * @return Value for property 'usedStreamCount'.
-     */
+ 
     protected int getUsedStreamCount() {
         return usedStreams.get();
     }
-
-    /** {@inheritDoc} */
+ 
     public IClientStream getStreamById(Number streamId) {
         return streams.get(streamId.doubleValue());
     }
-
-    /**
-     * Return stream id for given channel id.
-     * 
-     * @param channelId
-     *            Channel id
-     * @return ID of stream that channel belongs to
-     */
+ 
     public Number getStreamIdForChannelId(int channelId) {
         if (channelId < 4) {
             return 0;
@@ -918,14 +859,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return streamId;
     }
-
-    /**
-     * Return stream by given channel id.
-     * 
-     * @param channelId
-     *            Channel id
-     * @return Stream that channel belongs to
-     */
+ 
     public IClientStream getStreamByChannelId(int channelId) {
         // channels 2 and 3 are "special" and don't have an IClientStream associated
         if (channelId < 4) {
@@ -937,14 +871,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return getStreamById(streamId);
     }
-
-    /**
-     * Return channel id for given stream id.
-     * 
-     * @param streamId
-     *            Stream id
-     * @return ID of channel that belongs to the stream
-     */
+ 
     public int getChannelIdForStreamId(Number streamId) {
         int channelId = (int) (streamId.doubleValue() * 5) - 1;
         if (log.isTraceEnabled()) {
@@ -952,15 +879,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return channelId;
     }
-
-    /**
-     * Creates output stream object from stream id. Output stream consists of audio, video, and data channels.
-     * 
-     * @see org.red5.server.stream.OutputStream
-     * @param streamId
-     *            Stream id
-     * @return Output stream object
-     */
+ 
     public OutputStream createOutputStream(Number streamId) {
         int channelId = getChannelIdForStreamId(streamId);
         if (log.isTraceEnabled()) {
@@ -974,15 +893,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return new OutputStream(video, audio, data);
     }
-
-    /**
-     * Specify name, connection, scope and etc for stream
-     *
-     * @param streamId
-     *            Stream id
-     * @param stream
-     *            Stream
-     */
+ 
     private void customizeStream(Number streamId, AbstractClientStream stream) {
         Integer buffer = streamBuffers.get(streamId.doubleValue());
         if (buffer != null) {
@@ -993,12 +904,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         stream.setScope(this.getScope());
         stream.setStreamId(streamId);
     }
-
-    /**
-     * Store a stream in the connection.
-     * 
-     * @param stream
-     */
+ 
     private boolean registerStream(IClientStream stream) {
         if (streams.putIfAbsent(stream.getStreamId().doubleValue(), stream) == null) {
             usedStreams.incrementAndGet();
@@ -1007,20 +913,14 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         log.error("Unable to register stream {}, stream with id {} was already added", stream, stream.getStreamId());
         return false;
     }
-
-    /**
-     * Remove a stream from the connection.
-     * 
-     * @param stream
-     */
+ 
     @SuppressWarnings("unused")
     private void unregisterStream(IClientStream stream) {
         if (stream != null) {
             deleteStreamById(stream.getStreamId());
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void close() {
         if (closing.compareAndSet(false, true)) {
@@ -1078,13 +978,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
             log.debug("Already closing..");
         }
     }
-
-    /**
-     * Dispatches event
-     * 
-     * @param event
-     *            Event
-     */
+ 
     @Override
     public void dispatchEvent(IEvent event) {
         if (log.isDebugEnabled()) {
@@ -1127,7 +1021,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
     }
 
-    /** {@inheritDoc} */
+    
     public void unreserveStreamId(Number streamId) {
         if (log.isTraceEnabled()) {
             log.trace("Unreserve streamId: {}", streamId);
@@ -1144,7 +1038,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
     }
 
-    /** {@inheritDoc} */
+    
     public void deleteStreamById(Number streamId) {
         if (log.isTraceEnabled()) {
             log.trace("Delete streamId: {}", streamId);
@@ -1226,7 +1120,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         return clientBytesRead.get();
     }
 
-    /** {@inheritDoc} */
+    
     public void invoke(IServiceCall call) {
         invoke(call, 3);
     }
@@ -1251,8 +1145,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     public void registerPendingCall(int invokeId, IPendingServiceCall call) {
         pendingCalls.put(invokeId, call);
     }
-
-    /** {@inheritDoc} */
+ 
     public void invoke(IServiceCall call, int channel) {
         // We need to use Invoke for all calls to the client
         Invoke invoke = new Invoke();
@@ -1263,23 +1156,19 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         getChannel(channel).write(invoke);
     }
-
-    /** {@inheritDoc} */
+ 
     public void invoke(String method) {
         invoke(method, null, null);
     }
-
-    /** {@inheritDoc} */
+ 
     public void invoke(String method, Object[] params) {
         invoke(method, params, null);
     }
-
-    /** {@inheritDoc} */
+ 
     public void invoke(String method, IPendingServiceCallback callback) {
         invoke(method, null, callback);
     }
-
-    /** {@inheritDoc} */
+ 
     public void invoke(String method, Object[] params, IPendingServiceCallback callback) {
         IPendingServiceCall call = new PendingCall(method, params);
         if (callback != null) {
@@ -1287,49 +1176,45 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         invoke(call);
     }
-
-    /** {@inheritDoc} */
+ 
     public void notify(IServiceCall call) {
         notify(call, 3);
     }
-
-    /** {@inheritDoc} */
+ 
     public void notify(IServiceCall call, int channel) {
         Notify notify = new Notify();
         notify.setCall(call);
         getChannel(channel).write(notify);
     }
-
-    /** {@inheritDoc} */
+ 
     public void notify(String method) {
         notify(method, null);
     }
 
-    /** {@inheritDoc} */
+    
     public void notify(String method, Object[] params) {
         IServiceCall call = new Call(method, params);
         notify(call);
     }
 
-    /** {@inheritDoc} */
+    
     public void status(Status status) {
         status(status, 3);
     }
 
-    /** {@inheritDoc} */
+    
     public void status(Status status, int channel) {
         if (status != null) {
             getChannel(channel).sendStatus(status);
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public long getReadBytes() {
         return 0;
     }
 
-    /** {@inheritDoc} */
+    
     @Override
     public long getWrittenBytes() {
         return 0;
@@ -1537,64 +1422,59 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
             log.trace("Process tasks for streamId {}", streamId);
         }
         final ReceivedMessageTask task = currentStreamTasks.getTaskToProcess();
-        if (task != null) {
-            Packet packet = task.getPacket();
-            try {
-                final String messageType = getMessageType(packet);
-                ListenableFuture<Packet> future = (ListenableFuture<Packet>) executor.submitListenable(new ListenableFutureTask<Packet>(task));
-                future.addCallback(new ListenableFutureCallback<Packet>() {
-
-                    final long startTime = System.currentTimeMillis();
-
-                    int getProcessingTime() {
-                        return (int) (System.currentTimeMillis() - startTime);
-                    }
-
-                    public void onFailure(Throwable t) {
-                        log.debug("ReceivedMessageTask failure: {}", t);
-                        if (log.isWarnEnabled()) {
-                            log.warn("onFailure - session: {}, msgtype: {}, processingTime: {}, packetNum: {}", sessionId, messageType, getProcessingTime(), task.getPacketNumber());
-                        }
-                        currentStreamTasks.removeTask(task);
-                    }
-
-                    public void onSuccess(Packet packet) {
-                        log.debug("ReceivedMessageTask success");
-                        if (log.isDebugEnabled()) {
-                            log.debug("onSuccess - session: {}, msgType: {}, processingTime: {}, packetNum: {}", sessionId, messageType, getProcessingTime(), task.getPacketNumber());
-                        }
-                        currentStreamTasks.removeTask(task);
-                    }
-
-                });
-            } catch (TaskRejectedException tre) {
-                Throwable[] suppressed = tre.getSuppressed();
-                for (Throwable t : suppressed) {
-                    log.warn("Suppressed exception on {}", sessionId, t);
-                }
-                log.info("Rejected message: {} on {}", packet, sessionId);
-                currentStreamTasks.removeTask(task);
-            } catch (Throwable e) {
-                log.error("Incoming message handling failed on session=[" + sessionId + "]", e);
-                if (log.isDebugEnabled()) {
-                    log.debug("Execution rejected on {} - {}", getSessionId(), RTMP.states[getStateCode()]);
-                    log.debug("Lock permits - decode: {} encode: {}", decoderLock.availablePermits(), encoderLock.availablePermits());
-                }
-                currentStreamTasks.removeTask(task);
-            }
-        } else {
-            if (log.isTraceEnabled()) {
+        if(task == null){
+        	if (log.isTraceEnabled()) {
                 log.trace("Channel {} task queue is empty", streamId);
             }
-        }
-    }
+        	return;
+        } 
+        Packet packet = task.getPacket();
+        try {
+            final String messageType = getMessageType(packet);
+            ListenableFuture<Packet> future = (ListenableFuture<Packet>) executor.submitListenable(new ListenableFutureTask<Packet>(task));
+            future.addCallback(new ListenableFutureCallback<Packet>() {
 
-    /**
-     * Mark message as sent.
-     * 
-     * @param message
-     *            Message to mark
-     */
+                final long startTime = System.currentTimeMillis();
+
+                int getProcessingTime() {
+                    return (int) (System.currentTimeMillis() - startTime);
+                }
+
+                public void onFailure(Throwable t) {
+                    log.debug("ReceivedMessageTask failure: {}", t);
+                    if (log.isWarnEnabled()) {
+                        log.warn("onFailure - session: {}, msgtype: {}, processingTime: {}, packetNum: {}", sessionId, messageType, getProcessingTime(), task.getPacketNumber());
+                    }
+                    currentStreamTasks.removeTask(task);
+                }
+
+                public void onSuccess(Packet packet) {
+                    log.debug("ReceivedMessageTask success");
+                    if (log.isDebugEnabled()) {
+                        log.debug("onSuccess - session: {}, msgType: {}, processingTime: {}, packetNum: {}", sessionId, messageType, getProcessingTime(), task.getPacketNumber());
+                    }
+                    currentStreamTasks.removeTask(task);
+                }
+
+            });
+        } catch (TaskRejectedException tre) {
+            Throwable[] suppressed = tre.getSuppressed();
+            for (Throwable t : suppressed) {
+                log.warn("Suppressed exception on {}", sessionId, t);
+            }
+            log.info("Rejected message: {} on {}", packet, sessionId);
+            currentStreamTasks.removeTask(task);
+        } catch (Throwable e) {
+            log.error("Incoming message handling failed on session=[" + sessionId + "]", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Execution rejected on {} - {}", getSessionId(), RTMP.states[getStateCode()]);
+                log.debug("Lock permits - decode: {} encode: {}", decoderLock.availablePermits(), encoderLock.availablePermits());
+            }
+            currentStreamTasks.removeTask(task);
+        }
+        
+    }
+ 
     public void messageSent(Packet message) {
         if (message.getMessage() instanceof VideoData) {
             Number streamId = message.getHeader().getStreamId();
@@ -1608,24 +1488,15 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         writtenMessages.incrementAndGet();
     }
-
-    /**
-     * Increases number of dropped messages.
-     */
+ 
     protected void messageDropped() {
         droppedMessages.incrementAndGet();
     }
-
-    /**
-     * Returns the current received message queue size.
-     * 
-     * @return current message queue size
-     */
+ 
     protected int currentQueueSize() {
         return currentQueueSize.get();
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public long getPendingVideoMessages(Number streamId) {
         AtomicInteger pendingCount = pendingVideos.get(streamId.doubleValue());
@@ -1633,20 +1504,8 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
             log.trace("Stream id: {} pendingCount: {} total pending videos: {}", streamId, pendingCount, pendingVideos.size());
         }
         return pendingCount != null ? pendingCount.intValue() : 0;
-    }
-
-    /**
-     * Send a shared object message.
-     * 
-     * @param name
-     *            shared object name
-     * @param currentVersion
-     *            the current version
-     * @param persistent
-     *            toggle
-     * @param events
-     *            shared object events
-     */
+    } 
+   
     public void sendSharedObjectMessage(String name, int currentVersion, boolean persistent, Set<ISharedObjectEvent> events) {
         // create a new sync message for every client to avoid concurrent access through multiple threads
         SharedObjectMessage syncMessage = state.getEncoding() == Encoding.AMF3 ? new FlexSharedObjectMessage(null, name, currentVersion, persistent) : new SharedObjectMessage(null, name, currentVersion, persistent);
@@ -1663,7 +1522,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
     }
 
-    /** {@inheritDoc} */
+    
     public void ping() {
         long newPingTime = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
@@ -1718,7 +1577,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         return (int) (lastPingSentOn.get() - lastPongReceivedOn.get());
     }
 
-    /** {@inheritDoc} */
+    
     public int getLastPingTime() {
         return lastPingRoundTripTime.get();
     }
@@ -1913,7 +1772,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         return "rtmp";
     }
 
-    /** {@inheritDoc} */
+    
     @Override
     public String toString() {
         if (log.isDebugEnabled()) {
@@ -1926,7 +1785,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     }
 
     /**
-     * Task that keeps connection alive and disconnects if client is dead.
+     *使连接保持活动状态并在客户端死机时断开连接的任务。
      */
     private class KeepAliveTask implements Runnable {
 
@@ -1934,68 +1793,72 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
         private volatile long lastBytesReadTime = 0;
 
+        @Override
         public void run() {
-            // we dont ping until in connected state
-            if (state.getState() == RTMP.STATE_CONNECTED) {
-                // ensure the job is not already running
-                if (running.compareAndSet(false, true)) {
+            //在连接状态下才能ping
+        	if (state.getState() != RTMP.STATE_CONNECTED) {
+        		return;
+        	}
+        	// 确保作业尚未运行
+            if (!running.compareAndSet(false, true)) {
+            	return;
+            } 
+            if (log.isTraceEnabled()) {
+                log.trace("Running keep-alive for {}", getSessionId());
+            }
+            
+            try {
+                // first check connected
+            	if (!isConnected()){
+            		 if (log.isDebugEnabled()) {
+                         log.debug("No longer connected, clean up connection. Connection state: {}", RTMP.states[state.getState()]);
+                     }
+                     onInactive();
+                     return;
+            	}  
+                long now = System.currentTimeMillis();
+                //获取连接上当前读取的字节数
+                long currentReadBytes = getReadBytes();
+                //获取最后读取的字节数
+                long previousReadBytes = lastBytesRead.get();
+                if (log.isTraceEnabled()) {
+                    log.trace("Time now: {} current read count: {} last read count: {}", new Object[] { now, currentReadBytes, previousReadBytes });
+                }
+                if (currentReadBytes > previousReadBytes) {
                     if (log.isTraceEnabled()) {
-                        log.trace("Running keep-alive for {}", getSessionId());
+                        log.trace("Client is still alive, no ping needed");
                     }
-                    try {
-                        // first check connected
-                        if (isConnected()) {
-                            // get now
-                            long now = System.currentTimeMillis();
-                            // get the current bytes read count on the connection
-                            long currentReadBytes = getReadBytes();
-                            // get our last bytes read count
-                            long previousReadBytes = lastBytesRead.get();
-                            if (log.isTraceEnabled()) {
-                                log.trace("Time now: {} current read count: {} last read count: {}", new Object[] { now, currentReadBytes, previousReadBytes });
-                            }
-                            if (currentReadBytes > previousReadBytes) {
-                                if (log.isTraceEnabled()) {
-                                    log.trace("Client is still alive, no ping needed");
-                                }
-                                // client has sent data since last check and thus is not dead. No need to ping
-                                if (lastBytesRead.compareAndSet(previousReadBytes, currentReadBytes)) {
-                                    // update the timestamp to match our update
-                                    lastBytesReadTime = now;
-                                }
-                            } else {
-                                // client didn't send response to ping command and didn't sent data for too long, disconnect
-                                long lastPingTime = lastPingSentOn.get();
-                                long lastPongTime = lastPongReceivedOn.get();
-                                if (lastPongTime > 0 && (lastPingTime - lastPongTime > maxInactivity) && (now - lastBytesReadTime > maxInactivity)) {
-                                    log.warn("Closing connection - inactivity timeout: session=[{}], lastPongReceived=[{} ms ago], lastPingSent=[{} ms ago], lastDataRx=[{} ms ago]", new Object[] { getSessionId(), (lastPingTime - lastPongTime), (now - lastPingTime), (now - lastBytesReadTime) });
-                                    // the following line deals with a very common support request
-                                    log.warn("Client on session=[{}] has not responded to our ping for [{} ms] and we haven't received data for [{} ms]", new Object[] { getSessionId(), (lastPingTime - lastPongTime), (now - lastBytesReadTime) });
-                                    onInactive();
-                                } else {
-                                    // send ping command to client to trigger sending of data
-                                    ping();
-                                }
-                            }
-                        } else {
-                            if (log.isDebugEnabled()) {
-                                log.debug("No longer connected, clean up connection. Connection state: {}", RTMP.states[state.getState()]);
-                            }
-                            onInactive();
-                        }
-                    } catch (Exception e) {
-                        log.warn("Exception in keepalive for {}", getSessionId(), e);
-                    } finally {
-                        // reset running flag
-                        running.compareAndSet(true, false);
+                    // 自上次检查以来，客户端已发送数据，因此没有死机。不需要ping
+                    if (lastBytesRead.compareAndSet(previousReadBytes, currentReadBytes)) {
+                        //更新时间戳以匹配我们的更新
+                        lastBytesReadTime = now;
+                    }
+                } else {
+                    //客户端没有向ping命令发送响应，也没有发送数据太长时间，请断开连接
+                    long lastPingTime = lastPingSentOn.get();
+                    long lastPongTime = lastPongReceivedOn.get();
+                    if (lastPongTime > 0 && (lastPingTime - lastPongTime > maxInactivity) && (now - lastBytesReadTime > maxInactivity)) {
+                        log.warn("Closing connection - inactivity timeout: session=[{}], lastPongReceived=[{} ms ago], lastPingSent=[{} ms ago], lastDataRx=[{} ms ago]", new Object[] { getSessionId(), (lastPingTime - lastPongTime), (now - lastPingTime), (now - lastBytesReadTime) });
+                        // 以下行处理一个非常常见的支持请求
+                        log.warn("Client on session=[{}] has not responded to our ping for [{} ms] and we haven't received data for [{} ms]", new Object[] { getSessionId(), (lastPingTime - lastPongTime), (now - lastBytesReadTime) });
+                        onInactive();
+                    } else {
+                        // 向客户端发送ping命令触发数据发送
+                        ping();
                     }
                 }
+                 
+            } catch (Exception e) {
+                log.warn("Exception in keepalive for {}", getSessionId(), e);
+            } finally {
+                // 重置运行标识
+                running.compareAndSet(true, false);
             }
         }
     }
 
     /**
-     * Task that waits for a valid handshake and disconnects the client if none is received.
+     * 
      * 10秒钟内如果握手没有成功则断开连接
      */
     private class WaitForHandshakeTask implements TimerTask , Runnable {
@@ -2026,17 +1889,9 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 			onInactive();
 		}
 
-    }
-    /**
-	 * Name of that is waiting for a valid handshake.
-	 */
+    } 
 	private Timeout waitForHandshakeTimeout;
-    /**
-	 * Start waiting for a valid handshake.
-	 * 
-	 * @param service
-	 *            The scheduling service to use
-	 */
+    
 	protected void startWaitForHandshake(ISchedulingService service) {
 		waitForHandshakeTimeout = timerO.newTimeout(new WaitForHandshakeTask(), maxHandshakeTimeout, TimeUnit.MILLISECONDS);
 	}

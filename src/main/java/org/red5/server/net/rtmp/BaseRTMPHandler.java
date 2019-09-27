@@ -48,133 +48,126 @@ import org.red5.server.net.rtmp.message.Packet;
 import org.red5.server.net.rtmp.status.StatusCodes;
 import org.red5.server.scheduling.QuartzSchedulingService;
 import org.red5.server.so.SharedObjectMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * Base class for all RTMP handlers.
- * 
+ * 所有rtmp处理程序的基类. 
  * @author The Red5 Project
  */
+@Slf4j
 public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, StatusCodes {
-
-    private static Logger log = LoggerFactory.getLogger(BaseRTMPHandler.class);
-
-    /** {@inheritDoc} */
+ 
     public void connectionOpened(RTMPConnection conn) {
         if (log.isTraceEnabled()) {
             log.trace("connectionOpened - conn: {} state: {}", conn, conn.getState());
         }
-        conn.open();
-        // start the wait for handshake
+        conn.open(); 
         conn.startWaitForHandshake();
     }
-
-    /** {@inheritDoc} */
+    @Override
     public void messageReceived(RTMPConnection conn, Packet packet) throws Exception {
-        log.trace("messageReceived connection: {}", conn.getSessionId());
-        if (conn != null) {
-            IRTMPEvent message = null;
-            try {
-                message = packet.getMessage();
-                final Header header = packet.getHeader();
-                final Number streamId = header.getStreamId();
-                final Channel channel = conn.getChannel(header.getChannelId());
-                final IClientStream stream = conn.getStreamById(streamId);
-                if (log.isTraceEnabled()) {
-                    log.trace("Message received - header: {}", header);
-                }
-                // set stream id on the connection
-                conn.setStreamId(streamId);
-                // increase number of received messages
-                conn.messageReceived();
-                // set the source of the message
-                message.setSource(conn);
-                // process based on data type
-                final byte headerDataType = header.getDataType();
-                if (log.isTraceEnabled()) {
-                    log.trace("Header / message data type: {}", headerDataType);
-                }
-                switch (headerDataType) {
-                    case TYPE_AGGREGATE:
-                        log.debug("Aggregate type data - header timer: {} size: {}", header.getTimer(), header.getSize());
-                    case TYPE_AUDIO_DATA:
-                    case TYPE_VIDEO_DATA:
-                        // mark the event as from a live source
-                        // log.trace("Marking message as originating from a Live source");
-                        message.setSourceType(Constants.SOURCE_TYPE_LIVE);
-                        // NOTE: If we respond to "publish" with "NetStream.Publish.BadName",
-                        // the client sends a few stream packets before stopping. We need to ignore them
-                        if (stream != null) {
-                            ((IEventDispatcher) stream).dispatchEvent(message);
-                        }
-                        break;
-                    case TYPE_FLEX_SHARED_OBJECT:
-                    case TYPE_SHARED_OBJECT:
-                        onSharedObject(conn, channel, header, (SharedObjectMessage) message);
-                        break;
-                    case TYPE_INVOKE:
-                    case TYPE_FLEX_MESSAGE:
-                        onCommand(conn, channel, header, (Invoke) message);
-                        IPendingServiceCall call = ((Invoke) message).getCall();
-                        if (message.getHeader().getStreamId().intValue() != 0 && call.getServiceName() == null && StreamAction.PUBLISH.equals(call.getServiceMethodName())) {
-                            if (stream != null) {
-                                // Only dispatch if stream really was created
-                                ((IEventDispatcher) stream).dispatchEvent(message);
-                            }
-                        }
-                        break;
-                    case TYPE_NOTIFY: 
-                        // like an invoke, but does not return anything and has a invoke / transaction id of 0
-                    case TYPE_FLEX_STREAM_SEND:
-                        if (((Notify) message).getData() != null && stream != null) {
-                            // Stream metadata
-                            ((IEventDispatcher) stream).dispatchEvent(message);
-                        } else {
-                            onCommand(conn, channel, header, (Notify) message);
-                        }
-                        break;
-                    case TYPE_PING:
-                        onPing(conn, channel, header, (Ping) message);
-                        break;
-                    case TYPE_BYTES_READ:
-                        onStreamBytesRead(conn, channel, header, (BytesRead) message);
-                        break;
-                    case TYPE_CHUNK_SIZE:
-                        onChunkSize(conn, channel, header, (ChunkSize) message);
-                        break;
-                    case Constants.TYPE_CLIENT_BANDWIDTH: // onBWDone / peer bw
-                        log.debug("Client bandwidth: {}", message);
-                        onClientBandwidth(conn, channel, (ClientBW) message);
-                        break;
-                    case Constants.TYPE_SERVER_BANDWIDTH: // window ack size
-                        log.debug("Server bandwidth: {}", message);
-                        onServerBandwidth(conn, channel, (ServerBW) message);
-                        break;
-                    default:
-                        log.debug("Unknown type: {}", header.getDataType());
-                }
-                if (message instanceof Unknown) {
-                    log.info("Message type unknown: {}", message);
-                }
-            } catch (Throwable t) {
-                log.error("Exception", t);
-            }
-            // XXX this may be causing 'missing' data if previous methods are not making copies before buffering etc..
-            if (message != null) {
-                message.release();
-            }
+    	if (conn == null) {
+        	return;
         }
+    	log.trace("messageReceived connection: {}", conn.getSessionId()); 
+        IRTMPEvent message = null;
+        try {
+            message = packet.getMessage();
+            final Header header = packet.getHeader();
+            final Number streamId = header.getStreamId();
+            final Channel channel = conn.getChannel(header.getChannelId());
+            final IClientStream stream = conn.getStreamById(streamId);
+            if (log.isTraceEnabled()) {
+                log.trace("Message received - header: {}", header);
+            } 
+            conn.setStreamId(streamId);
+            //增加接收的消息数
+            conn.messageReceived();
+            // 消息来源
+            message.setSource(conn);
+            // 基于数据类型的处理
+            final byte headerDataType = header.getDataType();
+            if (log.isTraceEnabled()) {
+                log.trace("Header / message data type: {}", headerDataType);
+            }
+            switch (headerDataType) {
+                case TYPE_AGGREGATE:
+                    log.debug("Aggregate type data - header timer: {} size: {}", header.getTimer(), header.getSize());
+                case TYPE_AUDIO_DATA:
+                case TYPE_VIDEO_DATA:
+                    // 将事件标记为来自实时源 
+                    message.setSourceType(Constants.SOURCE_TYPE_LIVE);
+                    //注意：如果用“NetStream.Publish.BadName”响应“publish”，
+                    //客户端在停止前发送一些流数据包。我们得无视他们
+                    if (stream != null) {
+                        ((IEventDispatcher) stream).dispatchEvent(message);
+                    }
+                    break;
+                case TYPE_FLEX_SHARED_OBJECT:
+                case TYPE_SHARED_OBJECT:
+                    onSharedObject(conn, channel, header, (SharedObjectMessage) message);
+                    break;
+                case TYPE_INVOKE:
+                case TYPE_FLEX_MESSAGE:
+                    onCommand(conn, channel, header, (Invoke) message);
+                    IPendingServiceCall call = ((Invoke) message).getCall();
+                    if (message.getHeader().getStreamId().intValue() != 0 && call.getServiceName() == null && StreamAction.PUBLISH.equals(call.getServiceMethodName())) {
+                        if (stream != null) {
+                            // Only dispatch if stream really was created
+                            ((IEventDispatcher) stream).dispatchEvent(message);
+                        }
+                    }
+                    break;
+                case TYPE_NOTIFY: 
+                    // 类似于调用，但不返回任何内容，且调用/事务ID为0
+                case TYPE_FLEX_STREAM_SEND:
+                    if (((Notify) message).getData() != null && stream != null) {
+                        // Stream metadata
+                        ((IEventDispatcher) stream).dispatchEvent(message);
+                    } else {
+                        onCommand(conn, channel, header, (Notify) message);
+                    }
+                    break;
+                case TYPE_PING:
+                    onPing(conn, channel, header, (Ping) message);
+                    break;
+                case TYPE_BYTES_READ:
+                    onStreamBytesRead(conn, channel, header, (BytesRead) message);
+                    break;
+                case TYPE_CHUNK_SIZE:
+                    onChunkSize(conn, channel, header, (ChunkSize) message);
+                    break;
+                case Constants.TYPE_CLIENT_BANDWIDTH: // onBWDone / peer bw
+                    log.debug("Client bandwidth: {}", message);
+                    onClientBandwidth(conn, channel, (ClientBW) message);
+                    break;
+                case Constants.TYPE_SERVER_BANDWIDTH: // window ack size
+                    log.debug("Server bandwidth: {}", message);
+                    onServerBandwidth(conn, channel, (ServerBW) message);
+                    break;
+                default:
+                    log.debug("Unknown type: {}", header.getDataType());
+            }
+            if (message instanceof Unknown) {
+                log.info("Message type unknown: {}", message);
+            }
+        } catch (Throwable t) {
+            log.error("Exception", t);
+        }
+        //如果以前的方法在缓冲之前没有进行复制，这可能会导致“丢失”数据
+        if (message != null) {
+            message.release();
+        }
+        
     }
-
-    /** {@inheritDoc} */
+ 
     public void messageSent(RTMPConnection conn, Packet packet) {
         log.trace("Message sent");
         // increase number of sent messages
         conn.messageSent(packet);
     }
-
-    /** {@inheritDoc} */
+ 
     public void connectionClosed(RTMPConnection conn) {
         log.debug("connectionClosed: {}", conn.getSessionId());
         if (conn.getStateCode() != RTMP.STATE_DISCONNECTED) {
@@ -201,11 +194,7 @@ public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, Status
     }
 
     /**
-     * Return hostname for URL.
-     * 
-     * @param url
-     *            URL
-     * @return Hostname from that URL
+     * Return hostname for URL. 
      */
     protected String getHostname(String url) {
         if (log.isDebugEnabled()) {
@@ -226,104 +215,55 @@ public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, Status
     }
 
     /**
-     * Handler for pending call result. Dispatches results to all pending call handlers.
-     * 
-     * @param conn
-     *            Connection
-     * @param invoke
-     *            Pending call result event context
+     * 挂起调用结果的处理程序。将结果分派给所有挂起的调用处理程序。 
      */
     protected void handlePendingCallResult(RTMPConnection conn, Notify invoke) {
         final IServiceCall call = invoke.getCall();
         final IPendingServiceCall pendingCall = conn.retrievePendingCall(invoke.getTransactionId());
-        if (pendingCall != null) {
-            // The client sent a response to a previously made call.
-            Object[] args = call.getArguments();
-            if (args != null && args.length > 0) {
-                // TODO: can a client return multiple results?
-                pendingCall.setResult(args[0]);
-            }
-            Set<IPendingServiceCallback> callbacks = pendingCall.getCallbacks();
-            if (!callbacks.isEmpty()) {
-                HashSet<IPendingServiceCallback> tmp = new HashSet<>();
-                tmp.addAll(callbacks);
-                for (IPendingServiceCallback callback : tmp) {
-                    try {
-                        callback.resultReceived(pendingCall);
-                    } catch (Exception e) {
-                        log.error("Error while executing callback {}", callback, e);
-                    }
-                }
+        if (pendingCall == null) {
+        	return;
+        }
+        // 客户机对先前发出的呼叫发送了响应.
+        Object[] args = call.getArguments();
+        if (args != null && args.length > 0) { 
+            pendingCall.setResult(args[0]);
+        }
+        Set<IPendingServiceCallback> callbacks = pendingCall.getCallbacks();
+        if (callbacks.isEmpty()) {
+            return;
+        }
+        HashSet<IPendingServiceCallback> tmp = new HashSet<>();
+        tmp.addAll(callbacks);
+        for (IPendingServiceCallback callback : tmp) {
+            try {
+                callback.resultReceived(pendingCall);
+            } catch (Exception e) {
+                log.error("Error while executing callback {}", callback, e);
             }
         }
     }
 
     /**
-     * Chunk size change event handler. Abstract, to be implemented in subclasses.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param source
-     *            Header
-     * @param chunkSize
-     *            New chunk size
+     * Chunk size change event handler. Abstract, to be implemented in subclasses. 
      */
     protected abstract void onChunkSize(RTMPConnection conn, Channel channel, Header source, ChunkSize chunkSize);
     /**
-	 * Invocation event handler.
-	 * 
-	 * @param conn
-	 *            Connection
-	 * @param channel
-	 *            Channel
-	 * @param source
-	 *            Header
-	 * @param invoke
-	 *            Invocation event context
-	 * @param rtmp
-	 *            RTMP connection state
+	 * Invocation event handler. 
 	 */
 	protected abstract void onInvoke(RTMPConnection conn, Channel channel, Header source, Notify invoke, RTMP rtmp);
 
     /**
      * Command event handler, which current consists of an Invoke or Notify type object.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param source
-     *            Header
-     * @param command
-     *            event context
      */
     protected abstract void onCommand(RTMPConnection conn, Channel channel, Header source, ICommand command);
 
     /**
-     * Ping event handler.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param source
-     *            Header
-     * @param ping
-     *            Ping event context
+     * Ping event handler. 
      */
     protected abstract void onPing(RTMPConnection conn, Channel channel, Header source, Ping ping);
 
     /**
-     * Server bandwidth / Window ACK size event handler.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param message
-     *            ServerBW
+     * Server bandwidth / Window ACK size event handler. 
      */
     protected void onServerBandwidth(RTMPConnection conn, Channel channel, ServerBW message) {
 
@@ -331,48 +271,24 @@ public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, Status
 
     /**
      * Client bandwidth / Peer bandwidth set event handler.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param message
-     *            ClientBW
+     
      */
     protected void onClientBandwidth(RTMPConnection conn, Channel channel, ClientBW message) {
 
     }
 
     /**
-     * Stream bytes read event handler.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param source
-     *            Header
-     * @param streamBytesRead
-     *            Bytes read event context
+     * Stream bytes read event handler. 
      */
     protected void onStreamBytesRead(RTMPConnection conn, Channel channel, Header source, BytesRead streamBytesRead) {
         conn.receivedBytesRead(streamBytesRead.getBytesRead());
     }
 
     /**
-     * Shared object event handler.
-     * 
-     * @param conn
-     *            Connection
-     * @param channel
-     *            Channel
-     * @param source
-     *            Header
-     * @param message
-     *            Shared object message
+     * Shared object event handler. 
      */
     protected abstract void onSharedObject(RTMPConnection conn, Channel channel, Header source, SharedObjectMessage message);
-    /** {@inheritDoc} */
+    
 	public void connectionOpened(RTMPConnection conn, RTMP state) {
 		log.trace("connectionOpened - conn: {} state: {}", conn, state);
 		if (state.getMode() == RTMP.MODE_SERVER /*&& appCtx != null*/) {

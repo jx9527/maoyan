@@ -19,37 +19,26 @@
 package org.red5.server.api.stream;
 
 import org.red5.server.messaging.IMessageInput;
-
 /**
- * Playlist item. Each playlist item has name, start time, length in milliseconds and message input source.
- */
+ * 播放列表项。每个播放列表项都有名称、开始时间、长度（毫秒）和消息输入源。
+ *  */
 public interface IPlayItem {
-
     /**
      * Get name of item. The VOD or Live stream provider is found according to this name.
-     * 
-     * @return the name
-     */
-    String getName();
-
+    */
+    String getName(); 
     /**
-     * Start time in milliseconds.
-     * 
-     * @return start time
+     * Start time in milliseconds. 
      */
     long getStart();
 
     /**
-     * Play length in milliseconds.
-     * 
-     * @return length in milliseconds
+     * Play length in milliseconds. 
      */
     long getLength();
 
     /**
      * Get a message input for play. This object overrides the default algorithm for finding the appropriate VOD or Live stream provider according to the item name.
-     * 
-     * @return message input
      */
     IMessageInput getMessageInput();
 }

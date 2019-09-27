@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Client is an abstraction representing user connected to Red5 application. Clients are tied to connections and registered in ClientRegistry
+ * 客户机是一个抽象，表示连接到red5应用程序的用户。客户端绑定到连接并在ClientRegistry中注册
  */
 public class Client extends AttributeStore implements IClient {
 
@@ -87,11 +87,6 @@ public class Client extends AttributeStore implements IClient {
 
     /**
      * Creates client, sets creation time and registers it in ClientRegistry.
-     *
-     * @param id
-     *            Client id
-     * @param registry
-     *            ClientRegistry
      */
     @ConstructorProperties({ "id", "registry" })
     public Client(String id, ClientRegistry registry) {
@@ -107,14 +102,7 @@ public class Client extends AttributeStore implements IClient {
     }
 
     /**
-     * Creates client, sets creation time and registers it in ClientRegistry.
-     *
-     * @param id
-     *            Client id
-     * @param creationTime
-     *            Creation time
-     * @param registry
-     *            ClientRegistry
+     * Creates client, sets creation time and registers it in ClientRegistry. 
      */
     @ConstructorProperties({ "id", "creationTime", "registry" })
     public Client(String id, Long creationTime, ClientRegistry registry) {
@@ -137,25 +125,26 @@ public class Client extends AttributeStore implements IClient {
      * Disconnects client from Red5 application
      */
     public void disconnect() {
-        if (disconnected.compareAndSet(false, true)) {
-            log.debug("Disconnect - id: {}", id);
-            if (connections != null && !connections.isEmpty()) {
-                log.debug("Closing {} scope connections", connections.size());
-                // close all connections held to Red5 by client
-                for (IConnection con : getConnections()) {
-                    try {
-                        con.close();
-                    } catch (Exception e) {
-                        // closing a connection calls into application code, so exception possible
-                        log.error("Unexpected exception closing connection {}", e);
-                    }
-                }
-            } else {
-                log.debug("Connection map is empty or null");
+    	if (!disconnected.compareAndSet(false, true)) {
+    		 return;
+    	} 
+        log.debug("Disconnect - id: {}", id);
+        if (connections == null || connections.isEmpty()) {
+        	log.debug("Connection map is empty or null");
+        	removeInstance();
+        	return;
+        }  
+        log.debug("Closing {} scope connections", connections.size()); 
+        for (IConnection con : getConnections()) {
+            try {
+                con.close();
+            } catch (Exception e) {
+                // closing a connection calls into application code, so exception possible
+                log.error("Unexpected exception closing connection {}", e);
             }
-            // unregister client
-            removeInstance();
-        }
+        } 
+        // unregister client
+        removeInstance(); 
     }
 
     /**
@@ -280,22 +269,14 @@ public class Client extends AttributeStore implements IClient {
     }
 
     /**
-     * Removes client-connection association for given connection
-     * 
-     * @param conn
-     *            Connection object
+     * Removes client-connection association for given connection 
      */
     protected void unregister(IConnection conn) {
         unregister(conn, true);
     }
 
     /**
-     * Removes client-connection association for given connection
-     * 
-     * @param conn
-     *            Connection object
-     * @param deleteIfNoConns
-     *            Whether to delete this client if it no longer has any connections
+     * Removes client-connection association for given connection 
      */
     protected void unregister(IConnection conn, boolean deleteIfNoConns) {
         log.debug("Unregister connection ({}:{}) client id: {}", conn.getRemoteAddress(), conn.getRemotePort(), id);
@@ -307,13 +288,11 @@ public class Client extends AttributeStore implements IClient {
             removeInstance();
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean isBandwidthChecked() {
         return bandwidthChecked;
     }
-
-    /** {@inheritDoc} */
+ 
     @SuppressWarnings("unchecked")
     public Collection<String> getPermissions(IConnection conn) {
         Collection<String> result = (Collection<String>) conn.getAttribute(PERMISSIONS);
@@ -322,14 +301,12 @@ public class Client extends AttributeStore implements IClient {
         }
         return result;
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean hasPermission(IConnection conn, String permissionName) {
         final Collection<String> permissions = getPermissions(conn);
         return permissions.contains(permissionName);
     }
-
-    /** {@inheritDoc} */
+ 
     public void setPermissions(IConnection conn, Collection<String> permissions) {
         if (permissions == null) {
             conn.removeAttribute(PERMISSIONS);
@@ -337,8 +314,7 @@ public class Client extends AttributeStore implements IClient {
             conn.setAttribute(PERMISSIONS, permissions);
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public void checkBandwidth() {
         log.debug("Check bandwidth");
         bandwidthChecked = true;
@@ -346,25 +322,20 @@ public class Client extends AttributeStore implements IClient {
         ServerClientDetection detection = new ServerClientDetection();
         detection.checkBandwidth(Red5.getConnectionLocal());
     }
-
-    /** {@inheritDoc} */
+ 
     public Map<String, Object> checkBandwidthUp(Object[] params) {
         if (log.isDebugEnabled()) {
             log.debug("Check bandwidth: {}", Arrays.toString(params));
         }
         bandwidthChecked = true;
-        //do something to check the bandwidth, Dan what do you think?
+        //做点什么来检查带宽，丹，你觉得呢？
         ClientServerDetection detection = new ClientServerDetection();
-        // if dynamic bw is turned on, we switch to a higher or lower
+        // 如果启用动态bw，则切换到较高或较低
         return detection.checkBandwidth(params);
     }
 
     /**
-     * Allows for reconstruction via CompositeData.
-     *
-     * @param cd
-     *            composite data
-     * @return Client class instance
+     * Allows for reconstruction via CompositeData. 
      */
     public static Client from(CompositeData cd) {
         Client instance = null;
@@ -383,44 +354,31 @@ public class Client extends AttributeStore implements IClient {
     /**
      * Removes this instance from the client registry.
      */
-    private void removeInstance() {
-        // unregister client
+    private void removeInstance() { 
         ClientRegistry ref = registry.get();
-        if (ref != null) {
-            ref.removeClient(this);
-        } else {
-            log.warn("Client registry reference was not accessable, removal failed");
-            // TODO: attempt to lookup the registry via the global.clientRegistry
+        if (ref == null) {
+        	 log.warn("Client registry reference was not accessable, removal failed");
+             //attempt to lookup the registry via the global.clientRegistry
+        	 return;
         }
+        
+        ref.removeClient(this);
+         
     }
 
     @Override
-    public int hashCode() {
-        if (id == null) {
-            return -1;
-        }
-        return id.hashCode();
+    public int hashCode() { 
+        return id == null ? -1 : id.hashCode();
     }
 
     /**
-     * Check clients equality by id
-     *
-     * @param obj
-     *            Object to check against
-     * @return true if clients ids are the same, false otherwise
+     * Check clients equality by id 
      */
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Client) {
-            return ((Client) obj).getId().equals(id);
-        }
-        return false;
+    public boolean equals(Object obj){ 
+        return obj instanceof Client ? ((Client) obj).getId().equals(id) : false;
     }
-
-    /**
-     *
-     * @return string representation of client
-     */
+ 
     @Override
     public String toString() {
         return "Client: " + id;

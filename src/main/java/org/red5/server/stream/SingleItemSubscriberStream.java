@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.red5.logging.Red5LoggerFactory;
 import org.red5.server.api.IConnection;
 import org.red5.server.api.IContext;
 import org.red5.server.api.Red5;
@@ -35,69 +34,47 @@ import org.red5.server.api.stream.IStreamAwareScopeHandler;
 import org.red5.server.api.stream.OperationNotSupportedException;
 import org.red5.server.api.stream.StreamState;
 import org.red5.server.scheduling.QuartzSchedulingService;
-import org.slf4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * Stream of a single play item for a subscriber
+ * 订阅服务器的单个播放项流
  * 
  * @author Paul Gregoire (mondain@gmail.com)
  */
+@Slf4j
 public class SingleItemSubscriberStream extends AbstractClientStream implements ISingleItemSubscriberStream {
-
-    private static final Logger log = Red5LoggerFactory.getLogger(SingleItemSubscriberStream.class);
-
-    /**
-     * Service used to provide notifications, keep client buffer filled, clean up, etc...
+	/**
+     * 用于提供通知、保持客户端缓冲区已满、清理的服务, etc...
      */
     protected ISchedulingService schedulingService = QuartzSchedulingService.getInstance();
-
-    /**
-     * Scheduled job names
-     */
-    protected Set<String> jobs = new HashSet<String>(1); 
-    
-
+ 
+    protected Set<String> jobs = new HashSet<String>(1);  
 	/**
-     * Interval in ms to check for buffer underruns in VOD streams.
+     * 检查VOD流中缓冲区不足的间隔（毫秒）。
      */
-    protected int bufferCheckInterval = 0;
-
+    protected int bufferCheckInterval = 0; 
     /**
-     * Number of pending messages at which a
-     * 
-     * <pre>
-     * NetStream.Play.InsufficientBW
-     * </pre>
-     * 
-     * message is generated for VOD streams.
+     * 待处理邮件数
+     *<pre>为VOD流生成netstream.play.insufficientbw</pre>消息。
+     * 欠速触发器
      */
-    protected int underrunTrigger = 10;
-
+    protected int underrunTrigger = 10; 
     /**
      * Timestamp this stream was created.
      */
     protected long creationTime = System.currentTimeMillis();
 
     private volatile IPlayItem item;
-
-    /**
-     * Plays items back
-     */
-    protected PlayEngine engine;
-
-    public void setPlayItem(IPlayItem item) {
-        this.item = item;
-    }
+ 
+    protected PlayEngine engine; 
 
     public void play() throws IOException {
         try {
             engine.play(item);
-        } catch (StreamNotFoundException e) {
-            //TODO send stream not found to subscriber
-        }
-    }
-
-    /** {@inheritDoc} */
+        } catch (StreamNotFoundException e){}
+    } 
+    
     public void pause(int position) {
         try {
             engine.pause(position);
@@ -105,8 +82,7 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
             log.debug("pause caught an IllegalStateException");
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public void resume(int position) {
         try {
             engine.resume(position);
@@ -114,8 +90,7 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
             log.debug("resume caught an IllegalStateException");
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public void stop() {
         try {
             engine.stop();
@@ -123,8 +98,7 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
             log.debug("stop caught an IllegalStateException");
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public void seek(int position) throws OperationNotSupportedException {
         try {
             engine.seek(position);
@@ -136,22 +110,20 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
     public boolean isPaused() {
         return state.get() == StreamState.PAUSED;
     }
-
-    /** {@inheritDoc} */
+ 
     public void receiveVideo(boolean receive) {
         boolean receiveVideo = engine.receiveVideo(receive);
         if (!receiveVideo && receive) {
-            //video has been re-enabled
+            //已重新启用视频
             seekToCurrentPlayback();
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public void receiveAudio(boolean receive) {
-        //check if engine currently receives audio, returns previous value
+        //检查引擎当前是否接收到音频，返回上一个值
         boolean receiveAudio = engine.receiveAudio(receive);
         if (receiveAudio && !receive) {
-            //send a blank audio packet to reset the player
+            //发送一个空白音频包以重置播放机
             engine.sendBlankAudio(true);
         } else if (!receiveAudio && receive) {
             //do a seek	
@@ -167,40 +139,8 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
         return engine;
     }
 
-    /**
-     * Set interval to check for buffer underruns. Set to
-     * 
-     * <pre>
-     * 0
-     * </pre>
-     * 
-     * to disable.
-     * 
-     * @param bufferCheckInterval
-     *            interval in ms
-     */
-    public void setBufferCheckInterval(int bufferCheckInterval) {
-        this.bufferCheckInterval = bufferCheckInterval;
-    }
-
-    /**
-     * Set maximum number of pending messages at which a
-     * 
-     * <pre>
-     * NetStream.Play.InsufficientBW
-     * </pre>
-     * 
-     * message will be generated for VOD streams
-     * 
-     * @param underrunTrigger
-     *            the maximum number of pending messages
-     */
-    public void setUnderrunTrigger(int underrunTrigger) {
-        this.underrunTrigger = underrunTrigger;
-    }
-
-    public void start() {
-        //ensure the play engine exists
+    
+    public void start() { 
         if (engine == null) {
             IScope scope = getScope();
             if (scope != null) {
@@ -430,7 +370,7 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
     private void seekToCurrentPlayback() {
         if (engine.isPullMode()) {
             try {
-                // TODO: figure out if this is the correct position to seek to
+                // figure out if this is the correct position to seek to
                 final long delta = System.currentTimeMillis() - engine.getPlaybackStart();
                 engine.seek((int) delta);
             } catch (OperationNotSupportedException err) {
@@ -438,21 +378,18 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
             }
         }
     }
-
-    /** {@inheritDoc} */
+ 
     public String scheduleOnceJob(IScheduledJob job) {
         String jobName = schedulingService.addScheduledOnceJob(10, job);
         return jobName;
     }
-
-    /** {@inheritDoc} */
+ 
     public String scheduleWithFixedDelay(IScheduledJob job, int interval) {
         String jobName = schedulingService.addScheduledJob(interval, job);
         jobs.add(jobName);
         return jobName;
     }
-
-    /** {@inheritDoc} */
+ 
     public void cancelJob(String jobName) {
         schedulingService.removeScheduledJob(jobName);
     }
@@ -483,5 +420,29 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
         }
 
     }
+    /**
+     * Set interval to check for buffer underruns. Set to
+     *  <pre> 0 </pre> to disable. 
+     * @param bufferCheckInterval  interval in ms
+     */
+    public void setBufferCheckInterval(int bufferCheckInterval) {
+        this.bufferCheckInterval = bufferCheckInterval;
+    }
 
+    /**
+     * Set maximum number of pending messages at which a
+     *  <pre NetStream.Play.InsufficientBW </pre>
+     * 
+     * message will be generated for VOD streams
+     * 
+     * @param underrunTrigger
+     *            the maximum number of pending messages
+     */
+    public void setUnderrunTrigger(int underrunTrigger) {
+        this.underrunTrigger = underrunTrigger;
+    }
+
+    public void setPlayItem(IPlayItem item) {
+        this.item = item;
+    }
 }

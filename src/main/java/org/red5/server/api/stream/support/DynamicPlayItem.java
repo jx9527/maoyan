@@ -26,21 +26,11 @@ import org.red5.server.messaging.IMessageInput;
  */
 public class DynamicPlayItem implements IPlayItem {
 
-    /**
-     * Playlist item name
-     */
     protected final String name;
 
-    /**
-     * Start mark
-     */
     protected final long start;
 
-    /**
-     * Length - amount to play
-     */
     protected final long length;
-
     /**
      * Size - for VOD items this will be the file size
      */
@@ -68,75 +58,35 @@ public class DynamicPlayItem implements IPlayItem {
         this.length = length;
         this.offset = offset;
     }
-
-    /**
-     * Returns play item length in milliseconds
-     * 
-     * @return Play item length in milliseconds
-     */
+ 
     public long getLength() {
         return length;
     }
-
-    /**
-     * Returns IMessageInput object. IMessageInput is an endpoint for a consumer to connect.
-     * 
-     * @return IMessageInput object
-     */
+ 
     public IMessageInput getMessageInput() {
         return msgInput;
     }
-
-    /**
-     * Returns item name
-     * 
-     * @return item name
-     */
+ 
     public String getName() {
         return name;
     }
-
-    /**
-     * Returns boolean value that specifies whether item can be played
-     */
+ 
     public long getStart() {
         return start;
     }
-
-    /**
-     * Alias for getMessageInput
-     * 
-     * @return Message input source
-     */
+ 
     public IMessageInput getMsgInput() {
         return msgInput;
     }
-
-    /**
-     * Setter for message input
-     *
-     * @param msgInput
-     *            Message input
-     */
+ 
     public void setMsgInput(IMessageInput msgInput) {
         this.msgInput = msgInput;
     }
-
-    /**
-     * Returns size in bytes
-     * 
-     * @return size
-     */
+ 
     public long getSize() {
         return size;
     }
-
-    /**
-     * Set the size in bytes
-     * 
-     * @param size
-     *            size in bytes
-     */
+ 
     public void setSize(long size) {
         this.size = size;
     }
@@ -171,36 +121,12 @@ public class DynamicPlayItem implements IPlayItem {
             return false;
         return true;
     }
-
-    /**
-     * Builder for DynamicPlayItem
-     * 
-     * @param name
-     *            name
-     * @param start
-     *            start
-     * @param length
-     *            length
-     * @return play item instance
-     */
+ 
     public static DynamicPlayItem build(String name, long start, long length) {
         DynamicPlayItem playItem = new DynamicPlayItem(name, start, length);
         return playItem;
     }
-
-    /**
-     * Builder for DynamicPlayItem
-     * 
-     * @param name
-     *            name
-     * @param start
-     *            start
-     * @param length
-     *            length
-     * @param offset
-     *            offset
-     * @return play item instance
-     */
+ 
     public static DynamicPlayItem build(String name, long start, long length, double offset) {
         DynamicPlayItem playItem = new DynamicPlayItem(name, start, length, offset);
         return playItem;

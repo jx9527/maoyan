@@ -34,8 +34,8 @@ import org.red5.server.api.service.IPendingServiceCall;
 import org.red5.server.api.service.IServiceCall;
 import org.red5.server.api.service.IServiceInvoker;
 import org.red5.server.exception.ClientDetailsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Makes remote calls, invoking services, resolves service handlers
@@ -43,10 +43,8 @@ import org.slf4j.LoggerFactory;
  * @author The Red5 Project
  * @author Luke Hubbard, Codegent Ltd (luke@codegent.com)
  */
-public class ServiceInvoker implements IServiceInvoker {
-
-    private static final Logger log = LoggerFactory.getLogger(ServiceInvoker.class);
-
+@Slf4j
+public class ServiceInvoker implements IServiceInvoker { 
     /**
      * Service name
      */
@@ -58,63 +56,51 @@ public class ServiceInvoker implements IServiceInvoker {
     private Set<IServiceResolver> serviceResolvers = new HashSet<IServiceResolver>();
 
     /**
-     * Setter for service resolvers.
-     * 
-     * @param resolvers
-     *            Service resolvers
+     * Setter for service resolvers. 
      */
     public void setServiceResolvers(Set<IServiceResolver> resolvers) {
         serviceResolvers = resolvers;
     }
 
     /**
-     * Lookup a handler for the passed service name in the given scope.
-     * 
-     * @param scope
-     *            Scope
-     * @param serviceName
-     *            Service name
-     * @return Service handler
+     * Lookup a handler for the passed service name in the given scope. 
      */
     private Object getServiceHandler(IScope scope, String serviceName) {
-        // get application scope handler first
+        //首先获取应用程序范围处理程序
         Object service = scope.getHandler();
-        if (serviceName == null || serviceName.equals("")) {
-            // no service requested, return application scope handler
+        if (serviceName == null || "".equals(serviceName)) {
+            // 未请求服务，返回应用程序范围处理程序
             log.trace("No service requested, return application scope handler: {}", service);
             return service;
         }
-        // search service resolver that knows about service name
+        // 知道服务名称的搜索服务解析程序
         for (IServiceResolver resolver : serviceResolvers) {
             service = resolver.resolveService(scope, serviceName);
             if (service != null) {
                 return service;
             }
         }
-        // requested service does not exist
+        //请求的服务不存在
         return null;
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean invoke(IServiceCall call, IScope scope) {
         String serviceName = call.getServiceName();
         log.trace("Service name {}", serviceName);
         Object service = getServiceHandler(scope, serviceName);
         if (service == null) {
-            // Exception must be thrown if service was not found
+            // 如果找不到服务，则必须引发异常
             call.setException(new ServiceNotFoundException(serviceName));
-            // Set call status
+            // 设置呼叫状态
             call.setStatus(Call.STATUS_SERVICE_NOT_FOUND);
             log.warn("Service not found: {}", serviceName);
             return false;
         } else {
             log.trace("Service found: {}", serviceName);
         }
-        // Invoke if everything is ok
         return invoke(call, service);
     }
-
-    /** {@inheritDoc} */
+ 
     public boolean invoke(IServiceCall call, Object service) {
         IConnection conn = Red5.getConnectionLocal();
         String methodName = call.getServiceMethodName();

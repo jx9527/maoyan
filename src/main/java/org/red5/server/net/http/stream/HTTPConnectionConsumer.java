@@ -1,9 +1,6 @@
 package org.red5.server.net.http.stream;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.red5.io.utils.IOUtils;
 import org.red5.server.api.stream.IStreamPacket;
 import org.red5.server.messaging.IMessage;
@@ -15,9 +12,10 @@ import org.red5.server.net.rtmp.status.StatusCodes;
 import org.red5.server.stream.message.RTMPMessage;
 import org.red5.server.stream.message.StatusMessage;
 
-public class HTTPConnectionConsumer implements ICustomPushableConsumer {
+import lombok.extern.slf4j.Slf4j;
 
-    private static final Logger log = LoggerFactory.getLogger(HTTPConnectionConsumer.class);
+@Slf4j
+public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 	
 	private HTTPMinaConnection conn;
 	
@@ -37,8 +35,7 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 	}
     
     public HTTPConnectionConsumer(HTTPMinaConnection conn) {
-		
-    	this.conn = conn;    		
+		this.conn = conn;    		
 	}
     
 	@Override
@@ -48,7 +45,7 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 			if ("pendingVideoCount".equals(oobCtrlMsg.getServiceName())) {
 				long pendings = conn.getPendingMessages();
 				if(pendings > 500){
-					//log.info("http pending packet:{}", pendings);
+					log.info("http pending packet:{}", pendings);
 					oobCtrlMsg.setResult(pendings);
 				} else if(pendings > 1000) {
 					log.info("http pending packet > 1000, network is bad");
@@ -58,10 +55,14 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 		}
 	}
 
+	/**
+	 * 最终发送消息的方法
+	 */
 	@Override
 	public void pushMessage(IPipe pipe, IMessage message) {
 		
 		if(!inited) {
+			//new byte{}{0x46, 0x4c, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09}
 			conn.write(header.asReadOnlyBuffer());
 			inited = true;
 		}
@@ -74,12 +75,11 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 					IoBuffer data = IoBuffer.allocate(bodySize+16);
 					data.put(packet.getDataType());
 					IOUtils.writeMediumInt(data, bodySize);
-					IOUtils.writeExtendedMediumInt(data, (int)packet.getTimestamp());
+					IOUtils.writeExtendedMediumInt(data,packet.getTimestamp());
 					IOUtils.writeMediumInt(data, 0);
 					data.put(packet.getData().duplicate());
 					data.putInt(bodySize + 11);
-					data.flip();
-					
+					data.flip(); 
 					conn.write(data);
 				}
 			}
@@ -93,7 +93,6 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 	
 	@Override
 	public HTTPMinaConnection getConnection() {
-
 		return conn;
 	}
 
@@ -102,7 +101,6 @@ public class HTTPConnectionConsumer implements ICustomPushableConsumer {
 	}
 	
 	public void setClose(boolean value) {
-		
 		this.closed = value;
 	}
 }

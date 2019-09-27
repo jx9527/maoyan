@@ -38,37 +38,30 @@ import org.red5.server.net.rtmp.codec.RTMP;
 import org.red5.server.net.rtmp.codec.RTMPMinaCodecFactory;
 import org.red5.server.net.rtmp.message.Packet;
 import org.red5.server.net.rtmpe.RTMPEIoFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Handles all RTMP protocol events fired by the MINA framework.
  * 处理所有被MINA框架触发的RTMP协议事件
  */
-public class RTMPMinaIoHandler extends IoHandlerAdapter {
-
-    private static Logger log = LoggerFactory.getLogger(RTMPMinaIoHandler.class);
-
+@Slf4j
+public class RTMPMinaIoHandler extends IoHandlerAdapter { 
     /**
      * RTMP events handler
      * 在配置文件中设置 RTMPHandler
      */
-    protected IRTMPHandler handler;
-
+    protected IRTMPHandler handler; 
     /**
 	 * Mode
 	 */
 	protected boolean mode = RTMP.MODE_SERVER;
-	
-	/**
-	 * RTMP protocol codec factory
-	 */
+	 
 	protected ProtocolCodecFactory codecFactory;
 
 	protected IRTMPConnManager rtmpConnManager;
 	
-	public RTMPMinaIoHandler() {
-		
+	public RTMPMinaIoHandler() { 
 		handler = new RTMPHandler();
 		codecFactory = new RTMPMinaCodecFactory();
 		rtmpConnManager = new RTMPConnManager();
@@ -79,15 +72,13 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
     @Override
     public void sessionCreated(IoSession session) throws Exception {
         log.debug("Session created RTMP");
-        // check for the rtmpe filter and add if not there
+        //检查rtmpe过滤器，如果没有，则添加
         if (!session.getFilterChain().contains("rtmpeFilter")) {
-            // add rtmpe filter, rtmp protocol filter is added upon successful handshake
+            // 添加rtmpe筛选器，成功握手时添加rtmp协议筛选器
             session.getFilterChain().addFirst("rtmpeFilter", new RTMPEIoFilter());
-        }
-        // connection instance
+        } 
         RTMPMinaConnection conn = null;
-        String sessionId = null;
-        // check to ensure the connection instance doesnt already exist
+        String sessionId = null; 
         //检查确保连接实例是否存在,首次连接不存在则进行创建
         if (!session.containsAttribute(RTMPConnection.RTMP_SESSION_ID)) {
             // create a connection

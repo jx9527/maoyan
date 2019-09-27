@@ -21,7 +21,7 @@ package org.red5.server.api.service;
 import org.red5.server.api.scope.IScope;
 
 /**
- * Interface for objects that execute service calls (remote calls from client).
+ * 执行服务调用（来自客户端的远程调用）的对象的接口。
  * 
  * @author The Red5 Project
  * @author Luke Hubbard (luke@codegent.com)
@@ -29,40 +29,12 @@ import org.red5.server.api.scope.IScope;
 public interface IServiceInvoker {
 
     /**
-     * Execute the passed service call in the given scope. This looks up the handler for the call in the scope and the context of the scope.
-     * 
-     * @param call
-     *            the call to invoke
-     * @param scope
-     *            the scope to search for a handler
-     * @return <pre>
-     * true
-     * </pre>
-     * 
-     *         if the call was performed, otherwise
-     * 
-     *         <pre>
-     * false
-     * </pre>
-     */
+     * 在给定范围内执行传递的服务调用。这将在作用域和作用域上下文中查找调用的处理程序.
+      */
     boolean invoke(IServiceCall call, IScope scope);
 
     /**
-     * Execute the passed service call in the given object.
-     * 
-     * @param call
-     *            the call to invoke
-     * @param service
-     *            the service to use
-     * @return <pre>
-     * true
-     * </pre>
-     * 
-     *         if the call was performed, otherwise
-     * 
-     *         <pre>
-     * false
-     * </pre>
+     * 在给定对象中执行传递的服务调用。
      */
     boolean invoke(IServiceCall call, Object service);
 

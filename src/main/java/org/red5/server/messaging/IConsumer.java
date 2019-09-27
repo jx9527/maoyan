@@ -24,6 +24,4 @@ package org.red5.server.messaging;
  * @author The Red5 Project
  * @author Steven Gong (steven.gong@gmail.com)
  */
-public interface IConsumer extends IMessageComponent {
-
-}
+public interface IConsumer extends IMessageComponent {}
