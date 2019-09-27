@@ -794,11 +794,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Estimate client buffer fill.
-     * 
-     * @param now
-     *            The current timestamp being used.
-     * @return True if it appears that the client buffer is full, otherwise false.
+     * Estimate client buffer fill. 
      */
     private boolean isClientBufferFull(final long now) {
         // check client buffer length when we've already sent some messages
@@ -862,9 +858,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Sends a status message.
-     * 
-     * @param status
+     * Sends a status message. 
      */
     private void doPushMessage(Status status) {
         StatusMessage message = new StatusMessage();
@@ -873,10 +867,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send message to output stream and handle exceptions.
-     * 
-     * @param message
-     *            The message to send.
+     * Send message to output stream and handle exceptions. 
      */
     private void doPushMessage(AbstractMessage message) {
         if (log.isTraceEnabled()) {
@@ -909,10 +900,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send an RTMP message
-     * 
-     * @param messageIn
-     *            incoming RTMP message
+     * Send an RTMP message 
      */
     private void sendMessage(RTMPMessage messageIn) {
         IRTMPEvent eventIn = messageIn.getBody();
@@ -979,7 +967,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send clear ping. Lets client know that stream has no more data to send.
+     * 发送清除ping。让客户端知道流没有更多的数据要发送。
      */
     private void sendClearPing() {
         Ping eof = new Ping();
@@ -1014,10 +1002,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send reset status for item
-     * 
-     * @param item
-     *            Playlist item
+     * Send reset status for item 
      */
     private void sendResetStatus(IPlayItem item) {
         Status reset = new Status(StatusCodes.NS_PLAY_RESET);
@@ -1029,10 +1014,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send playback start status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Send playback start status notification 
      */
     private void sendStartStatus(IPlayItem item) {
         Status start = new Status(StatusCodes.NS_PLAY_START);
@@ -1044,10 +1026,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send playback stoppage status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Send playback stoppage status notification 
      */
     private void sendStopStatus(IPlayItem item) {
         Status stop = new Status(StatusCodes.NS_PLAY_STOP);
@@ -1062,10 +1041,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
      * Sends an onPlayStatus message.
      * 
      * http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/events/NetDataEvent.html
-     * 
-     * @param code
-     * @param duration
-     * @param bytes
+     
      */
     private void sendOnPlayStatus(String code, int duration, long bytes) {
         if (log.isDebugEnabled()) {
@@ -1129,12 +1105,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send seek status notification
-     * 
-     * @param item
-     *            Playlist item
-     * @param position
-     *            Seek position
+     * Send seek status notification 
      */
     private void sendSeekStatus(IPlayItem item, int position) {
         Status seek = new Status(StatusCodes.NS_SEEK_NOTIFY);
@@ -1146,10 +1117,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send pause status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Send pause status notification 
      */
     private void sendPauseStatus(IPlayItem item) {
         Status pause = new Status(StatusCodes.NS_PAUSE_NOTIFY);
@@ -1160,10 +1128,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send resume status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Send resume status notification 
      */
     private void sendResumeStatus(IPlayItem item) {
         Status resume = new Status(StatusCodes.NS_UNPAUSE_NOTIFY);
@@ -1174,10 +1139,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send published status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Send published status notification 
      */
     private void sendPublishedStatus(IPlayItem item) {
         Status published = new Status(StatusCodes.NS_PLAY_PUBLISHNOTIFY);
@@ -1188,10 +1150,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send unpublished status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Send unpublished status notification 
      */
     private void sendUnpublishedStatus(IPlayItem item) {
         Status unpublished = new Status(StatusCodes.NS_PLAY_UNPUBLISHNOTIFY);
@@ -1202,10 +1161,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Stream not found status notification
-     * 
-     * @param item
-     *            Playlist item
+     * Stream not found status notification 
      */
     private void sendStreamNotFoundStatus(IPlayItem item) {
         Status notFound = new Status(StatusCodes.NS_PLAY_STREAMNOTFOUND);
@@ -1217,10 +1173,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Insufficient bandwidth notification
-     * 
-     * @param item
-     *            Playlist item
+     * Insufficient bandwidth notification 
      */
     private void sendInsufficientBandwidthStatus(IPlayItem item) {
         Status insufficientBW = new Status(StatusCodes.NS_PLAY_INSUFFICIENT_BW);
@@ -1233,10 +1186,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send VOD init control message
-     * 
-     * @param item
-     *            Playlist item
+     * Send VOD init control message 
      */
     private void sendVODInitCM(IPlayItem item) {
         OOBControlMessage oobCtrlMsg = new OOBControlMessage();
@@ -1249,13 +1199,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Send VOD seek control message
-     * 
-     * @param msgIn
-     *            Message input
-     * @param position
-     *            Playlist item
-     * @return Out-of-band control message call result or -1 on failure
+     * Send VOD seek control message 
      */
     private int sendVODSeekCM(int position) {
         OOBControlMessage oobCtrlMsg = new OOBControlMessage();
@@ -1349,6 +1293,12 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         } 
         return false;
     }
+    
+    /**
+     * 1、由InMemoryPushPushPipe启动Consumer和Provider
+     * 2、Provider的pushMessage发送消息
+     * 3、Consumer的pushMessage接受消息
+     */
     @Override
     public void pushMessage(IPipe pipe, IMessage message) throws IOException {
         if (!pullMode) {

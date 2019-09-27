@@ -34,172 +34,52 @@ import org.red5.server.net.ICommand;
 import org.red5.server.stream.IStreamData;
 
 /**
- * Stream notification event. The invoke / transaction id is "always" equal to zero for a Notify.
+ * 流通知事件。对于通知，调用/事务ID始终等于零。
  */
 public class Notify extends BaseEvent implements ICommand, IStreamData<Notify>, IStreamPacket {
 
     private static final long serialVersionUID = -6085848257275156569L;
-
-    /**
-     * Service call
-     */
+ 
     protected IServiceCall call;
-
-    /**
-     * Event data
-     */
+ 
     protected IoBuffer data;
-
-    /**
-     * Event data type
-     */
-    protected byte dataType = TYPE_NOTIFY;
-
+ 
+    protected byte dataType = TYPE_NOTIFY; 
     /**
      * Invoke id / transaction id
      */
     protected int transactionId = 0;
     
-    /**
-	 * Invoke id
-	 */
 	private int invokeId = 0;
-
-    /**
-     * Connection parameters
-     */
+ 
     private Map<String, Object> connectionParams;
 
     private String action;
-
-    /** Constructs a new Notify */
+ 
     public Notify() {
         super(Type.SERVICE_CALL);
     }
-
-    /**
-     * Create new notification event with given byte buffer
-     * 
-     * @param data
-     *            Byte buffer
-     */
+ 
     public Notify(IoBuffer data) {
-        super(Type.STREAM_DATA);
-        this.data = data;
+    	this(data,null);
     }
-
-    /**
-     * Create new notification event with given byte buffer and action.
-     * 
-     * @param data Byte buffer
-     * @param action Action / method
-     */
+ 
     public Notify(IoBuffer data, String action) {
         super(Type.STREAM_DATA);
         this.data = data;
         this.action = action;
     }
-
-    /**
-     * Create new notification event with given service call
-     * 
-     * @param call
-     *            Service call
-     */
+ 
     public Notify(IServiceCall call) {
         super(Type.SERVICE_CALL);
         this.call = call;
-    }
-
-    /** {@inheritDoc} */
-    public byte getDataType() {
-        return dataType;
-    }
-
-    /**
-     * Setter for data
-     *
-     * @param data
-     *            Data
-     */
-    public void setData(IoBuffer data) {
-        this.data = data;
-    }
-
-    /**
-     * Setter for call
-     *
-     * @param call
-     *            Service call
-     */
-    public void setCall(IServiceCall call) {
-        this.call = call;
-    }
-
-    /**
-     * Getter for service call
-     *
-     * @return Service call
-     */
-    public IServiceCall getCall() {
-        return this.call;
-    }
-
-    /** {@inheritDoc} */
-    public IoBuffer getData() {
-        return data;
-    }
-
-    /**
-     * Getter for transaction id
-     *
-     * @return Transaction id
-     */
-    public int getTransactionId() {
-        return transactionId;
-    }
-
-    /**
-     * Release event (nullify call object)
-     */
-    protected void doRelease() {
-        call = null;
-    }
-
-    /**
-     * Getter for connection parameters
-     *
-     * @return Connection parameters
-     */
-    public Map<String, Object> getConnectionParams() {
-        return connectionParams;
-    }
-
-    /**
-     * Setter for connection parameters
-     *
-     * @param connectionParams
-     *            Connection parameters
-     */
-    public void setConnectionParams(Map<String, Object> connectionParams) {
-        this.connectionParams = connectionParams;
-    }
-
-    public void setAction(String onCueOrOnMeta) {
-        this.action = onCueOrOnMeta;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    /** {@inheritDoc} */
+    } 
+ 
     @Override
     public String toString() {
         return call != null ? String.format("%s: %s", getClass().getSimpleName(), call) : (action != null ? String.format("%s action: %s", getClass().getSimpleName(), action) : getClass().getSimpleName());
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -232,8 +112,7 @@ public class Notify extends BaseEvent implements ICommand, IStreamData<Notify>, 
         }
         return true;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     protected void releaseInternal() {
         if (data != null) {
@@ -277,9 +156,7 @@ public class Notify extends BaseEvent implements ICommand, IStreamData<Notify>, 
     }
 
     /**
-     * Duplicate this Notify message to future injection Serialize to memory and deserialize, safe way.
-     * 
-     * @return duplicated Notify event
+     * 将此通知消息复制到将来的注入序列化到内存并反序列化，安全方式。 
      */
     public Notify duplicate() throws IOException, ClassNotFoundException {
         Notify result = new Notify();
@@ -294,28 +171,63 @@ public class Notify extends BaseEvent implements ICommand, IStreamData<Notify>, 
         result.readExternal(ois);
         ois.close();
         bais.close();
-        // set the action if it exists
+        //set the action if it exists
         result.setAction(getAction());
         result.setSourceType(sourceType);
         result.setSource(source);
         result.setTimestamp(timestamp);
         return result;
     }
-    /**
-     * Getter for invoke id
-     *
-     * @return  Invoke id
-     */
+     
     public int getInvokeId() {
 		return invokeId;
 	}
-
-	/**
-     * Setter for invoke id
-     *
-     * @param invokeId  Invoke id
-     */
+ 
     public void setInvokeId(int invokeId) {
 		this.invokeId = invokeId;
 	}
+    
+    public byte getDataType() {
+        return dataType;
+    }
+ 
+    public void setData(IoBuffer data) {
+        this.data = data;
+    }
+ 
+    public void setCall(IServiceCall call) {
+        this.call = call;
+    }
+ 
+    public IServiceCall getCall() {
+        return this.call;
+    }
+ 
+    public IoBuffer getData() {
+        return data;
+    }
+ 
+    public int getTransactionId() {
+        return transactionId;
+    }
+ 
+    protected void doRelease() {
+        call = null;
+    }
+ 
+    public Map<String, Object> getConnectionParams() {
+        return connectionParams;
+    }
+ 
+    public void setConnectionParams(Map<String, Object> connectionParams) {
+        this.connectionParams = connectionParams;
+    }
+
+    public void setAction(String onCueOrOnMeta) {
+        this.action = onCueOrOnMeta;
+    }
+
+    public String getAction() {
+        return action;
+    }
 }
