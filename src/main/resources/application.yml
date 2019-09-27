@@ -123,7 +123,8 @@ jmx:
     port: 9999
     sport: 9998
     registryes: 9999
-    enable: false 
+    enable: false
+    remoteobjects: ""
   mina:
     monitor:
       enable: false

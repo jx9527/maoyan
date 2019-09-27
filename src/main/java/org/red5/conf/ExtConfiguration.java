@@ -1,5 +1,6 @@
 package org.red5.conf;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -121,7 +122,7 @@ public class ExtConfiguration{
 	public static int MAX_QUEUE_OFFER_TIME = 125;
 	public static int MAX_QUEUE_OFFER_ATTEMPTS = 4; 
 	
-	/*
+	 
 	@Value("${http.host}")
 	public  void setHTTP_HOST(String hTTP_HOST) {
 		HTTP_HOST = hTTP_HOST;
@@ -497,5 +498,5 @@ public class ExtConfiguration{
 	@Value("${unicast.executor_threads}")
 	public  void setUNICAST_EXECUTOR_THREADS(int uNICAST_EXECUTOR_THREADS) {
 		UNICAST_EXECUTOR_THREADS = uNICAST_EXECUTOR_THREADS;
-	} */
+	}  
 }
