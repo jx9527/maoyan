@@ -26,55 +26,33 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.red5.server.net.rtmp.event.IRTMPEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * RTMP packet. Consists of packet header, data and event context.
  */
+@Slf4j
 public class Packet implements Externalizable {
 
     private static final long serialVersionUID = -6415050845346626950L;
 
-    private static Logger log = LoggerFactory.getLogger(Packet.class);
-
     private static final boolean noCopy = System.getProperty("packet.noCopy") == null ? false : Boolean.valueOf(System.getProperty("packet.noCopy"));
-
-    /**
-     * Header
-     */
+ 
     private Header header;
-
-    /**
-     * RTMP event
-     */
+ 
     private IRTMPEvent message;
-
-    /**
-     * Packet data
-     */
+ 
     private IoBuffer data;
-
-    /**
-     * Expiration time
-     */
+ 
     private transient long expirationTime = 0L;
-
-    /**
-     * Flag representing processed status
-     */
+ 
     private transient final AtomicBoolean processed = new AtomicBoolean(false);
 
     public Packet() {
         log.trace("ctor");
     }
-
-    /**
-     * Create packet with given header.
-     * 
-     * @param header
-     *            Packet header
-     */
+ 
     public Packet(Header header) {
         if (log.isTraceEnabled()) {
             log.trace("Header: {}", header);
@@ -82,15 +60,7 @@ public class Packet implements Externalizable {
         this.header = header;
         data = IoBuffer.allocate(header.getSize()).setAutoExpand(true);
     }
-
-    /**
-     * Create packet with given header and event context.
-     * 
-     * @param header
-     *            RTMP header
-     * @param event
-     *            RTMP message
-     */
+ 
     public Packet(Header header, IRTMPEvent event) {
         if (log.isTraceEnabled()) {
             log.trace("Header: {} event: {}", header, event);
@@ -98,41 +68,19 @@ public class Packet implements Externalizable {
         this.header = header;
         this.message = event;
     }
-
-    /**
-     * Getter for header
-     *
-     * @return Packet header
-     */
+ 
     public Header getHeader() {
         return header;
     }
-
-    /**
-     * Setter for event context
-     *
-     * @param message
-     *            RTMP event context
-     */
+ 
     public void setMessage(IRTMPEvent message) {
         this.message = message;
     }
-
-    /**
-     * Getter for event context
-     *
-     * @return RTMP event context
-     */
+ 
     public IRTMPEvent getMessage() {
         return message;
     }
-
-    /**
-     * Setter for data
-     *
-     * @param buffer
-     *            Packet data
-     */
+ 
     public void setData(IoBuffer buffer) {
         if (noCopy) {
             log.trace("Using buffer reference");
@@ -153,28 +101,15 @@ public class Packet implements Externalizable {
             }
         }
     }
-
-    /**
-     * Getter for data
-     *
-     * @return Packet data
-     */
+ 
     public IoBuffer getData() {
         return data;
     }
-
-    /**
-     * Returns whether or not the packet has a data buffer.
-     * 
-     * @return true if data buffer exists and false otherwise
-     */
+ 
     public boolean hasData() {
         return data != null;
     }
-
-    /**
-     * Clears the data buffer.
-     */
+ 
     public void clearData() {
         if (data != null) {
             data.clear();
@@ -182,50 +117,24 @@ public class Packet implements Externalizable {
             data = null;
         }
     }
-
-    /**
-     * Return the expiration time.
-     * 
-     * @return expirationTime
-     */
+ 
     public long getExpirationTime() {
         return expirationTime;
     }
-
-    /**
-     * Set the expiration time.
-     * 
-     * @param expirationTime new expiration time to set
-     */
+ 
     public void setExpirationTime(long expirationTime) {
         this.expirationTime = expirationTime;
     }
-
-    /**
-     * Returns true if expiration time has been reached and false otherwise.
-     * 
-     * @return expired or not
-     */
+ 
     public boolean isExpired() {
         // if expirationTime is zero, the expiration is not used
         return expirationTime > 0L ? System.currentTimeMillis() > expirationTime : false;
     }
-
-    /**
-     * Sets the processed flag.
-     * 
-     * @param isProcessed
-     *            true if processed and false otherwise
-     */
+ 
     public void setProcessed(boolean isProcessed) {
         this.processed.set(isProcessed);
     }
-
-    /**
-     * Gets the processed flag.
-     * 
-     * @return true if processed and false otherwise
-     */
+ 
     public boolean isProcessed() {
         return this.processed.get();
     }
@@ -241,10 +150,7 @@ public class Packet implements Externalizable {
         out.writeObject(header);
         out.writeObject(message);
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+ 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Packet [");
@@ -261,5 +167,4 @@ public class Packet implements Externalizable {
         sb.append("]");
         return sb.toString();
     }
-
 }

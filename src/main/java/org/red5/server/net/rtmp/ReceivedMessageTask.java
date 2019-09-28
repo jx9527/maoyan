@@ -63,14 +63,14 @@ public final class ReceivedMessageTask implements Callable<Packet> {
     }
 
     public Packet call() throws Exception {
-        //keep a ref for executor thread
+        //为执行器线程保留一个ref
         taskThread = Thread.currentThread();
-        // set connection to thread local
+        // 将连接设置为线程本地
         Red5.setConnectionLocal(conn);
         try {
-            // pass message to the handler
+            //将消息传递给处理程序
             handler.messageReceived(conn, packet);
-            // if we get this far, set done / completed flag
+            // 如果我们走到这一步，设置完成/完成标志
             packet.setProcessed(true);
         } finally {
             // clear thread local
@@ -81,13 +81,7 @@ public final class ReceivedMessageTask implements Callable<Packet> {
         }
         return packet;
     }
-
-    /**
-     * Runs deadlock guard task
-     *
-     * @param deadlockGuardTask
-     *            deadlock guard task
-     */
+ 
     @SuppressWarnings("unchecked")
     public void runDeadlockFuture(Runnable deadlockGuardTask) {
         if (deadlockFuture == null) {
@@ -105,22 +99,14 @@ public final class ReceivedMessageTask implements Callable<Packet> {
             log.warn("Deadlock future is already create for {}", sessionId);
         }
     }
-
-    /**
-     * Cancels deadlock future if it was created
-     */
+ 
     public void cancelDeadlockFuture() {
         // kill the future for the deadlock since processing is complete
         if (deadlockFuture != null) {
             deadlockFuture.cancel(true);
         }
     }
-
-    /**
-     * Marks task as processing if it is not processing yet.
-     *
-     * @return true if successful, or false otherwise
-     */
+ 
     public boolean setProcessing() {
         return processing.compareAndSet(false, true);
     }

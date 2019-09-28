@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RTMPMinaIoHandler extends IoHandlerAdapter { 
     /**
      * RTMP events handler
-     * 在配置文件中设置 RTMPHandler
+     ** 在配置文件中设置 RTMPHandler
      */
     protected IRTMPHandler handler; 
     /**
@@ -66,9 +66,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
 		codecFactory = new RTMPMinaCodecFactory();
 		rtmpConnManager = new RTMPConnManager();
 	}
-    
-    
-    /** {@inheritDoc} */
+     
     @Override
     public void sessionCreated(IoSession session) throws Exception {
         log.debug("Session created RTMP");
@@ -107,8 +105,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
             }
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void sessionOpened(IoSession session) throws Exception {
         String sessionId = (String) session.getAttribute(RTMPConnection.RTMP_SESSION_ID);
@@ -118,8 +115,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
         RTMPMinaConnection conn = (RTMPMinaConnection) connManager.getConnectionBySessionId(sessionId);
         handler.connectionOpened(conn);
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
         if (log.isTraceEnabled()) {
@@ -134,8 +130,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
             }
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
         String sessionId = (String) session.getAttribute(RTMPConnection.RTMP_SESSION_ID);
@@ -165,8 +160,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
             log.debug("Connections session id was null in session, may already be closed");
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
         if (log.isTraceEnabled()) {
@@ -198,7 +192,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
         }
     }
 
-    /** {@inheritDoc} */
+    
     @Override
     public void messageSent(IoSession session, Object message) throws Exception {
         log.trace("messageSent session: {} message: {}", session, message);
@@ -233,8 +227,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
             }
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
         log.debug("Filter chain: {}", session.getFilterChain());
@@ -257,14 +250,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
             }
         }
     }
-
-    /**
-     * Close and clean-up the IoSession.
-     * 
-     * @param session
-     * @param immediately
-     *            close without waiting for the write queue to flush
-     */
+ 
     private void cleanSession(final IoSession session, boolean immediately) {
         if (session.isClosing()) {
             log.debug("Session already being closed");
@@ -318,21 +304,11 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
             future.addListener(listener);
         }
     }
-
-    /**
-     * Setter for handler.
-     *
-     * @param handler
-     *            RTMP events handler
-     */
+ 
     public void setHandler(IRTMPHandler handler) {
         this.handler = handler;
     }
-
-    /**
-     * @param codecFactory
-     *            the codecFactory to set
-     */
+ 
     @Deprecated
     public void setCodecFactory(ProtocolCodecFactory codecFactory) {
     	this.codecFactory = codecFactory;
@@ -342,14 +318,7 @@ public class RTMPMinaIoHandler extends IoHandlerAdapter {
     protected RTMPMinaConnection createRTMPMinaConnection() {
         return (RTMPMinaConnection) RTMPConnManager.getInstance().createConnection(RTMPMinaConnection.class);
     } 
-     
-
-	/**
-	 * Setter for mode.
-	 * 
-	 * @param mode <code>true</code> if handler should work in server mode,
-	 *            <code>false</code> otherwise
-	 */
+    
 	public void setMode(boolean mode) {
 		this.mode = mode;
 	} 

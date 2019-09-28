@@ -43,10 +43,10 @@ import org.red5.server.net.rtmp.codec.RTMP;
 import org.red5.server.net.rtmp.event.ClientBW;
 import org.red5.server.net.rtmp.event.ServerBW;
 import org.red5.server.net.rtmp.message.Packet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents an RTMP connection using Mina.
@@ -55,24 +55,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 
  * @author Paul Gregoire
  */
+@Slf4j
 @ManagedResource
 public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnectionMXBean {
-
-    protected static Logger log = LoggerFactory.getLogger(RTMPMinaConnection.class);
-
-    /**
-     * Closing flag
-     */
+  
     private final AtomicBoolean closing = new AtomicBoolean(false);
-
-    /**
-     * MINA I/O session, connection between two end points
-     */
+ 
     private transient IoSession ioSession;
-
-    /**
-     * MBean object name used for de/registration purposes.
-     */
+ 
     private ObjectName oName;
 
     protected int defaultServerBandwidth = 10000000;
@@ -86,8 +76,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
     public RTMPMinaConnection() {
         super(IConnection.Type.PERSISTENT.name().toLowerCase());
     }
-
-    @SuppressWarnings("cast")
+ 
     @Override
     public boolean connect(IScope newScope, Object[] params) {
         log.debug("Connect scope: {}", newScope);
@@ -114,7 +103,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
         return success;
     }
 
-    /** {@inheritDoc} */
+    
     @Override
     public void close() {
         if (closing.compareAndSet(false, true)) {
@@ -152,58 +141,32 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
             log.debug("Close has already been called");
         }
     }
-
-    /**
-     * Return MINA I/O session.
-     * 
-     * @return MINA O/I session, connection between two end-points
-     */
+ 
     @Override
     public IoSession getIoSession() {
         return ioSession;
     }
-
-    /**
-     * @return the defaultServerBandwidth
-     */
+ 
     public int getDefaultServerBandwidth() {
         return defaultServerBandwidth;
     }
-
-    /**
-     * @param defaultServerBandwidth
-     *            the defaultServerBandwidth to set
-     */
+ 
     public void setDefaultServerBandwidth(int defaultServerBandwidth) {
         this.defaultServerBandwidth = defaultServerBandwidth;
     }
-
-    /**
-     * @return the defaultClientBandwidth
-     */
+ 
     public int getDefaultClientBandwidth() {
         return defaultClientBandwidth;
     }
-
-    /**
-     * @param defaultClientBandwidth
-     *            the defaultClientBandwidth to set
-     */
+ 
     public void setDefaultClientBandwidth(int defaultClientBandwidth) {
         this.defaultClientBandwidth = defaultClientBandwidth;
     }
-
-    /**
-     * @return the limitType
-     */
+ 
     public int getLimitType() {
         return limitType;
     }
-
-    /**
-     * @param limitType
-     *            the limitType to set
-     */
+ 
     public void setLimitType(int limitType) {
         this.limitType = limitType;
     }
@@ -212,23 +175,15 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
     public void setExecutor(ThreadPoolTaskExecutor executor) {
         this.executor = executor;
     }
-
-    /**
-     * @return the bandwidthDetection
-     */
+ 
     public boolean isBandwidthDetection() {
         return bandwidthDetection;
     }
-
-    /**
-     * @param bandwidthDetection
-     *            the bandwidthDetection to set
-     */
+ 
     public void setBandwidthDetection(boolean bandwidthDetection) {
         this.bandwidthDetection = bandwidthDetection;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public boolean isReaderIdle() {
         if (ioSession != null) {
@@ -236,8 +191,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
         }
         return true;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public boolean isWriterIdle() {
         if (ioSession != null) {
@@ -245,8 +199,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
         }
         return true;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public long getPendingMessages() {
         if (ioSession != null) {
@@ -254,8 +207,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
         }
         return 0;
     }
-
-    /** {@inheritDoc} */
+    
     @Override
     public long getReadBytes() {
         if (ioSession != null) {
@@ -263,8 +215,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
         }
         return 0;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public long getWrittenBytes() {
         if (ioSession != null) {
@@ -276,18 +227,16 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
     public void invokeMethod(String method) {
         invoke(method);
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public boolean isConnected() {
         if (log.isTraceEnabled()) {
             log.trace("Connected: {}", (ioSession != null && ioSession.isConnected()));
         }
-        // XXX Paul: not sure isClosing is actually working as we expect here
+        // Paul: not sure isClosing is actually working as we expect here
         return super.isConnected() && (ioSession != null && ioSession.isConnected());
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public boolean isIdle() {
         if (ioSession != null) {
@@ -298,19 +247,12 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
         }
         return super.isIdle();
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     protected void onInactive() {
         close();
     }
-
-    /**
-     * Setter for MINA I/O session (connection).
-     * 
-     * @param protocolSession
-     *            Protocol session
-     */
+ 
     public void setIoSession(IoSession protocolSession) {
         SocketAddress remote = protocolSession.getRemoteAddress();
         if (remote instanceof InetSocketAddress) {
@@ -328,8 +270,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
             log.trace("setIoSession conn: {}", this);
         }
     }
-
-    /** {@inheritDoc} */
+    
     @Override
     public void write(Packet out) {
         if (ioSession != null) {
@@ -370,8 +311,7 @@ public class RTMPMinaConnection extends RTMPConnection implements RTMPMinaConnec
             }
         }
     }
-
-    /** {@inheritDoc} */
+    
     @Override
     public void writeRaw(IoBuffer out) {
         if (ioSession != null) {

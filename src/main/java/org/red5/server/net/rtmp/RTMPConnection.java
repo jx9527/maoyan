@@ -115,31 +115,31 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
     /**
      * Marker byte for standard or non-encrypted RTMP data.
-     * 标准或非加密RTMP数据的标记字节。
+     * 	标准或非加密RTMP数据的标记字节。
      */
     public static final byte RTMP_NON_ENCRYPTED = (byte) 0x03;
 
     /**
      * Marker byte for encrypted RTMP data.
-     * 加密RTMP数据标记字节
+     * 	加密RTMP数据标记字节
      */
     public static final byte RTMP_ENCRYPTED = (byte) 0x06;
 
     /**
      * Marker byte for encrypted RTMP data XTEA. http://en.wikipedia.org/wiki/XTEA
-     * 加密的rtmp数据xtea的标记字节
+     * 	加密的rtmp数据xtea的标记字节
      */
     public static final byte RTMP_ENCRYPTED_XTEA = (byte) 0x08;
 
     /**
      * Marker byte for encrypted RTMP data using Blowfish. http://en.wikipedia.org/wiki/Blowfish_(cipher)
-     * 使用Blowfish加密RTMP数据的标记字节
+     * 	使用Blowfish加密RTMP数据的标记字节
      */
     public static final byte RTMP_ENCRYPTED_BLOWFISH = (byte) 0x09;
 
     /**
      * Unknown type 0x0a, seen on youtube
-     * 未知类型0x0a，在YouTube上看到
+     * 	未知类型0x0a，在YouTube上看到
      */
     public static final byte RTMP_ENCRYPTED_UNK = (byte) 0x0a;
 
@@ -165,49 +165,49 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 	private volatile Encoding encoding = Encoding.AMF0;
     /**
      * Initial channel capacity
-     * 初始信道容量
+     * 	初始信道容量
      */
     private int channelsInitalCapacity = 3;
 
     /**
      * Concurrency level for channels collection
-     * 通道集合的并发级别
+     * 	通道集合的并发级别
      */
     private int channelsConcurrencyLevel = 1;
 
     /**
      * Initial streams capacity
-     * 初始流容量
+     * 	初始流容量
      */
     private int streamsInitalCapacity = 1;
 
     /**
      * Concurrency level for streams collection
-     * 流集合的并发级别
+     * 	流集合的并发级别
      */
     private int streamsConcurrencyLevel = 1;
 
     /**
      * Initial pending calls capacity
-     * 初始挂起回调容量
+     * 	初始挂起回调容量
      */
     private int pendingCallsInitalCapacity = 3;
 
     /**
      * Concurrency level for pending calls collection
-     * 挂起回到集合级别
+     * 	挂起回到集合级别
      */
     private int pendingCallsConcurrencyLevel = 1;
 
     /**
      * Initial reserved streams capacity
-     * 初始预留流容量
+     * 	初始预留流容量
      */
     private int reservedStreamsInitalCapacity = 1;
 
     /**
      * Concurrency level for reserved streams collection
-     * 保留流集合的并发级别
+     * 	保留流集合的并发级别
      */
     private int reservedStreamsConcurrencyLevel = 1;
 
@@ -234,44 +234,44 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
     /**
      * Reserved stream ids. Stream id's directly relate to individual NetStream instances.
-     * 保留流ID。流ID直接与单个Netstream实例相关。
+     *	 保留流ID。流ID直接与单个Netstream实例相关。
      */
     private transient Set<Number> reservedStreams = Collections.newSetFromMap(new ConcurrentHashMap<Number, Boolean>(reservedStreamsInitalCapacity, 0.9f, reservedStreamsConcurrencyLevel));
 
     /**
      * Transaction identifier for remote commands.
-     * 远程命令的事务标识符。
+     * 	远程命令的事务标识符。
      */
     private AtomicInteger transactionId = new AtomicInteger(1);
 
     /**
      * Hash map that stores pending calls and ids as pairs.
-     * 将挂起的调用和ID成对存储的哈希映射。
+     * 	将挂起的调用和ID成对存储的哈希映射。
      */
     private transient ConcurrentMap<Integer, IPendingServiceCall> pendingCalls = new ConcurrentHashMap<>(pendingCallsInitalCapacity, 0.75f, pendingCallsConcurrencyLevel);
 
     /**
      * Deferred results set.
-     * 延迟的结果集。
+     * 	延迟的结果集。
      * @see org.red5.server.net.rtmp.DeferredResult
      */
     private transient CopyOnWriteArraySet<DeferredResult> deferredResults = new CopyOnWriteArraySet<>();
 
     /**
      * Last ping round trip time
-     * 上次ping往返时间
+     * 	上次ping往返时间
      */
     private AtomicInteger lastPingRoundTripTime = new AtomicInteger(-1);
 
     /**
      * Timestamp when last ping command was sent.
-     * 最后一次ping的发送时间
+     * 	最后一次ping的发送时间
      */
     private AtomicLong lastPingSentOn = new AtomicLong(0);
 
     /**
      * Timestamp when last ping result was received.
-     * 最后一次ping收到结果的时间
+     * 	最后一次ping收到结果的时间
      */
     private AtomicLong lastPongReceivedOn = new AtomicLong(0);
 
@@ -282,43 +282,43 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
     /**
      * Ping interval in ms to detect dead clients.
-     * 以毫秒为单位的ping间隔，用于检测死机。
+     * 	以毫秒为单位的ping间隔，用于检测死机。
      */
     private volatile int pingInterval = 5000;
 
     /**
      * Maximum time in ms after which a client is disconnected because of inactivity.
-     * 客户端因不活动而断开连接的最长时间（毫秒）。
+     * 	客户端因不活动而断开连接的最长时间（毫秒）。
      */
     protected volatile int maxInactivity = 60000;
 
     /**
      * Data read interval
-     * 数据读取间隔
+     * 	数据读取间隔
      */
     protected long bytesReadInterval = 1024 * 1024;
 
     /**
      * Number of bytes to read next.
-     * 下一个要读取的字节数。
+     * 	下一个要读取的字节数。
      */
     protected long nextBytesRead = 1024 * 1024;
 
     /**
      * Number of bytes the client reported to have received.
-     * 客户端报告已接收的字节数。
+     *	 客户端报告已接收的字节数。
      */
     private AtomicLong clientBytesRead = new AtomicLong(0L);
 
     /**
      * Map for pending video packets keyed by stream id.
-     * 由流ID键控的挂起视频包的映射。
+     * 	由流ID键控的挂起视频包的映射。
      */
     private transient ConcurrentMap<Number, AtomicInteger> pendingVideos = new ConcurrentHashMap<>(1, 0.9f, 1);
 
     /**
      * Number of (NetStream) streams used.
-     * 使用的（netstream）流数。
+     * 	使用的（netstream）流数。
      */
     private AtomicInteger usedStreams = new AtomicInteger(0);
 
@@ -330,19 +330,19 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
     /**
      * Maximum time in milliseconds to wait for a valid handshake.
-     * 等待有效握手的最长时间（毫秒）。
+     * 	等待有效握手的最长时间（毫秒）。
      */
     private int maxHandshakeTimeout = 10000;
 
     /**
      * Maximum time in milliseconds allowed to process received message
-     * 允许处理接收消息的最长时间（毫秒）
+     * 	允许处理接收消息的最长时间（毫秒）
      */
     protected long maxHandlingTimeout = 500L;
 
     /**
      * Bandwidth limit type / enforcement. (0=hard,1=soft,2=dynamic)
-     * 带宽限制类型/强制
+     * 	带宽限制类型/强制
      */
     protected int limitType = 0;
 
@@ -374,13 +374,13 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
     /**
      * Thread pool for guarding deadlocks.
-     * 用于保护死锁的线程池
+     * 	用于保护死锁的线程池
      */
     protected transient ThreadPoolTaskScheduler deadlockGuardScheduler;
 
     /**
      * Keep-alive worker flag
-     * 保持活动的工人标志
+     * 	保持活动的工人标志
      */
     protected final AtomicBoolean running;
 
@@ -403,31 +403,31 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
     /**
      * Specify the size of queue that will trigger audio packet dropping, disabled if it's 0
-     * 指定将触发音频数据包丢弃的队列的大小，如果为0，则禁用
+     *	 指定将触发音频数据包丢弃的队列的大小，如果为0，则禁用
      * */
     private Integer executorQueueSizeToDropAudioPackets = 0;
 
     /**
      * Keep track of current queue size
-     * 跟踪当前队列大小
+     * 	跟踪当前队列大小
      * */
     private final AtomicInteger currentQueueSize = new AtomicInteger();
 
     /**
      * Wait for handshake task.
-     * 等待握手任务。
+     * 	等待握手任务。
      */
     private ScheduledFuture<?> waitForHandshakeTask;
 
     /**
      * Keep alive task.
-     * 继续执行任务。
+     * 	继续执行任务。
      */
     private ScheduledFuture<?> keepAliveTask;
 
     /**
      * Creates anonymous RTMP connection without scope.
-     * 创建没有作用域的匿名RTMP连接。
+     * 	创建没有作用域的匿名RTMP连接。
      * @param type
      *            Connection type
      */
@@ -551,7 +551,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     }
 
     /**
-     * 开始等待有效的握手。
+     *	 开始等待有效的握手。
      */
     public void startWaitForHandshake() {
         if (log.isDebugEnabled()) {
@@ -649,21 +649,11 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 			state.setEncoding(Encoding.AMF3);
 		}
 	}
-	
-    /**
-     * Return AMF protocol encoding used by this connection.
-     * 
-     * @return AMF encoding used by connection
-     */
+	 
     public Encoding getEncoding() {
         return state.getEncoding();
     }
-
-    /**
-     * Getter for next available channel id.
-     * 
-     * @return Next available channel id
-     */
+ 
     public int getNextAvailableChannelId() {
         int result = 4;
         while (isChannelUsed(result)) {
@@ -671,10 +661,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return result;
     }
-
-    /**
-     * Checks whether channel is used. 
-     */
+ 
     public boolean isChannelUsed(int channelId) {
         return channels.get(channelId) != null;
     }
@@ -778,12 +765,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
         }
         return idle;
     }
-
-    /**
-     * Returns whether or not the connection is disconnected.
-     * 
-     * @return true if connection state is RTMP.STATE_DISCONNECTED, false otherwise
-     */
+ 
     public boolean isDisconnected() {
         return state.getState() == RTMP.STATE_DISCONNECTED;
     }
@@ -1056,36 +1038,15 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
             }
         }
     }
-
-    /**
-     * Handler for ping event.
-     * 
-     * @param ping
-     *            Ping event context
-     */
+ 
     public void ping(Ping ping) {
         getChannel(2).write(ping);
     }
-
-    /**
-     * Write packet.
-     * 
-     * @param out
-     *            Packet
-     */
+ 
     public abstract void write(Packet out);
-
-    /**
-     * Write raw byte buffer.
-     * 
-     * @param out
-     *            IoBuffer
-     */
+ 
     public abstract void writeRaw(IoBuffer out);
-
-    /**
-     * Update number of bytes to read next value.
-     */
+ 
     protected void updateBytesRead() {
         if (log.isTraceEnabled()) {
             log.trace("updateBytesRead");
@@ -1097,51 +1058,26 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
             nextBytesRead += bytesReadInterval;
         }
     }
-
-    /**
-     * Read number of received bytes.
-     * 
-     * @param bytes
-     *            Number of bytes
-     */
+ 
     public void receivedBytesRead(int bytes) {
         if (log.isDebugEnabled()) {
             log.debug("Client received {} bytes, written {} bytes, {} messages pending", new Object[] { bytes, getWrittenBytes(), getPendingMessages() });
         }
         clientBytesRead.addAndGet(bytes);
     }
-
-    /**
-     * Get number of bytes the client reported to have received.
-     * 
-     * @return Number of bytes
-     */
+ 
     public long getClientBytesRead() {
         return clientBytesRead.get();
     }
-
-    
+ 
     public void invoke(IServiceCall call) {
         invoke(call, 3);
     }
-
-    /**
-     * Generate next invoke id.
-     * 
-     * @return Next invoke id for RPC
-     */
+ 
     public int getTransactionId() {
         return transactionId.incrementAndGet();
     }
-
-    /**
-     * Register pending call (remote function call that is yet to finish).
-     * 
-     * @param invokeId
-     *            Deferred operation id
-     * @param call
-     *            Call service
-     */
+ 
     public void registerPendingCall(int invokeId, IPendingServiceCall call) {
         pendingCalls.put(invokeId, call);
     }
@@ -1219,44 +1155,19 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
     public long getWrittenBytes() {
         return 0;
     }
-
-    /**
-     * Get pending call service by id.
-     * 
-     * @param invokeId
-     *            Pending call service id
-     * @return Pending call service object
-     */
+ 
     public IPendingServiceCall getPendingCall(int invokeId) {
         return pendingCalls.get(invokeId);
     }
-
-    /**
-     * Retrieves and removes the pending call service by id.
-     * 
-     * @param invokeId
-     *            Pending call service id
-     * @return Pending call service object
-     */
+ 
     public IPendingServiceCall retrievePendingCall(int invokeId) {
         return pendingCalls.remove(invokeId);
     }
-
-    /**
-     * Generates new stream name.
-     * 
-     * @return New stream name
-     */
+ 
     protected String createStreamName() {
         return UUID.randomUUID().toString();
     }
-
-    /**
-     * Mark message as being written.
-     * 
-     * @param message
-     *            Message to mark
-     */
+ 
     protected void writingMessage(Packet message) {
         if (message.getMessage() instanceof VideoData) {
             Number streamId = message.getHeader().getStreamId();
@@ -1268,10 +1179,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
             old.incrementAndGet();
         }
     }
-
-    /**
-     * Increases number of read messages by one. Updates number of bytes read.
-     */
+ 
     public void messageReceived() {
         if (log.isTraceEnabled()) {
             log.trace("messageReceived");
@@ -1322,24 +1230,18 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
 
         }
     }
-
-    /**
-     * Handle the incoming message.
-     * 
-     * @param packet
-     *            incoming message packet
-     */
+ 
     public void handleMessageReceived(Packet packet) {
         if (log.isTraceEnabled()) {
             log.trace("handleMessageReceived - {}", sessionId);
         }
-        // set the packet expiration time if maxHandlingTimeout is not disabled (set to 0)
+        // 如果未禁用maxhandlingtimeout，请设置数据包过期时间（设置为0）
         if (maxHandlingTimeout > 0) {
             packet.setExpirationTime(System.currentTimeMillis() + maxHandlingTimeout);
         }
         if (executor != null) {
             final byte dataType = packet.getHeader().getDataType();
-            // route these types outside the executor
+            //将这些类型路由到执行器之外
             switch (dataType) {
                 case Constants.TYPE_PING:
                 case Constants.TYPE_ABORT:
@@ -1347,7 +1249,7 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
                 case Constants.TYPE_CHUNK_SIZE:
                 case Constants.TYPE_CLIENT_BANDWIDTH:
                 case Constants.TYPE_SERVER_BANDWIDTH:
-                    // pass message to the handler
+                    //将消息传递给处理程序
                     try {
                         handler.messageReceived(this, packet);
                     } catch (Exception e) {
@@ -1357,11 +1259,11 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
                 default:
                     final String messageType = getMessageType(packet);
                     try {
-                        // increment the packet number
+                        // 增加包数
                         final long packetNumber = packetSequence.incrementAndGet();
                         if (executorQueueSizeToDropAudioPackets > 0 && currentQueueSize.get() >= executorQueueSizeToDropAudioPackets) {
                             if (packet.getHeader().getDataType() == Constants.TYPE_AUDIO_DATA) {
-                                // if there's a backlog of messages in the queue. Flash might have sent a burst of messages after a network congestion. Throw away packets that we are able to discard.
+                                //如果队列中有积压的消息。flash可能在网络拥塞后发送了一系列消息。扔掉我们可以丢弃的包。
                                 log.info("Queue threshold reached. Discarding packet: session=[{}], msgType=[{}], packetNum=[{}]", sessionId, messageType, packetNumber);
                                 return;
                             }
@@ -1370,18 +1272,18 @@ public abstract class RTMPConnection extends BaseConnection implements IStreamCa
                         if (log.isTraceEnabled()) {
                             log.trace("Handling message for streamId: {}, channelId: {} Channels: {}", streamId, packet.getHeader().getChannelId(), channels);
                         }
-                        // create a task to setProcessing the message
+                        // 创建任务以设置处理消息
                         ReceivedMessageTask task = new ReceivedMessageTask(sessionId, packet, handler, this);
                         task.setPacketNumber(packetNumber);
-                        // create a task queue
+                        // 创建任务队列
                         ReceivedMessageTaskQueue newStreamTasks = new ReceivedMessageTaskQueue(streamId, this);
-                        // put the queue in the task by stream map
+                        // 按流映射将队列放入任务中
                         ReceivedMessageTaskQueue currentStreamTasks = tasksByStreams.putIfAbsent(streamId, newStreamTasks);
                         if (currentStreamTasks != null) {
-                            // add the task to the existing queue
+                            //将任务添加到现有队列
                             currentStreamTasks.addTask(task);
                         } else {
-                            // add the task to the newly created and just added queue
+                            // 将任务添加到新创建的和刚添加的队列中
                             newStreamTasks.addTask(task);
                         }
                     } catch (Exception e) {

@@ -52,7 +52,7 @@ import org.red5.server.so.SharedObjectMessage;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 所有rtmp处理程序的基类. 
+ * 	所有rtmp处理程序的基类. 
  * @author The Red5 Project
  */
 @Slf4j
@@ -215,7 +215,7 @@ public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, Status
     }
 
     /**
-     * 挂起调用结果的处理程序。将结果分派给所有挂起的调用处理程序。 
+     * 	挂起调用结果的处理程序。将结果分派给所有挂起的调用处理程序。 
      */
     protected void handlePendingCallResult(RTMPConnection conn, Notify invoke) {
         final IServiceCall call = invoke.getCall();
@@ -265,28 +265,14 @@ public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, Status
     /**
      * Server bandwidth / Window ACK size event handler. 
      */
-    protected void onServerBandwidth(RTMPConnection conn, Channel channel, ServerBW message) {
-
-    }
-
-    /**
-     * Client bandwidth / Peer bandwidth set event handler.
-     
-     */
-    protected void onClientBandwidth(RTMPConnection conn, Channel channel, ClientBW message) {
-
-    }
-
-    /**
-     * Stream bytes read event handler. 
-     */
+    protected void onServerBandwidth(RTMPConnection conn, Channel channel, ServerBW message) {}
+ 
+    protected void onClientBandwidth(RTMPConnection conn, Channel channel, ClientBW message) {}
+ 
     protected void onStreamBytesRead(RTMPConnection conn, Channel channel, Header source, BytesRead streamBytesRead) {
         conn.receivedBytesRead(streamBytesRead.getBytesRead());
     }
-
-    /**
-     * Shared object event handler. 
-     */
+ 
     protected abstract void onSharedObject(RTMPConnection conn, Channel channel, Header source, SharedObjectMessage message);
     
 	public void connectionOpened(RTMPConnection conn, RTMP state) {
@@ -296,7 +282,7 @@ public abstract class BaseRTMPHandler implements IRTMPHandler, Constants, Status
 			conn.startWaitForHandshake(service);
 		}
 	}
-	/** {@inheritDoc} */
+	
 	public void connectionClosed(RTMPConnection conn, RTMP state) {
 		log.debug("connectionClosed: {}", conn.getSessionId());
 		if (conn.getStateCode() != RTMP.STATE_DISCONNECTED) {

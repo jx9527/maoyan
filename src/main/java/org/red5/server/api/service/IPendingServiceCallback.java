@@ -27,7 +27,7 @@ package org.red5.server.api.service;
  */
 public interface IPendingServiceCallback { 
     /**
-     * 收到结果时触发
+     * 	收到结果时触发
      */
     public void resultReceived(IPendingServiceCall call);
 

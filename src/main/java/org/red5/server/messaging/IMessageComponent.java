@@ -23,14 +23,5 @@ package org.red5.server.messaging;
  * 消息控件
  */
 public interface IMessageComponent {
-    /**
-     * 
-     * @param source
-     *            Message component source
-     * @param pipe
-     *            Connection pipe
-     * @param oobCtrlMsg
-     *            Out-of-band control message
-     */
     void onOOBControlMessage(IMessageComponent source, IPipe pipe, OOBControlMessage oobCtrlMsg);
 }

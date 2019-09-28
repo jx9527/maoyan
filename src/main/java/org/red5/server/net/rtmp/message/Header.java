@@ -33,133 +33,57 @@ public class Header implements Constants, Cloneable, Externalizable {
     public enum HeaderType {
         HEADER_NEW, HEADER_SAME_SOURCE, HEADER_TIMER_CHANGE, HEADER_CONTINUE;
     }
-
-    /**
-     * Channel
-     */
+ 
     private int channelId;
-
-    /**
-     * Timer
-     */
+ 
     private int timerBase;
-
-    /**
-     * Delta
-     */
+ 
     private int timerDelta;
-
-    /**
-     * Header size
-     */
+ 
     private int size;
-
-    /**
-     * Type of data
-     */
+ 
     private byte dataType;
-
-    /**
-     * Stream id
-     */
+ 
     private Number streamId = 0.0d;
-
-    /**
-     * Using extended timestamps
-     */
+ 
     private boolean extended;
-
-    /**
-     * Getter for channel id
-     *
-     * @return Channel id
-     */
+ 
     public int getChannelId() {
         return channelId;
     }
-
-    /**
-     * Setter for channel id
-     *
-     * @param channelId
-     *            Header channel id
-     */
+ 
     public void setChannelId(int channelId) {
         this.channelId = channelId;
     }
-
-    /**
-     * Getter for data type
-     *
-     * @return Data type
-     */
+ 
     public byte getDataType() {
         return dataType;
     }
-
-    /**
-     * Setter for data type
-     *
-     * @param dataType
-     *            Data type
-     */
+ 
     public void setDataType(byte dataType) {
         this.dataType = dataType;
     }
-
-    /**
-     * Getter for size.
-     *
-     * @return Header size
-     */
+ 
     public int getSize() {
         return size;
     }
-
-    /**
-     * Setter for size
-     *
-     * @param size
-     *            Header size
-     */
+ 
     public void setSize(int size) {
         this.size = size;
     }
-
-    /**
-     * Getter for stream id
-     *
-     * @return Stream id
-     */
+ 
     public Number getStreamId() {
         return streamId;
     }
-
-    /**
-     * Setter for stream id
-     *
-     * @param streamId
-     *            Stream id
-     */
+ 
     public void setStreamId(Number streamId) {
         this.streamId = streamId;
     }
-
-    /**
-     * Getter for timer
-     *
-     * @return Timer
-     */
+ 
     public int getTimer() {
         return timerBase + timerDelta;
     }
-
-    /**
-     * Setter for timer
-     *
-     * @param timer
-     *            Timer
-     */
+ 
     public void setTimer(int timer) {
         this.timerBase = timer;
         this.timerDelta = 0;
@@ -204,8 +128,7 @@ public class Header implements Constants, Cloneable, Externalizable {
         result = prime * result + getTimer();
         return result;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof Header)) {
@@ -214,8 +137,7 @@ public class Header implements Constants, Cloneable, Externalizable {
         final Header header = (Header) other;
         return (header.getChannelId() == channelId && header.getDataType() == dataType && header.getSize() == size && header.getTimer() == this.getTimer() && header.getStreamId() == streamId);
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public Header clone() {
         final Header header = new Header();
@@ -248,10 +170,7 @@ public class Header implements Constants, Cloneable, Externalizable {
         out.writeInt(timerBase);
         out.writeInt(timerDelta);
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+ 
     @Override
     public String toString() {
         // if its new and props are un-set, just return that message

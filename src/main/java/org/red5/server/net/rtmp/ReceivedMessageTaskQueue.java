@@ -22,18 +22,17 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.red5.server.net.rtmp.message.Packet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Contains queue of tasks for processing messages in the specified channel. Ensures that all messages which has got in channel will be processed sequentially.
  *
  * @author Maria Chabanets (m.e.platova@gmail.com)
  */
+@Slf4j
 public class ReceivedMessageTaskQueue {
-
-    private final static Logger log = LoggerFactory.getLogger(ReceivedMessageTaskQueue.class);
-
+ 
     /**
      * Stream id.
      */

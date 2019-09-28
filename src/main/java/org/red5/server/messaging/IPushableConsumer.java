@@ -29,9 +29,6 @@ import java.io.IOException;
 public interface IPushableConsumer extends IConsumer {
 	
     public static final String KEY = IPushableConsumer.class.getName();
-
-    /**
-     * Pushes message through pipe 
-     */
+ 
     void pushMessage(IPipe pipe, IMessage message) throws IOException;
 }

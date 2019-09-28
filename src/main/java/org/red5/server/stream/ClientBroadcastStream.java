@@ -83,9 +83,9 @@ import org.red5.server.net.rtmp.status.Status;
 import org.red5.server.net.rtmp.status.StatusCodes;
 import org.red5.server.stream.message.RTMPMessage;
 import org.red5.server.stream.message.StatusMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.ManagedResource;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents live stream broadcasted from client. As Flash Media Server, Red5 supports recording mode for live streams, that is,
@@ -102,11 +102,10 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @author Paul Gregoire (mondain@gmail.com)
  * @author Vladimir Hmelyoff (vlhm@splitmedialabs.com)
  */
+@Slf4j
 @ManagedResource(objectName = "org.red5.server:type=ClientBroadcastStream", description = "ClientBroadcastStream")
 public class ClientBroadcastStream extends AbstractClientStream implements IClientBroadcastStream, IFilter, IPushableConsumer, IPipeConnectionListener, IEventDispatcher, IClientBroadcastStreamStatistics, ClientBroadcastStreamMXBean {
-
-    private static final Logger log = LoggerFactory.getLogger(ClientBroadcastStream.class);
-
+ 
     /**
      * Whether or not to automatically record the associated stream.
      */
@@ -191,9 +190,6 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
 
     /**
      * Check and send notification if necessary
-     * 
-     * @param event
-     *            Event
      */
     private void checkSendNotifications(IEvent event) {
         IEventListener source = event.getSource();
@@ -217,7 +213,7 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
                 recordingListener.get().stop();
             }
             sendPublishStopNotify();
-            // TODO: can we send the client something to make sure he stops sending data?
+            // can we send the client something to make sure he stops sending data?
             if (connMsgOut != null) {
                 connMsgOut.unsubscribe(this);
             }
@@ -238,9 +234,6 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
 
     /**
      * Dispatches event
-     * 
-     * @param event
-     *            Event to dispatch
      */
     public void dispatchEvent(IEvent event) {
         if (event instanceof IRTMPEvent && !closed.get()) {
@@ -384,43 +377,10 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
         } else {
             log.debug("Event was of wrong type or stream is closed ({})", closed);
         }
-    }
-
-    /** {@inheritDoc} */
-    public int getActiveSubscribers() {
-        return subscriberStats.getCurrent();
-    }
-
-    /** {@inheritDoc} */
-    public long getBytesReceived() {
-        return bytesReceived;
-    }
-
-    /** {@inheritDoc} */
-    public int getCurrentTimestamp() {
-        return (int) latestTimeStamp;
-    }
-
-    /** {@inheritDoc} */
-    public int getMaxSubscribers() {
-        return subscriberStats.getMax();
-    }
-
-    /**
-     * Getter for provider
-     * 
-     * @return Provider
-     */
-    public IProvider getProvider() {
-        return this;
-    }
-
+    } 
     /**
      * Setter for stream published name
-     * 
-     * @param name
-     *            Name that used for publishing. Set at client side when begin to broadcast with NetStream#publish.
-     */
+     * */
     public void setPublishedName(String name) {
         //log.debug("setPublishedName: {}", name);
         // a publish name of "false" is a special case, used when stopping a stream
@@ -432,24 +392,21 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
 
     /**
      * Getter for published name
-     * 
-     * @return Stream published name
      */
     public String getPublishedName() {
         return publishedName;
-    }
-
-    /** {@inheritDoc} */
+    } 
+    
     public void setParameters(Map<String, String> params) {
         this.parameters = params;
     }
 
-    /** {@inheritDoc} */
+    
     public Map<String, String> getParameters() {
         return parameters;
     }
 
-    /** {@inheritDoc} */
+    
     public String getSaveFilename() {
         if (recordingListener != null) {
             return recordingListener.get().getFileName();
@@ -457,12 +414,12 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
         return null;
     }
 
-    /** {@inheritDoc} */
+    
     public IClientBroadcastStreamStatistics getStatistics() {
         return this;
     }
 
-    /** {@inheritDoc} */
+    
     public int getTotalSubscribers() {
         return subscriberStats.getTotal();
     }
@@ -573,13 +530,6 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
 
     /**
      * Out-of-band control message handler
-     *
-     * @param source
-     *            OOB message source
-     * @param pipe
-     *            Pipe that used to send OOB message
-     * @param oobCtrlMsg
-     *            Out-of-band control message
      */
     public void onOOBControlMessage(IMessageComponent source, IPipe pipe, OOBControlMessage oobCtrlMsg) {
         String target = oobCtrlMsg.getTarget();
@@ -598,9 +548,6 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
 
     /**
      * Pipe connection event handler
-     * 
-     * @param event
-     *            Pipe connection event
      */
     @SuppressWarnings("unused")
     public void onPipeConnectionEvent(PipeConnectionEvent event) {
@@ -644,57 +591,38 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
     }
 
     /**
-     * Currently not implemented
-     *
-     * @param pipe
-     *            Pipe
-     * @param message
-     *            Message
+     * Currently not implemented 
      */
-    public void pushMessage(IPipe pipe, IMessage message) {
-    }
+    public void pushMessage(IPipe pipe, IMessage message) {}
 
     /**
-     * Save broadcasted stream.
-     *
-     * @param name
-     *            Stream name
-     * @param isAppend
-     *            Append mode
-     * @throws IOException
-     *             File could not be created/written to
+     * Save broadcasted stream. 
      */
     public void saveAs(String name, boolean isAppend) throws IOException {
         //log.debug("SaveAs - name: {} append: {}", name, isAppend);
-        // get connection to check if client is still streaming
+        // 获取连接以检查客户端是否仍在流式处理
         IStreamCapableConnection conn = getConnection();
         if (conn == null) {
             throw new IOException("Stream is no longer connected");
         }
-        // one recording listener at a time via this entry point
+        // 通过此入口点一次一个录音侦听器
         if (recordingListener == null) {
-            // XXX Paul: Revisit this section to allow for implementation of custom IRecordingListener
+            //paul:重新访问此部分以允许实现自定义irecordingListener
             //IRecordingListener listener = (IRecordingListener) ScopeUtils.getScopeService(conn.getScope(), IRecordingListener.class, RecordingListener.class, false);
-            // create a recording listener
-            IRecordingListener listener = new RecordingListener();
-            //log.debug("Created: {}", listener);
-            // initialize the listener
+            //创建录制侦听器
+            IRecordingListener listener = new RecordingListener();  
             if (listener.init(conn, name, isAppend)) {
-                // get decoder info if it exists for the stream
-                IStreamCodecInfo codecInfo = getCodecInfo();
-                //log.debug("Codec info: {}", codecInfo);
+                //获取流的解码器信息（如果存在）
+                IStreamCodecInfo codecInfo = getCodecInfo(); 
                 if (codecInfo instanceof StreamCodecInfo) {
                     StreamCodecInfo info = (StreamCodecInfo) codecInfo;
-                    IVideoStreamCodec videoCodec = info.getVideoCodec();
-                    //log.debug("Video codec: {}", videoCodec);
+                    IVideoStreamCodec videoCodec = info.getVideoCodec(); 
                     if (videoCodec != null) {
-                        //check for decoder configuration to send
+                        //检查要发送的解码器配置
                         IoBuffer config = videoCodec.getDecoderConfiguration();
-                        if (config != null) {
-                            //log.debug("Decoder configuration is available for {}", videoCodec.getName());
+                        if (config != null) { 
                             VideoData videoConf = new VideoData(config.asReadOnlyBuffer());
                             try {
-                                //log.debug("Setting decoder configuration for recording");
                                 listener.getFileConsumer().setVideoDecoderConfiguration(videoConf);
                             } finally {
                                 videoConf.release();
@@ -703,16 +631,12 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
                     } else {
                         log.debug("Could not initialize stream output, videoCodec is null.");
                     }
-                    IAudioStreamCodec audioCodec = info.getAudioCodec();
-                    //log.debug("Audio codec: {}", audioCodec);
+                    IAudioStreamCodec audioCodec = info.getAudioCodec(); 
                     if (audioCodec != null) {
-                        //check for decoder configuration to send
                         IoBuffer config = audioCodec.getDecoderConfiguration();
-                        if (config != null) {
-                            //log.debug("Decoder configuration is available for {}", audioCodec.getName());
+                        if (config != null) { 
                             AudioData audioConf = new AudioData(config.asReadOnlyBuffer());
                             try {
-                                //log.debug("Setting decoder configuration for recording");
                                 listener.getFileConsumer().setAudioDecoderConfiguration(audioConf);
                             } finally {
                                 audioConf.release();
@@ -722,11 +646,11 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
                         log.debug("No decoder configuration available, audioCodec is null.");
                     }
                 }
-                // set as primary listener
+                // 设为主侦听器
                 recordingListener = new WeakReference<IRecordingListener>(listener);
-                // add as a listener
+                // 添加为侦听器
                 addStreamListener(listener);
-                // start the listener thread
+                // 启动侦听器线程
                 listener.start();
             } else {
                 log.warn("Recording listener failed to initialize for stream: {}", name);
@@ -806,10 +730,7 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
     }
 
     /**
-     * Pushes a message out to a consumer.
-     * 
-     * @param msg
-     *            StatusMessage
+     * Pushes a message out to a consumer. 
      */
     protected void pushMessage(StatusMessage msg) {
         if (connMsgOut != null) {
@@ -884,7 +805,7 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
         setState(StreamState.STARTED);
     }
 
-    /** {@inheritDoc} */
+    
     public void startPublishing() {
         // We send the start messages before the first packet is received.
         // This is required so FME actually starts publishing.
@@ -900,7 +821,7 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
         }
     }
 
-    /** {@inheritDoc} */
+    
     public void stop() {
         //log.info("Stream stop: {}", publishedName);
         setState(StreamState.STOPPED);
@@ -926,33 +847,8 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
         }
     }
 
-    public boolean isRecording() {
-        return recordingListener != null && recordingListener.get().isRecording();
-    }
-
-    /** {@inheritDoc} */
-    public void addStreamListener(IStreamListener listener) {
-        listeners.add(listener);
-    }
-
-    /** {@inheritDoc} */
-    public Collection<IStreamListener> getStreamListeners() {
-        return listeners;
-    }
-
-    /** {@inheritDoc} */
-    public void removeStreamListener(IStreamListener listener) {
-        listeners.remove(listener);
-    }
-
     /**
      * Get the file we'd be recording to based on scope and given name.
-     * 
-     * @param scope
-     *            scope
-     * @param name
-     *            record name
-     * @return file
      */
     protected File getRecordFile(IScope scope, String name) {
         return RecordingListener.getRecordFile(scope, name);
@@ -987,4 +883,39 @@ public class ClientBroadcastStream extends AbstractClientStream implements IClie
         }
     }
 
+    public int getActiveSubscribers() {
+        return subscriberStats.getCurrent();
+    }
+    
+    public long getBytesReceived() {
+        return bytesReceived;
+    }
+    
+    public int getCurrentTimestamp() {
+        return (int) latestTimeStamp;
+    } 
+    
+    public int getMaxSubscribers() {
+        return subscriberStats.getMax();
+    }
+ 
+    public IProvider getProvider() {
+        return this;
+    }
+
+    public boolean isRecording() {
+        return recordingListener != null && recordingListener.get().isRecording();
+    }
+    
+    public void addStreamListener(IStreamListener listener) {
+        listeners.add(listener);
+    }
+    
+    public Collection<IStreamListener> getStreamListeners() {
+        return listeners;
+    }
+    
+    public void removeStreamListener(IStreamListener listener) {
+        listeners.remove(listener);
+    }
 }

@@ -72,74 +72,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RTMPHandler extends BaseRTMPHandler { 
-
-    /**
-     * Status object service.
-     */
+ 
     protected StatusObjectService statusObjectService;
-
-    /**
-     * Red5 server instance.
-     */
+ 
     protected IServer server;
-
-    /**
-     * Whether or not unvalidated connections are allowed.
-     */
+ 
     private boolean unvalidatedConnectionAllowed;
-
-    /**
-     * Whether or not to dispatch stream actions to the current scope.
-     */
+ 
     private boolean dispatchStreamActions;
-
-    /**
-	 * Whether or not global scope connections are allowed.
-	 */
+ 
 	private boolean globalScopeConnectionAllowed = false;
-	public boolean isGlobalScopeConnectionAllowed() {
-		return globalScopeConnectionAllowed;
-	}
-
-	public void setGlobalScopeConnectionAllowed(boolean globalScopeConnectionAllowed) {
-		this.globalScopeConnectionAllowed = globalScopeConnectionAllowed;
-	}
-    /**
-     * Setter for server object. 
-     */
-    public void setServer(IServer server) {
-        this.server = server;
-    }
-
-    /**
-     * Setter for status object service. 
-     */
-    public void setStatusObjectService(StatusObjectService statusObjectService) {
-        this.statusObjectService = statusObjectService;
-    }
-
-    public boolean isUnvalidatedConnectionAllowed() {
-        return unvalidatedConnectionAllowed;
-    }
-
-    public void setUnvalidatedConnectionAllowed(boolean unvalidatedConnectionAllowed) {
-        this.unvalidatedConnectionAllowed = unvalidatedConnectionAllowed;
-    }
-
-    /**
-     * @return the dispatchStreamActions
-     */
-    public boolean isDispatchStreamActions() {
-        return dispatchStreamActions;
-    }
-
-    /**
-     * @param dispatchStreamActions
-     *            the dispatchStreamActions to set
-     */
-    public void setDispatchStreamActions(boolean dispatchStreamActions) {
-        this.dispatchStreamActions = dispatchStreamActions;
-    }
      
     @Override
     protected void onChunkSize(RTMPConnection conn, Channel channel, Header source, ChunkSize chunkSize) {
@@ -205,8 +147,7 @@ public class RTMPHandler extends BaseRTMPHandler {
         }
         return context.getServiceInvoker().invoke(call, service);
     }
-
-    /** {@inheritDoc} */
+ 
     @SuppressWarnings({ "unchecked" })
     @Override
     protected void onCommand(RTMPConnection conn, Channel channel, Header source, ICommand command) {
@@ -492,8 +433,7 @@ public class RTMPHandler extends BaseRTMPHandler {
     public StatusObject getStatus(String code) {
         return statusObjectService.getStatusObject(code);
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     protected void onPing(RTMPConnection conn, Channel channel, Header source, Ping ping) {
         switch (ping.getEventType()) {
@@ -530,11 +470,7 @@ public class RTMPHandler extends BaseRTMPHandler {
     }
 
     /**
-     * Create and send SO message stating that a SO could not be created.
-     * 
-     * @param conn
-     * @param message
-     *            Shared object message that incurred the failure
+     * Create and send SO message stating that a SO could not be created. 
      */
     private void sendSOCreationFailed(RTMPConnection conn, SharedObjectMessage message) {
         log.debug("sendSOCreationFailed - message: {} conn: {}", message, conn);
@@ -551,8 +487,7 @@ public class RTMPHandler extends BaseRTMPHandler {
             conn.getChannel(3).write(message);
         }
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     protected void onSharedObject(RTMPConnection conn, Channel channel, Header source, SharedObjectMessage message) {
         if (log.isDebugEnabled()) {
@@ -616,8 +551,7 @@ public class RTMPHandler extends BaseRTMPHandler {
     protected void onBWDone() {
         log.debug("onBWDone");
     }
-
-    /** {@inheritDoc} */
+ 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	protected void onInvoke(RTMPConnection conn, Channel channel, Header source, Notify invoke, RTMP rtmp) {
@@ -885,5 +819,37 @@ public class RTMPHandler extends BaseRTMPHandler {
 				}
 			}
 		}
-	} 
+	}
+	
+	public boolean isGlobalScopeConnectionAllowed() {
+		return globalScopeConnectionAllowed;
+	}
+
+	public void setGlobalScopeConnectionAllowed(boolean globalScopeConnectionAllowed) {
+		this.globalScopeConnectionAllowed = globalScopeConnectionAllowed;
+	}
+     
+    public void setServer(IServer server) {
+        this.server = server;
+    }
+ 
+    public void setStatusObjectService(StatusObjectService statusObjectService) {
+        this.statusObjectService = statusObjectService;
+    }
+
+    public boolean isUnvalidatedConnectionAllowed() {
+        return unvalidatedConnectionAllowed;
+    }
+
+    public void setUnvalidatedConnectionAllowed(boolean unvalidatedConnectionAllowed) {
+        this.unvalidatedConnectionAllowed = unvalidatedConnectionAllowed;
+    }
+ 
+    public boolean isDispatchStreamActions() {
+        return dispatchStreamActions;
+    }
+ 
+    public void setDispatchStreamActions(boolean dispatchStreamActions) {
+        this.dispatchStreamActions = dispatchStreamActions;
+    }
 }

@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 /**
- * 生产消费者模式
- * 抽象的管道 注册 生产者，消费者和监听者。目的是让子类更容易实现。
+ * 	生产消费者模式
+ * 	抽象的管道 注册 生产者，消费者和监听者。目的是让子类更容易实现。
  * @author The Red5 Project
  * @author Steven Gong (steven.gong@gmail.com)
  *
@@ -51,12 +51,12 @@ public abstract class AbstractPipe implements IPipe {
 
     /**
      * Connect consumer to this pipe. Doesn't allow to connect one consumer twice. Does register event listeners if instance of IPipeConnectionListener is given.
-     *  连接消费者到管道上，不允许同一个消费者连接两次，如果是监听这就注册到监听上面。
+     *  	连接消费者到管道上，不允许同一个消费者连接两次，如果是监听这就注册到监听上面。
      */
     public boolean subscribe(IConsumer consumer, Map<String, Object> paramMap) {
-        // pipe is possibly used by dozens of threads at once (like many subscribers for one server stream)
+        // 管道可能同时被数十个线程使用（就像一个服务器流的许多订阅者一样）
         boolean success = consumers.addIfAbsent(consumer);
-        // if consumer is listener object register it as listener and consumer has just been added
+        // 如果consumer是listener对象，则将其注册为listener，并且consumer刚刚被添加
         if (success && consumer instanceof IPipeConnectionListener) {
             listeners.addIfAbsent((IPipeConnectionListener) consumer);
         }
@@ -74,10 +74,7 @@ public abstract class AbstractPipe implements IPipe {
 
     /**
      * Disconnects provider from this pipe. Fires pipe connection event.
-     * 取消生产者的连接，同时触发连接事件
-     * @param provider
-     *            Provider that should be removed
-     * @return true on success, false otherwise
+     * 	取消生产者的连接，同时触发连接事件 
      */
     public boolean unsubscribe(IProvider provider) {
         if (providers.remove(provider)) {
@@ -90,10 +87,7 @@ public abstract class AbstractPipe implements IPipe {
 
     /**
      * Disconnects consumer from this pipe. Fires pipe connection event.
-     * 同上
-     * @param consumer
-     *            Consumer that should be removed
-     * @return true on success, false otherwise
+     * 	同上 
      */
     public boolean unsubscribe(IConsumer consumer) {
         if (consumers.remove(consumer)) {
@@ -113,12 +107,7 @@ public abstract class AbstractPipe implements IPipe {
     }
 
     /**
-     * Send out-of-band ("special") control message to all consumers
-     *
-     * @param provider
-     *            Provider, may be used in concrete implementations
-     * @param oobCtrlMsg
-     *            Out-of-band control message
+     * Send out-of-band ("special") control message to all consumers 
      */
     public void sendOOBControlMessage(IProvider provider, OOBControlMessage oobCtrlMsg) {
         for (IConsumer consumer : consumers) {
@@ -131,12 +120,7 @@ public abstract class AbstractPipe implements IPipe {
     }
 
     /**
-     * Send out-of-band ("special") control message to all providers
-     *
-     * @param consumer
-     *            Consumer, may be used in concrete implementations
-     * @param oobCtrlMsg
-     *            Out-of-band control message
+     * Send out-of-band ("special") control message to all providers 
      */
     public void sendOOBControlMessage(IConsumer consumer, OOBControlMessage oobCtrlMsg) {
         for (IProvider provider : providers) {
@@ -175,7 +159,7 @@ public abstract class AbstractPipe implements IPipe {
 
     /**
      * Fire any pipe connection event and run all it's tasks
-     * 触发连接事件，同时运行全部的任务。
+     * 	触发连接事件，同时运行全部的任务。
      */
     protected void firePipeConnectionEvent(PipeConnectionEvent event) {
         for (IPipeConnectionListener element : listeners) {

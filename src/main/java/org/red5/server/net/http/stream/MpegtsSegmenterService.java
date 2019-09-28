@@ -26,55 +26,32 @@ import org.red5.server.net.rtmp.event.AudioData;
 import org.red5.server.net.rtmp.event.IRTMPEvent;
 import org.red5.server.net.rtmp.event.VideoData;
 import org.red5.server.net.rtmp.event.VideoData.FrameType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * FLV TO Mpeg2ts Segmenter
  * @author pengliren
  *
  */
+@Slf4j
 public class MpegtsSegmenterService implements IStreamListener {
-
-	private static Logger log = LoggerFactory.getLogger(MpegtsSegmenterService.class);
-	
+ 
 	private static ConcurrentMap<String, ConcurrentHashMap<String, SegmentFacade>> scopeSegMap = new ConcurrentHashMap<String, ConcurrentHashMap<String,SegmentFacade>>();
-	
-	// length of a segment in milliseconds
+	 
 	private long segmentTimeLimit = ExtConfiguration.HLS_SEGMENT_TIME * 1000;
-	
-	// maximum number of segments to keep available per stream
+	 
 	private int maxSegmentsPerFacade = ExtConfiguration.HLS_SEGMENT_MAX;
 	
 	private static final class SingletonHolder {
-
 		private static final MpegtsSegmenterService INSTANCE = new MpegtsSegmenterService();
 	}
 	
-	protected MpegtsSegmenterService() {
-		
-	}
+	protected MpegtsSegmenterService() {}
 	
-	public static MpegtsSegmenterService getInstance() {
-
+	public static MpegtsSegmenterService getInstance() { 
 		return SingletonHolder.INSTANCE;
-	}
-	
-	public long getSegmentTimeLimit() {
-		return segmentTimeLimit;
-	}
-
-	public void setSegmentTimeLimit(long segmentTimeLimit) {
-		this.segmentTimeLimit = segmentTimeLimit;
-	}
-
-	public int getMaxSegmentsPerFacade() {
-		return maxSegmentsPerFacade;
-	}
-
-	public void setMaxSegmentsPerFacade(int maxSegmentsPerFacade) {
-		this.maxSegmentsPerFacade = maxSegmentsPerFacade;
-	}
+	} 
 	
 	public int getSegmentCount(String scopeName, String streamName) {
 		ConcurrentHashMap<String, SegmentFacade> segments = scopeSegMap.get(scopeName);
@@ -134,7 +111,7 @@ public class MpegtsSegmenterService implements IStreamListener {
 			scopeSegMap.put(scope.getName(), segments);
 		}
 		SegmentFacade facade = segments.get(name);
-		if (facade == null) { //TODO http live stream aes 128是否加密在这里处理 
+		if (facade == null) { //http live stream aes 128是否加密在这里处理 
 			facade = new SegmentFacade(name, ExtConfiguration.HLS_ENCRYPT);
 			segments.put(name, facade);
 		}
@@ -336,5 +313,21 @@ public class MpegtsSegmenterService implements IStreamListener {
 		}
 		
 		return encKey;
+	}
+	
+	public long getSegmentTimeLimit() {
+		return segmentTimeLimit;
+	}
+
+	public void setSegmentTimeLimit(long segmentTimeLimit) {
+		this.segmentTimeLimit = segmentTimeLimit;
+	}
+
+	public int getMaxSegmentsPerFacade() {
+		return maxSegmentsPerFacade;
+	}
+
+	public void setMaxSegmentsPerFacade(int maxSegmentsPerFacade) {
+		this.maxSegmentsPerFacade = maxSegmentsPerFacade;
 	}
 }

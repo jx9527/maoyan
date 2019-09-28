@@ -19,21 +19,11 @@
 package org.red5.server.api.stream;
 
 /**
- * Listener that is notified about packets received from a stream.
+ * *  侦听器，该侦听器接收到来自流的数据包的通知
  * 
  * @author The Red5 Project
  * @author Joachim Bauch (jojo@struktur.de)
  */
 public interface IStreamListener {
-
-    /**
-     * A packet has been received from a stream.
-     * 
-     * @param stream
-     *            the stream the packet has been received for
-     * @param packet
-     *            the packet received
-     */
     public void packetReceived(IBroadcastStream stream, IStreamPacket packet);
-
 }

@@ -27,32 +27,11 @@ import org.apache.mina.core.buffer.IoBuffer;
  * @author Joachim Bauch (jojo@struktur.de)
  */
 public interface IStreamPacket {
-
-    /**
-     * Type of this packet. This is one of the
-     * 
-     * <pre>
-     * TYPE_
-     * </pre>
-     * 
-     * constants.
-     * 
-     * @return the type
-     */
+ 
     public byte getDataType();
-
-    /**
-     * Timestamp of this packet.
-     * 
-     * @return the timestamp in milliseconds
-     */
+ 
     public int getTimestamp();
-
-    /**
-     * Packet contents.
-     * 
-     * @return the contents
-     */
+ 
     public IoBuffer getData();
 
 }

@@ -1,6 +1,5 @@
 package org.red5.server.net.http.stream;
 
-import static org.red5.server.net.http.message.HTTPHeaders.Names.CONTENT_LENGTH;
 import static org.red5.server.net.http.message.HTTPHeaders.Names.CONTENT_TYPE;
 
 import java.io.IOException;

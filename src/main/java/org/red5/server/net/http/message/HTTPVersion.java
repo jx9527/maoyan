@@ -128,46 +128,27 @@ public class HTTPVersion implements Comparable<HTTPVersion> {
         text = protocolName + '/' + majorVersion + '.' + minorVersion;
         this.keepAliveDefault = keepAliveDefault;
     }
-
-    /**
-     * Returns the name of the protocol such as {@code "HTTP"} in {@code "HTTP/1.0"}.
-     */
+ 
     public String getProtocolName() {
         return protocolName;
     }
-
-    /**
-     * Returns the name of the protocol such as {@code 1} in {@code "HTTP/1.0"}.
-     */
+ 
     public int getMajorVersion() {
         return majorVersion;
     }
-
-    /**
-     * Returns the name of the protocol such as {@code 0} in {@code "HTTP/1.0"}.
-     */
+ 
     public int getMinorVersion() {
         return minorVersion;
     }
-
-    /**
-     * Returns the full protocol version text such as {@code "HTTP/1.0"}.
-     */
+ 
     public String getText() {
         return text;
     }
-
-    /**
-     * Returns {@code true} if and only if the connection is kept alive unless
-     * the {@code "Connection"} header is set to {@code "close"} explicitly.
-     */
+ 
     public boolean isKeepAliveDefault() {
         return keepAliveDefault;
     }
-
-    /**
-     * Returns the full protocol version text such as {@code "HTTP/1.0"}.
-     */
+    
     @Override
     public String toString() {
         return getText();
