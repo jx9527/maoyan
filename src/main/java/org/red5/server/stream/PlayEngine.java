@@ -115,7 +115,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
 
     private String waitLiveJob;
     /**  
-     * 发送第一个包的时间戳
+     * 	发送第一个包的时间戳
      */
     private AtomicInteger streamStartTS = new AtomicInteger(-1);
 
@@ -130,26 +130,26 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     private int maxPendingVideoFrames = 10;
 
     /**
-     * 如果我们有超过1个挂起的视频帧，但小于最大挂起的视频帧，请继续发送，直到有这么多个超过1个挂起的连续帧
+     * 	如果我们有超过1个挂起的视频帧，但小于最大挂起的视频帧，请继续发送，直到有这么多个超过1个挂起的连续帧
      */
     private int maxSequentialPendingVideoFrames = 10;
     /**
-     * 大于0个挂起帧的连续视频帧数
+     * 	大于0个挂起帧的连续视频帧数
      */
     private int numSequentialPendingVideoFrames = 0;
     /**
-     * 实时流中视频帧丢弃的状态机
+     * 	实时流中视频帧丢弃的状态机
      */
     private IFrameDropper videoFrameDropper = new VideoFrameDropper();
 
     private int timestampOffset = 0;
     /**
-     * 上次发送到客户端的消息的时间戳。
+     *	 上次发送到客户端的消息的时间戳。
      */
     private int lastMessageTs = -1;
     /**
      * Number of bytes sent.
-     * 发送bytes的数目
+     * 	发送bytes的数目
      */
     private AtomicLong bytesSent = new AtomicLong(0);
 
@@ -159,27 +159,27 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
      **/
     private volatile long playbackStart;
     /**
-     * 指示是否计划推拉作业的标志。作业确保将消息发送到客户端
+     * 	指示是否计划推拉作业的标志。作业确保将消息发送到客户端
      */
     private volatile String pullAndPush; 
     /**
-     *指示是否调度缓冲区用完后关闭流的作业的标志。
+     *	指示是否调度缓冲区用完后关闭流的作业的标志。
      */
     private volatile String deferredStop; 
     /**
-     * 监控给定推拉运行的防护完成情况。用于等待作业取消完成。
+     * 	监控给定推拉运行的防护完成情况。用于等待作业取消完成。
      */
     private final AtomicBoolean pushPullRunning = new AtomicBoolean(false); 
     /**
-     * 流开始处的偏移量（毫秒）。
+     * 	流开始处的偏移量（毫秒）。
      */
     private int streamOffset; 
     /**
-     *下一步应检查缓冲区是否不足的时间戳。
+     *	下一步应检查缓冲区是否不足的时间戳。
      */
     private long nextCheckBufferUnderrun; 
     /**
-     * 下一步发送空白音频包
+     * 	下一步发送空白音频包
      */
     private boolean sendBlankAudio; 
     /**
@@ -217,7 +217,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         streamId = subscriberStream.getStreamId();
     } 
     /**
-     * 更新IMessageOutput 为当前subscriberStream的输出
+     * 	更新IMessageOutput 为当前subscriberStream的输出
      */
     public void start() {
         if (log.isDebugEnabled()) {
@@ -512,7 +512,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
 
     /**
      * Performs the processes needed for VOD / pre-recorded streams. 
-     * 播放vod方法
+     * 	播放vod方法
      */
     private final IMessage playVOD(boolean withReset, long itemLength) throws IOException {
         IMessage msg = null;
@@ -1215,12 +1215,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             return -1;
         }
     }
-
-    /**
-     * Send VOD check video control message
-     * 
-     * @return result of oob control message
-     */
+ 
     private boolean sendCheckVideoCM() {
         OOBControlMessage oobCtrlMsg = new OOBControlMessage();
         oobCtrlMsg.setTarget(IStreamTypeAwareProvider.KEY);
@@ -1233,7 +1228,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
     }
 
-    /** {@inheritDoc} */
+    
     public void onOOBControlMessage(IMessageComponent source, IPipe pipe, OOBControlMessage oobCtrlMsg) {
         if ("ConnectionConsumer".equals(oobCtrlMsg.getTarget())) {
             if (source instanceof IProvider) {
@@ -1249,7 +1244,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
     }
 
-    /** {@inheritDoc} */
+    
     public void onPipeConnectionEvent(PipeConnectionEvent event) {
         switch (event.getType()) {
             case PROVIDER_CONNECT_PUSH:
@@ -1430,9 +1425,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * Get number of pending video messages
-     * 
-     * @return Number of pending video messages
+     * Get number of pending video messages 
      */
     private long pendingVideoMessages() {
         IMessageOutput out = msgOutReference.get();
@@ -1447,12 +1440,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         return 0;
     }
-
-    /**
-     * Get number of pending messages to be sent
-     * 
-     * @return Number of pending messages
-     */
+ 
     private long pendingMessages() {
         return subscriberStream.getConnection().getPendingMessages();
     }
@@ -1464,12 +1452,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     public boolean isPaused() {
         return subscriberStream.isPaused();
     }
-
-    /**
-     * Returns the timestamp of the last message sent.
-     * 
-     * @return last message timestamp
-     */
+ 
     public int getLastMessageTimestamp() {
         return lastMessageTs;
     }
@@ -1481,17 +1464,11 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     public void sendBlankAudio(boolean sendBlankAudio) {
         this.sendBlankAudio = sendBlankAudio;
     }
-
-    /**
-     * Returns true if the engine currently receives audio. 
-     */
+ 
     public boolean receiveAudio() {
         return receiveAudio;
     }
-
-    /**
-     * Returns true if the engine currently receives audio and sets the new value.
-     */
+ 
     public boolean receiveAudio(boolean receive) {
         boolean oldValue = receiveAudio;
         //set new value
@@ -1500,23 +1477,11 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         return oldValue;
     }
-
-    /**
-     * Returns true if the engine currently receives video.
-     * 
-     * @return receive video
-     */
+ 
     public boolean receiveVideo() {
         return receiveVideo;
     }
-
-    /**
-     * Returns true if the engine currently receives video and sets the new value.
-     * 
-     * @param receive
-     *            new value
-     * @return old value
-     */
+ 
     public boolean receiveVideo(boolean receive) {
         boolean oldValue = receiveVideo;
         //set new value
@@ -1525,10 +1490,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         return oldValue;
     }
-
-    /**
-     * Releases pending message body, nullifies pending message object
-     */
+ 
     private void releasePendingMessage() {
         if (pendingMessage == null) {
         	return;
@@ -1539,14 +1501,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         pendingMessage = null; 
     }
-
-    /**
-     * Check if sending the given message was enabled by the client.
-     * 
-     * @param message
-     *            the message to check
-     * @return true if the message should be sent, false otherwise (and the message is discarded)
-     */
+ 
     protected boolean checkSendMessageEnabled(RTMPMessage message) {
         IRTMPEvent body = message.getBody();
         if (!receiveAudio && body instanceof AudioData) {
@@ -1573,10 +1528,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
         }
         return true;
     }
-
-    /**
-     * Schedule a stop to be run from a separate thread to allow the background thread to stop cleanly.
-     */
+ 
     private void runDeferredStop() {
         // Stop current jobs from running.
         clearWaitJobs();
@@ -1595,10 +1547,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             deferredStop = null;
         }
     }
-
-    /**
-     * Runnable worker to handle seek operations.
-     */
+ 
     private final class SeekRunnable implements Runnable {
 
         private final int position;
@@ -1647,40 +1596,43 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
             switch (subscriberStream.getState()) {
                 case PAUSED:
                 case STOPPED:
-                    // we send a single snapshot on pause
-                    if (sendCheckVideoCM()) {
-                        IMessage msg = null;
-                        IMessageInput in = msgInReference.get();
-                        do {
-                            try {
-                                msg = in.pullMessage();
-                            } catch (Throwable err) {
-                                log.warn("Error while pulling message", err);
-                                break;
-                            }
-                            if (msg instanceof RTMPMessage) {
-                                RTMPMessage rtmpMessage = (RTMPMessage) msg;
-                                IRTMPEvent body = rtmpMessage.getBody();
-                                if (body instanceof VideoData && ((VideoData) body).getFrameType() == FrameType.KEYFRAME) {
-                                    //body.setTimestamp(seekPos);
-                                    doPushMessage(rtmpMessage);
-                                    rtmpMessage.getBody().release();
-                                    messageSent = true;
-                                    lastMessageTs = body.getTimestamp();
-                                    break;
-                                }
-                            }
-                        } while (msg != null);
-                    }
+                    //暂停时发送一个快照
+                	if (!sendCheckVideoCM()) {
+                		break;
+                	} 
+                	
+                    IMessage msg = null;
+                    IMessageInput in = msgInReference.get();
+                    do {
+                        try {
+                            msg = in.pullMessage();
+                        } catch (Throwable err) {
+                            log.warn("Error while pulling message", err);
+                            break;
+                        }
+                        if (!(msg instanceof RTMPMessage)) {
+                        	continue;
+                        } 
+                        RTMPMessage rtmpMessage = (RTMPMessage) msg;
+                        IRTMPEvent body = rtmpMessage.getBody();
+                        if (body instanceof VideoData && ((VideoData) body).getFrameType() == FrameType.KEYFRAME) {
+                            //body.setTimestamp(seekPos);
+                            doPushMessage(rtmpMessage);
+                            rtmpMessage.getBody().release();
+                            messageSent = true;
+                            lastMessageTs = body.getTimestamp();
+                            break;
+                        } 
+                    } while (msg != null);
             }
-            // seeked past end of stream
+            // 从河的尽头探出
             long length = currentItem.get().getLength();
             if (length >= 0 && (position - streamOffset) >= length) {
                 stop();
             }
-            // if no message has been sent by this point send an audio packet
+            // 如果此时未发送任何消息，请发送音频数据包
             if (!messageSent) {
-                // Send blank audio packet to notify client about new position
+                // 发送空白音频包通知客户端新位置
                 log.debug("Sending blank audio packet");
                 AudioData audio = new AudioData();
                 audio.setTimestamp(seekPos);
@@ -1702,23 +1654,25 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
                     do {
                         try {
                             msg = in.pullMessage();
-                            if (msg instanceof RTMPMessage) {
-                                RTMPMessage rtmpMessage = (RTMPMessage) msg;
-                                IRTMPEvent body = rtmpMessage.getBody();
-                                if (body.getTimestamp() >= position + (clientBuffer * 2)) {
-                                    // client buffer should be full by now, continue regular pull/push
-                                    releasePendingMessage();
-                                    if (checkSendMessageEnabled(rtmpMessage)) {
-                                        pendingMessage = rtmpMessage;
-                                    }
-                                    break;
+                            if (!(msg instanceof RTMPMessage)) {
+                            	continue;
+                            } 
+                            RTMPMessage rtmpMessage = (RTMPMessage) msg;
+                            IRTMPEvent body = rtmpMessage.getBody();
+                            if (body.getTimestamp() >= position + (clientBuffer * 2)) {
+                                // 客户端缓冲区现在应该已经满了，继续正常的拉/推
+                                releasePendingMessage();
+                                if (checkSendMessageEnabled(rtmpMessage)) {
+                                    pendingMessage = rtmpMessage;
                                 }
-                                if (!checkSendMessageEnabled(rtmpMessage)) {
-                                    continue;
-                                }
-                                msgSent++;
-                                sendMessage(rtmpMessage);
+                                break;
                             }
+                            if (!checkSendMessageEnabled(rtmpMessage)) {
+                                continue;
+                            }
+                            msgSent++;
+                            sendMessage(rtmpMessage);
+                            
                         } catch (Throwable err) {
                             log.warn("Error while pulling message", err);
                             break;
@@ -1728,7 +1682,7 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
                     playbackStart = System.currentTimeMillis() - lastMessageTs;
                 }
             }
-            // start pull-push
+            // 开始推拉
             if (startPullPushThread) {
                 ensurePullAndPushRunning();
             }
@@ -1736,11 +1690,11 @@ public final class PlayEngine implements IFilter, IPushableConsumer, IPipeConnec
     }
 
     /**
-     * 由执行器定期触发以向客户端发送消息。
+     * 	由执行器定期触发以向客户端发送消息。
      */
     private final class PullAndPushRunnable implements IScheduledJob{ 
         /**
-         * 触发消息发送。
+         * 	触发消息发送。
          */
         public void execute(ISchedulingService svc) {
             // 确保作业尚未运行

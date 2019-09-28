@@ -19,8 +19,6 @@
 package org.red5.server.stream;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Set;
 
@@ -51,7 +49,7 @@ public class ProviderService implements IProviderService {
     // whether or not to support FCS/FMS/AMS live-wait (default to off)
     private boolean liveWaitSupport;
 
-    /** {@inheritDoc} */
+    
     public INPUT_TYPE lookupProviderInput(IScope scope, String name, int type) {
         INPUT_TYPE result = INPUT_TYPE.NOT_FOUND;
         if (scope.getBasicScope(ScopeType.BROADCAST, name) != null) {
@@ -72,7 +70,7 @@ public class ProviderService implements IProviderService {
         return result;
     }
 
-    /** {@inheritDoc} */
+    
     public IMessageInput getProviderInput(IScope scope, String name) {
         IMessageInput msgIn = getLiveProviderInput(scope, name, false);
         if (msgIn == null) {
@@ -81,7 +79,7 @@ public class ProviderService implements IProviderService {
         return msgIn;
     }
 
-    /** {@inheritDoc} */
+    
     public IMessageInput getLiveProviderInput(IScope scope, String name, boolean needCreate) {
         log.debug("Get live provider input for {} scope: {}", name, scope);
         //make sure the create is actually needed
@@ -99,7 +97,7 @@ public class ProviderService implements IProviderService {
         return broadcastScope;
     }
 
-    /** {@inheritDoc} */
+    
     public IMessageInput getVODProviderInput(IScope scope, String name) {
         log.debug("getVODProviderInput - scope: {} name: {}", scope, name);
         File file = getVODProviderFile(scope, name);
@@ -111,7 +109,7 @@ public class ProviderService implements IProviderService {
         return pipe;
     }
 
-    /** {@inheritDoc} */
+    
     public File getVODProviderFile(IScope scope, String name) {
         if (log.isDebugEnabled()) {
             log.debug("getVODProviderFile - scope: {} name: {}", scope, name);
@@ -128,7 +126,7 @@ public class ProviderService implements IProviderService {
         return file;
     }
 
-    /** {@inheritDoc} */
+    
     public boolean registerBroadcastStream(IScope scope, String name, IBroadcastStream bs) {
         if (log.isDebugEnabled()) {
             log.debug("Registering - name: {} stream: {} scope: {}", new Object[] { name, bs, scope });
@@ -154,17 +152,17 @@ public class ProviderService implements IProviderService {
         return broadcastScope.subscribe(bs.getProvider(), null);
     }
 
-    /** {@inheritDoc} */
+    
     public Set<String> getBroadcastStreamNames(IScope scope) {
         return scope.getBasicScopeNames(ScopeType.BROADCAST);
     }
 
-    /** {@inheritDoc} */
+    
     public boolean unregisterBroadcastStream(IScope scope, String name) {
         return unregisterBroadcastStream(scope, name, null);
     }
 
-    /** {@inheritDoc} */
+    
     public boolean unregisterBroadcastStream(IScope scope, String name, IBroadcastStream bs) {
         if (log.isDebugEnabled()) {
             log.debug("Unregistering - name: {} stream: {} scope: {}", new Object[] { name, bs, scope });
@@ -229,12 +227,12 @@ public class ProviderService implements IProviderService {
         return file;
     }
 
-    /** {@inheritDoc} */
+    
     public boolean isLiveWaitSupport() {
         return liveWaitSupport;
     }
 
-    /** {@inheritDoc} */
+    
     public void setLiveWaitSupport(boolean liveWaitSupport) {
         this.liveWaitSupport = liveWaitSupport;
     }

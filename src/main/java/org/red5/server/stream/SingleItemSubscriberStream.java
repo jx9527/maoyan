@@ -45,19 +45,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SingleItemSubscriberStream extends AbstractClientStream implements ISingleItemSubscriberStream {
 	/**
-     * 用于提供通知、保持客户端缓冲区已满、清理的服务, etc...
+     * 	用于提供通知、保持客户端缓冲区已满、清理的服务, etc...
      */
     protected ISchedulingService schedulingService = QuartzSchedulingService.getInstance();
  
     protected Set<String> jobs = new HashSet<String>(1);  
 	/**
-     * 检查VOD流中缓冲区不足的间隔（毫秒）。
+     * 	检查VOD流中缓冲区不足的间隔（毫秒）。
      */
     protected int bufferCheckInterval = 0; 
     /**
-     * 待处理邮件数
+     * 	待处理邮件数
      *<pre>为VOD流生成netstream.play.insufficientbw</pre>消息。
-     * 欠速触发器
+     * 	欠速触发器
      */
     protected int underrunTrigger = 10; 
     /**
@@ -171,13 +171,13 @@ public class SingleItemSubscriberStream extends AbstractClientStream implements 
                 log.info("Scope was null on start");
             }
         }
-        //set buffer check interval
+        
         engine.setBufferCheckInterval(bufferCheckInterval);
-        //set underrun trigger
+         
         engine.setUnderrunTrigger(underrunTrigger);
-        // Start playback engine
+        
         engine.start();
-        // Notify subscribers on start
+         
         onChange(StreamState.STARTED);
     }
 
