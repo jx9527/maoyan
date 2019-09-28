@@ -1,25 +1,23 @@
 package org.red5.server.net.rtp.packetizer;
 
-import gov.nist.javax.sdp.MediaDescriptionImpl;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.sdp.SdpFactory;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.red5.codec.VideoCodec;
 import org.red5.io.flv.FLVUtils;
 import org.red5.io.utils.BufferUtil;
-import org.red5.io.utils.BufferUtils;
 import org.red5.server.api.stream.IStreamPacket;
 import org.red5.server.media.h264.H264CodecConfigInfo;
 import org.red5.server.media.h264.H264CodecConfigParts;
 import org.red5.server.media.h264.H264Utils;
 import org.red5.server.net.rtmp.event.VideoData;
 import org.red5.server.net.rtp.RTPPacket;
-import org.red5.codec.VideoCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gov.nist.javax.sdp.MediaDescriptionImpl;
 
 /**
  * RTP RFC 3984
