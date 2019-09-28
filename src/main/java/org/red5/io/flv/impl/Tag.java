@@ -31,56 +31,21 @@ import org.red5.io.ITag;
  * @author Luke Hubbard, Codegent Ltd (luke@codegent.com)
  */
 public class Tag implements ITag {
-
-    /**
-     * Tag type
-     */
+ 
     private byte type;
-
-    /**
-     * Tag data type
-     */
+ 
     private byte dataType;
-
-    /**
-     * Timestamp
-     */
+ 
     private int timestamp;
-
-    /**
-     * Tag body size
-     */
+ 
     private int bodySize;
-
-    /**
-     * Tag body as byte buffer
-     */
+ 
     private IoBuffer body;
-
-    /**
-     * Previous tag size
-     */
+ 
     private int previousTagSize;
-
-    /**
-     * Bit flags
-     */
+ 
     private byte bitflags;
-
-    /**
-     * TagImpl Constructor
-     * 
-     * @param dataType
-     *            Tag data type
-     * @param timestamp
-     *            Timestamp
-     * @param bodySize
-     *            Tag body size
-     * @param body
-     *            Tag body
-     * @param previousTagSize
-     *            Previous tag size information
-     */
+ 
     public Tag(byte dataType, int timestamp, int bodySize, IoBuffer body, int previousTagSize) {
         this.dataType = dataType;
         this.timestamp = timestamp;
@@ -88,94 +53,47 @@ public class Tag implements ITag {
         this.body = body;
         this.previousTagSize = previousTagSize;
     }
-
-    /** Constructs a new Tag. */
-    public Tag() {
-
-    }
-
-    /**
-     * Getter for bit flags
-     *
-     * @return Value for bit flags
-     */
+ 
+    public Tag() {}
+ 
     public byte getBitflags() {
         return bitflags;
     }
-
-    /**
-     * Setter for bit flags
-     *
-     * @param bitflags
-     *            Bit flags
-     */
+ 
     public void setBitflags(byte bitflags) {
         this.bitflags = bitflags;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public IoBuffer getData() {
         return null;
     }
-
-    /**
-     * Return the body IoBuffer
-     * 
-     * @return Tag body
-     */
+ 
     @Override
     public IoBuffer getBody() {
         return body;
     }
-
-    /**
-     * Return the size of the body
-     * 
-     * @return Tag body size
-     */
+ 
     @Override
     public int getBodySize() {
         return bodySize;
     }
-
-    /**
-     * Get the data type
-     * 
-     * @return Tag data type
-     */
+ 
     @Override
     public byte getDataType() {
         return dataType;
     }
-
-    /**
-     * Return the timestamp
-     * 
-     * @return Tag timestamp
-     */
+ 
     @Override
     public int getTimestamp() {
         return timestamp;
     }
-
-    /**
-     * Return previous tag size
-     * 
-     * @return Previous tag size
-     */
+ 
     @Override
     public int getPreviousTagSize() {
         return previousTagSize;
     }
-
-    /**
-     * Prints out the contents of the tag
-     * 
-     * @return Tag contents
-     */
+ 
     @Override
     public String toString() {
         String ret = "Data Type\t=" + dataType + "\n";
@@ -185,60 +103,39 @@ public class Tag implements ITag {
         ret += "Body Data\t=" + body + "\n";
         return ret;
     }
-
-    /**
-     * Getter for tag type
-     *
-     * @return Tag type
-     */
+ 
     public byte getType() {
         return type;
     }
-
-    /**
-     * Setter for tag type
-     *
-     * @param type
-     *            Tag type
-     */
+ 
     public void setType(byte type) {
         this.type = type;
     }
-
-    /** {@inheritDoc} */
+    
     @Override
     public void setBody(IoBuffer body) {
         this.body = body;
     }
-
-    /** {@inheritDoc} */
+    
     @Override
     public void setBodySize(int bodySize) {
         this.bodySize = bodySize;
     }
-
-    /** {@inheritDoc} */
+    
     @Override
     public void setDataType(byte dataType) {
         this.dataType = dataType;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void setTimestamp(int timestamp) {
         this.timestamp = timestamp;
     }
-
-    /**
-     * Setter for tag data. Empty method.
-     */
-    public void setData() {
-    }
-
-    /** {@inheritDoc} */
+ 
+    public void setData() {}
+ 
     @Override
     public void setPreviousTagSize(int size) {
         this.previousTagSize = size;
     }
-
 }

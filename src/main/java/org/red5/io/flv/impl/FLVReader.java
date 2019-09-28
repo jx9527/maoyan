@@ -106,21 +106,14 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Creates FLV reader from file input stream.
-	 *
-	 * @param f         File
-	 * @throws IOException on error
+	 * Creates FLV reader from file input stream. 
 	 */
 	public FLVReader(File f) throws IOException {
 		this(f, false);
 	}
 
 	/**
-	 * Creates FLV reader from file input stream, sets up metadata generation flag.
-	 *
-	 * @param f                    File input stream
-	 * @param generateMetadata     <code>true</code> if metadata generation required, <code>false</code> otherwise
-	 * @throws IOException on error
+	 * Creates FLV reader from file input stream, sets up metadata generation flag. 
 	 */
 	public FLVReader(File f, boolean generateMetadata) throws IOException {
 		if (null == f) {
@@ -138,10 +131,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 	
 	/**
-	 * Creates FLV reader from file channel.
-	 *
-	 * @param channel
-	 * @throws IOException on error
+	 * Creates FLV reader from file channel. 
 	 */
 	public FLVReader(FileChannel channel) throws IOException {
 		if (null == channel) {
@@ -164,10 +154,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Accepts mapped file bytes to construct internal members.
-	 *
-	 * @param generateMetadata         <code>true</code> if metadata generation required, <code>false</code> otherwise
-	 * @param buffer                   IoBuffer
+	 * Accepts mapped file bytes to construct internal members.  
 	 */
 	public FLVReader(IoBuffer buffer, boolean generateMetadata) {
 		this.generateMetadata = generateMetadata;
@@ -180,9 +167,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Get the remaining bytes that could be read from a file or ByteBuffer.
-	 *
-	 * @return          Number of remaining bytes
+	 * Get the remaining bytes that could be read from a file or ByteBuffer. 
 	 */
 	protected long getRemainingBytes() {
 		if (in != null) {
@@ -203,9 +188,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Get the total readable bytes in a file or ByteBuffer.
-	 *
-	 * @return          Total readable bytes
+	 * Get the total readable bytes in a file or ByteBuffer. 
 	 */
 	public long getTotalBytes() {
 		if (!useLoadBuf) {
@@ -220,9 +203,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Get the current position in a file or ByteBuffer.
-	 *
-	 * @return           Current position in a file
+	 * Get the current position in a file or ByteBuffer. 
 	 */
 	private long getCurrentPosition() {
 		long pos;
@@ -243,9 +224,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Modifies current position.
-	 *
-	 * @param pos  Current position in file
+	 * Modifies current position. 
 	 */
 	protected void setCurrentPosition(long pos) {
 		if (pos == Long.MAX_VALUE) {
@@ -276,9 +255,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Loads data from channel to buffer.
-	 *
-	 * @param amount         Amount of data to load with no reloading
+	 * Loads data from channel to buffer. 
 	 */
 	private void fillBuffer(long amount) {
 		fillBuffer(amount, false);
@@ -287,11 +264,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	/**
 	 * Load enough bytes from channel to buffer.
 	 * After the loading process, the caller can make sure the amount
-	 * in buffer is of size 'amount' if we haven't reached the end of channel.
-	 *
-	 * @param amount The amount of bytes in buffer after returning,
-	 * no larger than bufferSize
-	 * @param reload Whether to reload or append
+	 * in buffer is of size 'amount' if we haven't reached the end of channel. 
 	 */
 	private void fillBuffer(long amount, boolean reload) {
 		try {
@@ -352,8 +325,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 		long old = getCurrentPosition();
 		log.debug("Position: {}", old);
 	}
-
-	/** {@inheritDoc} */
+ 
 	public boolean hasVideo() {
 		KeyFrameMeta meta = analyzeKeyFrames();
 		if (meta == null) {
@@ -363,9 +335,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Getter for buffer type (auto, direct or heap).
-	 *
-	 * @return Value for property 'bufferType'
+	 * Getter for buffer type (auto, direct or heap). 
 	 */
 	public static String getBufferType() {
 		switch (bufferType) {
@@ -381,9 +351,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Setter for buffer type.
-	 *
-	 * @param bufferType Value to set for property 'bufferType'
+	 * Setter for buffer type. 
 	 */
 	public static void setBufferType(String bufferType) {
 		int bufferTypeHash = bufferType.hashCode();
@@ -404,18 +372,14 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Getter for buffer size.
-	 *
-	 * @return Value for property 'bufferSize'
+	 * Getter for buffer size. 
 	 */
 	public static int getBufferSize() {
 		return bufferSize;
 	}
 
 	/**
-	 * Setter for property 'bufferSize'.
-	 *
-	 * @param bufferSize Value to set for property 'bufferSize'
+	 * Setter for property 'bufferSize'. 
 	 */
 	public static void setBufferSize(int bufferSize) {
 		// make sure buffer size is no less than 1024 bytes.
@@ -426,9 +390,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	/**
-	 * Returns the file buffer.
-	 * 
-	 * @return  File contents as byte buffer
+	 * Returns the file buffer. 
 	 */
 	public IoBuffer getFileData() {
 		// TODO as of now, return null will disable cache
@@ -437,8 +399,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 		// thus both tag cache and file cache are feasible.
 		return null;
 	}
-
-	/** {@inheritDoc} */
+ 
 	public void decodeHeader() {
 		// flv header is 9 bytes
 		fillBuffer(9);
@@ -452,30 +413,23 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 			log.debug("Header: {}", header.toString());
 		}
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	public IStreamableFile getFile() {
 		// TODO wondering if we need to have a reference
 		return null;
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	public int getOffset() {
 		// XXX what's the difference from getBytesRead
 		return 0;
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	public long getBytesRead() {
 		// XXX should summarize the total bytes read or
 		// just the current position?
 		return getCurrentPosition();
 	}
-
-	/** {@inheritDoc} */
+ 
 	public long getDuration() {
 		return duration;
 	}
@@ -507,17 +461,13 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 		setCurrentPosition(old);
 		return frametype & MASK_SOUND_FORMAT;
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	public synchronized boolean hasMoreTags() {
 		return getRemainingBytes() > 4;
 	}
 
 	/**
-	 * Create tag for metadata event.
-	 *
-	 * @return         Metadata event tag
+	 * Create tag for metadata event. 
 	 */
 	private ITag createFileMeta() {
 		// Create tag for onMetaData event
@@ -558,9 +508,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 		out = null;
 		return result;
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	public synchronized ITag readTag() {
 		long oldPos = getCurrentPosition();
 		ITag tag = readTagHeader();
@@ -603,9 +551,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 		}
 		return tag;
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	public synchronized void close() {
 		log.debug("Reader close");
 		if (in != null) {
@@ -624,9 +570,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 
 	/**
 	 * Key frames analysis may be used as a utility method so
-	 * synchronize it.
-	 *
-	 * @return             Keyframe metadata
+	 * synchronize it. 
 	 */
 	public synchronized KeyFrameMeta analyzeKeyFrames() {
 		if (keyframeMeta != null) {
@@ -747,18 +691,14 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	/**
 	 * Put the current position to pos.
 	 * The caller must ensure the pos is a valid one
-	 * (eg. not sit in the middle of a frame).
-	 *
-	 * @param pos         New position in file. Pass <code>Long.MAX_VALUE</code> to seek to end of file.
+	 * (eg. not sit in the middle of a frame). 
 	 */
 	public void position(long pos) {
 		setCurrentPosition(pos);
 	}
 
 	/**
-	 * Read only header part of a tag.
-	 *
-	 * @return              Tag header
+	 * Read only header part of a tag. 
 	 */
 	private ITag readTagHeader() {
 		// previous tag size (4 bytes) + flv tag header size (11 bytes)
@@ -867,8 +807,7 @@ public class FLVReader implements IoConstants, ITagReader, IKeyFrameDataAnalyzer
 	}
 
 	@Override
-	public ITagReader copy() {
-		// TODO Auto-generated method stub
+	public ITagReader copy() { 
 		return null;
 	}
 }

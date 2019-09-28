@@ -91,22 +91,14 @@ public class FLV implements IFLV {
     }
 
     /**
-     * Create FLV from given file source
-     * 
-     * @param file
-     *            File source
+     * Create FLV from given file source 
      */
     public FLV(File file) {
         this(file, false);
     }
 
     /**
-     * Create FLV from given file source and with specified metadata generation option
-     * 
-     * @param file
-     *            File source
-     * @param generateMetadata
-     *            Metadata generation option
+     * Create FLV from given file source and with specified metadata generation option 
      */
     public FLV(File file, boolean generateMetadata) {
         this.file = file;
@@ -133,10 +125,7 @@ public class FLV implements IFLV {
     }
 
     /**
-     * Sets the cache implementation to be used.
-     * 
-     * @param cache
-     *            Cache store
+     * Sets the cache implementation to be used. 
      */
     @Override
     public void setCache(ICacheStore cache) {
@@ -144,9 +133,7 @@ public class FLV implements IFLV {
     }
 
     /**
-     * Sets a writer post processor.
-     * 
-     * @param writerPostProcessor IPostProcess implementation class name
+     * Sets a writer post processor. 
      */
     @SuppressWarnings("unchecked")
     public void setWriterPostProcessor(String writerPostProcessor) {
@@ -161,9 +148,7 @@ public class FLV implements IFLV {
     }
 
     /**
-     * Sets a group of writer post processors.
-     * 
-     * @param writerPostProcessors IPostProcess implementation class names
+     * Sets a group of writer post processors. 
      */
     @SuppressWarnings("unchecked")
     public void setWriterPostProcessors(Set<String> writerPostProcessors) {
@@ -182,28 +167,19 @@ public class FLV implements IFLV {
     public LinkedList<Class<IPostProcessor>> getWritePostProcessors() {
         return writePostProcessors;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public boolean hasMetaData() {
         return metaData != null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @SuppressWarnings({ "rawtypes" })
     @Override
     public IMetaData getMetaData() throws FileNotFoundException {
         metaService.setFile(file);
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public boolean hasKeyFrameData() {
         //if (hasMetaData()) {
@@ -211,10 +187,7 @@ public class FLV implements IFLV {
         //}
         return false;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void setKeyFrameData(Map keyframedata) {
@@ -243,10 +216,7 @@ public class FLV implements IFLV {
         }
         ((MetaData) metaData).put("filepositions", filepositions);
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @SuppressWarnings({ "rawtypes" })
     @Override
     public Map getKeyFrameData() {
@@ -256,24 +226,15 @@ public class FLV implements IFLV {
         //}
         return keyframes;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public void refreshHeaders() throws IOException {
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public void flushHeaders() throws IOException {
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public ITagReader getReader() throws IOException {
         FLVReader reader = null;
@@ -308,40 +269,29 @@ public class FLV implements IFLV {
         }
         return reader;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public ITagReader readerFromNearestKeyFrame(int seekPoint) {
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public ITagWriter getWriter() throws IOException {
         log.info("getWriter: {}", file);
         return new FLVWriter(file, false);
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public ITagWriter getAppendWriter() throws IOException {
         log.info("getAppendWriter: {}", file);
         return new FLVWriter(file, true);
     }
-
-    /**
-     * {@inheritDoc}
-     */
+ 
     @Override
     public ITagWriter writerFromNearestKeyFrame(int seekPoint) {
         return null;
     }
-
-    /** {@inheritDoc} */
+ 
     @SuppressWarnings({ "rawtypes" })
     @Override
     public void setMetaData(IMetaData meta) throws IOException {
@@ -356,8 +306,7 @@ public class FLV implements IFLV {
         metaService.write(meta);
         metaData = meta;
     }
-
-    /** {@inheritDoc} */
+ 
     @Override
     public void setMetaService(IMetaService service) {
         metaService = service;

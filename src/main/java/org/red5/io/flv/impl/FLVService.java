@@ -18,29 +18,25 @@ public class FLVService extends BaseStreamableFileService implements IFLVService
 	 */
 	private boolean generateMetadata;
 
-	/** {@inheritDoc} */
+	
 	@Override
 	public String getPrefix() {
 		return "flv";
 	}
 
-	/** {@inheritDoc} */
+	
 	@Override
 	public String getExtension() {
 		return ".flv";
 	}
-
-	/** {@inheritDoc}
-	 */
+ 
 	@Override
 	public IStreamableFile getStreamableFile(File file) throws IOException {
 		return new FLV(file, generateMetadata);
 	}
 
 	/**
-	 * Generate metadata or not
-	 *
-	 * @param generate  <code>true</code> if there's need to generate metadata, <code>false</code> otherwise
+	 * Generate metadata or not 
 	 */
 	public void setGenerateMetadata(boolean generate) {
 		generateMetadata = generate;

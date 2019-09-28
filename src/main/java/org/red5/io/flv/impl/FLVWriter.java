@@ -101,12 +101,8 @@ public class FLVWriter implements ITagWriter {
 	private FileChannel channel;
 
 	/**
-	 * Creates writer implementation with given file and last tag
-	 *
-	 * FLV.java uses this constructor so we have access to the file object
-	 *
-	 * @param file              File output stream
-	 * @param append            true if append to existing file
+	 * Creates writer implementation with given file and last tag 
+	 * FLV.java uses this constructor so we have access to the file object 
 	 */
 	public FLVWriter(File file, boolean append) {
 		try {
