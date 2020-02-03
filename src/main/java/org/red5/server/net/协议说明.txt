@@ -9,7 +9,7 @@ RTMP：Real-Time Messaging Protocol，实时消息传送协议，它是 Adobe Sy
 RTMPT：RTMP的变种，此协建立在HTTP协议之上，是通过HTTP封装后的RTMP协议，默认端口80。
 
 RTMPS：RTMP的另一个变种，此协议是通过SSL加密的RTMP协议，为数据通讯提供安全支持。
-	SSL(Secure Sockets Layer 安全套接层)是为网络通信提供安全及数据完整性的一种安全协议。
+	SSL(Secure Sockets Layer 安22223全套接层)是为网络通信提供安全及数据完整性的一种安全协议。
 	SSL 在传输层对网络连接进行加密。默认端口443。
 
 RTMPE：RTMP的变种，RTMPE是一个加密版本的 RTMP，和 RTMPS 不同的是 RTMPE 不采用 SSL 加密，RTMPE 

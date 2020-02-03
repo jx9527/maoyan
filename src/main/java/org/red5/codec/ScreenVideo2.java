@@ -22,13 +22,6 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Red5 video codec for the screen capture format.
- * 
- * @author The Red5 Project
- * @author Joachim Bauch (jojo@struktur.de)
- * @author Paul Gregoire (mondain@gmail.com)
- */
 public class ScreenVideo2 extends AbstractVideo {
 
     private Logger log = LoggerFactory.getLogger(ScreenVideo2.class);

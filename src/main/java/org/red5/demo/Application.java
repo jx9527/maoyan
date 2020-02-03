@@ -23,7 +23,6 @@ public class Application extends ApplicationAdapter {
 	public boolean appStart(IScope app) {
 		super.appStart(app);
 		log.info("oflaDemo appStart");
-		System.out.println("oflaDemo appStart");
 		appScope = app;
 		//registerStreamPlaybackSecurity(new NamePlaybackSecurity());
 		//registerStreamPublishSecurity(new NamePublishSecurity());
